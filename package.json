@@ -9,12 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "pg": "^8.7.1",
     "dotenv": "^16.4.5",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@types/pg": "^8.6.1",
     "@types/dotenv": "^8.2.0",
     "@types/node": "^20",
     "@types/react": "^18",
