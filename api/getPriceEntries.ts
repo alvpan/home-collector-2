@@ -1,6 +1,6 @@
-import { IncomingMessage, ServerResponse } from 'http';
-import { Client } from 'pg';
-import dotenv from 'dotenv';
+const { IncomingMessage, ServerResponse } = require('http');
+const { Client } = require('pg');
+const dotenv = require('dotenv');
 
 dotenv.config();
 
@@ -20,7 +20,7 @@ const client = new Client({
   port: POSTGRES_PORT ? parseInt(POSTGRES_PORT) : 5432,
 });
 
-const handler = async (req: IncomingMessage, res: ServerResponse) => {
+const handler = async (req, res) => {
   const url = new URL(req.url || '', `http://${req.headers.host}`);
   const cityName = url.searchParams.get('cityName');
   const areaName = url.searchParams.get('areaName');
@@ -80,4 +80,4 @@ const handler = async (req: IncomingMessage, res: ServerResponse) => {
   }
 };
 
-export default handler;
+module.exports = handler;
