@@ -12,7 +12,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "types": ["node", "pg"],
+    "types": ["node", "pg", "dotenv"],
     "plugins": [
       {
         "name": "next"
