@@ -11,13 +11,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const client = new Client({
-    host: process.env.PG_HOST,
-    port: parseInt(process.env.PG_PORT || '5432', 10),
-    database: process.env.PG_DATABASE,
-    user: process.env.PG_USER,
-    password: process.env.PG_PASSWORD,
+    host: process.env.POSTGRES_HOST,
+    port: parseInt(process.env.POSTGRES_PORT || '5432', 10),
+    database: process.env.POSTGRES_DATABASE,
+    user: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
     ssl: {
-      rejectUnauthorized: false, // for self-signed certificates
+      rejectUnauthorized: false,
     },
   });
 
