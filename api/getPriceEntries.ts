@@ -4,7 +4,13 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const { POSTGRES_HOST, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DATABASE, POSTGRES_PORT } = process.env;
+const {
+  POSTGRES_HOST,
+  POSTGRES_USER,
+  POSTGRES_PASSWORD,
+  POSTGRES_DATABASE,
+  POSTGRES_PORT,
+} = process.env;
 
 const client = new Client({
   host: POSTGRES_HOST,
@@ -28,6 +34,7 @@ const handler = async (req: IncomingMessage, res: ServerResponse) => {
 
   try {
     await client.connect();
+    console.log('Database connected successfully');
 
     let query = `
       SELECT pe.*
@@ -56,6 +63,7 @@ const handler = async (req: IncomingMessage, res: ServerResponse) => {
     }
     query += ')';
 
+    console.log('Executing query:', query, values);
     const result = await client.query(query, values);
 
     res.statusCode = 200;
@@ -68,6 +76,7 @@ const handler = async (req: IncomingMessage, res: ServerResponse) => {
     res.end(JSON.stringify({ error: 'Internal server error' }));
   } finally {
     await client.end();
+    console.log('Database connection closed');
   }
 };
 
