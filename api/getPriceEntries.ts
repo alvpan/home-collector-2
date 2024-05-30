@@ -1,7 +1,9 @@
-import { VercelRequest, VercelResponse } from '@vercel/node';
+import { IncomingMessage, ServerResponse } from 'http';
 import { Client } from 'pg';
+import dotenv from 'dotenv';
 
-// Environment variables (ensure these are set in your Vercel environment)
+dotenv.config();
+
 const { POSTGRES_HOST, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DATABASE, POSTGRES_PORT } = process.env;
 
 const client = new Client({
@@ -12,11 +14,15 @@ const client = new Client({
   port: POSTGRES_PORT ? parseInt(POSTGRES_PORT) : 5432,
 });
 
-export default async (req: VercelRequest, res: VercelResponse) => {
-  const { cityName, areaName } = req.query;
+const handler = async (req: IncomingMessage, res: ServerResponse) => {
+  const url = new URL(req.url || '', `http://${req.headers.host}`);
+  const cityName = url.searchParams.get('cityName');
+  const areaName = url.searchParams.get('areaName');
 
   if (!cityName) {
-    res.status(400).json({ error: 'City name is required' });
+    res.statusCode = 400;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ error: 'City name is required' }));
     return;
   }
 
@@ -44,7 +50,7 @@ export default async (req: VercelRequest, res: VercelResponse) => {
         JOIN "Area" ON "PriceEntry".area = "Area".id
         JOIN "City" ON "Area".city = "City".id
         WHERE "City".name = $1
-      `;
+    `;
     if (areaName) {
       query += ' AND "Area".name = $2';
     }
@@ -52,11 +58,17 @@ export default async (req: VercelRequest, res: VercelResponse) => {
 
     const result = await client.query(query, values);
 
-    res.status(200).json(result.rows);
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(result.rows));
   } catch (error) {
     console.error('Database query error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.statusCode = 500;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ error: 'Internal server error' }));
   } finally {
     await client.end();
   }
 };
+
+export default handler;
