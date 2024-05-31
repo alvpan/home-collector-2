@@ -21,13 +21,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: 'Missing parameters' });
   }
 
-  const actionCode = action === 'Buy' ? 2 : 1;
+  const priceType = action === 'Buy' ? 2 : 1;
 
   try {
     const client = await pool.connect();
     const result = await client.query(
-      'SELECT * FROM priceEntry WHERE action = $1 AND city = $2 AND area = $3',
-      [actionCode, city, area]
+      'SELECT * FROM "PriceEntry" WHERE price_type = $1 AND city = $2 AND area = $3',
+      [priceType, city, area]
     );
     client.release();
     res.status(200).json(result.rows);
