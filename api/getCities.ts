@@ -17,15 +17,12 @@ const pool = new Pool({
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const client = await pool.connect();
-    try {
-      const result = await client.query('SELECT name FROM City');
-      const cities = result.rows.map(row => row.name);
-      res.status(200).json({ cities });
-    } finally {
-      client.release();
-    }
+    const result = await client.query('SELECT name FROM City');
+    const cities = result.rows.map(row => row.name);
+    client.release();
+    res.status(200).json({ cities });
   } catch (error) {
-    console.error('Database query error:', error);
-    res.status(500).json({ error: 'Error fetching cities', details: error.message });
+    console.error('Error fetching cities:', error);
+    res.status(500).json({ error: 'Error fetching cities' });
   }
 }
