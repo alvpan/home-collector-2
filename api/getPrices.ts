@@ -25,11 +25,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const client = await pool.connect();
-    const result = await client.query(
-      'SELECT * FROM "PriceEntry" WHERE price_type = $1 AND city = $2 AND area = $3',
-      [priceType, city, area]
-    );
+
+    const query = `
+      SELECT pe.surface, pe.price
+      FROM "PriceEntry" pe
+      JOIN "Area" a ON pe.area = a.id
+      JOIN "City" c ON a.city = c.id
+      WHERE pe.price_type = $1 AND c.name = $2 AND a.name = $3
+    `;
+
+    const result = await client.query(query, [priceType, city, area]);
     client.release();
+    
     res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error querying the database:', error);
