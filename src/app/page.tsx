@@ -59,6 +59,16 @@ export default function Home() {
 
   const buttonStyle = "bg-transparent hover:bg-blue-900 text-white font-bold py-2 px-4 rounded w-48 h-12";
 
+  const shouldShowSeePricesButton = () => {
+    if (action === "Select an Action..." || selectedCity === "Select a Location...") {
+      return false;
+    }
+    if ((selectedCity === "Athens" || selectedCity === "Thessaloniki") && selectedArea === "Select an Area...") {
+      return false;
+    }
+    return true;
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <header className="p-8">
@@ -119,6 +129,11 @@ export default function Home() {
                 </div>
               )}
             </div>
+          )}
+          {shouldShowSeePricesButton() && (
+            <button className={`${buttonStyle} bg-blue-900 hover:bg-blue-700`}>
+              See Prices
+            </button>
           )}
         </div>
       </main>
