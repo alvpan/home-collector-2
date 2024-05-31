@@ -57,6 +57,20 @@ export default function Home() {
     setAreaDropdownVisible(false);
   };
 
+  const handleSeePricesClick = async () => {
+    const city = selectedCity;
+    const area = (city === "Athens" || city === "Thessaloniki") ? selectedArea : city;
+
+    try {
+      const response = await fetch(`/api/getPrices?action=${action}&city=${city}&area=${area}`);
+      const data = await response.json();
+      console.log(data);
+      // Handle the data as needed (e.g., display it in the UI)
+    } catch (error) {
+      console.error("Error fetching prices:", error);
+    }
+  };
+
   const buttonStyle = "bg-transparent hover:bg-blue-900 text-white font-bold py-2 px-4 rounded w-48 h-12";
 
   const shouldShowSeePricesButton = () => {
@@ -131,7 +145,10 @@ export default function Home() {
             </div>
           )}
           {shouldShowSeePricesButton() && (
-            <button className={`${buttonStyle} bg-blue-900 hover:bg-blue-700`}>
+            <button 
+              onClick={handleSeePricesClick}
+              className={`${buttonStyle} bg-blue-900 hover:bg-blue-700`}
+            >
               See Prices
             </button>
           )}
