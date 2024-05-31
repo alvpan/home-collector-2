@@ -6,7 +6,10 @@ export default function Home() {
   const [action, setAction] = useState("Select an Action...");
   const [selectedCity, setSelectedCity] = useState("Select a Location...");
   const [isDropdownVisible, setDropdownVisible] = useState(false);
+  const [isAreaDropdownVisible, setAreaDropdownVisible] = useState(false);
   const [cities, setCities] = useState<string[]>([]);
+  const [areas, setAreas] = useState<string[]>([]);
+  const [selectedArea, setSelectedArea] = useState("Select an Area...");
 
   useEffect(() => {
     const fetchCities = async () => {
@@ -33,6 +36,25 @@ export default function Home() {
   const handleCitySelect = (city: string) => {
     setSelectedCity(city);
     setDropdownVisible(false);
+    setAreas([]);
+    setSelectedArea("Select an Area...");
+    setAreaDropdownVisible(false);
+  };
+
+  const handleAreaButtonClick = async () => {
+    try {
+      const response = await fetch(`/api/getAreas?city=${selectedCity}`);
+      const data = await response.json();
+      setAreas(data.areas);
+      setAreaDropdownVisible(true);
+    } catch (error) {
+      console.error("Error fetching areas:", error);
+    }
+  };
+
+  const handleAreaSelect = (area: string) => {
+    setSelectedArea(area);
+    setAreaDropdownVisible(false);
   };
 
   const buttonStyle = "bg-transparent hover:bg-blue-900 text-white font-bold py-2 px-4 rounded w-48 h-12";
@@ -73,6 +95,31 @@ export default function Home() {
               </div>
             )}
           </div>
+          {(selectedCity === "Athens" || selectedCity === "Thessaloniki") && (
+            <div className="relative flex items-center w-48">
+              <button
+                onClick={handleAreaButtonClick}
+                className={buttonStyle}
+              >
+                Select an Area
+              </button>
+              {isAreaDropdownVisible && (
+                <div className="absolute top-1/2 transform -translate-y-1/2 w-full bg-white border border-gray-300 rounded shadow-lg z-10 text-black max-h-60 overflow-y-auto">
+                  <ul className="py-1">
+                    {areas.map((area) => (
+                      <li
+                        key={area}
+                        className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                        onClick={() => handleAreaSelect(area)}
+                      >
+                        {area}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </main>
     </div>
