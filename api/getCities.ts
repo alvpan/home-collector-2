@@ -17,7 +17,7 @@ const pool = new Pool({
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const client = await pool.connect();
-    const result = await client.query('SELECT name FROM City');
+    const result = await client.query('SELECT name FROM "City"');
     const cities = result.rows.map(row => row.name);
     client.release();
     res.status(200).json({ cities });
