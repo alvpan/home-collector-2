@@ -32,11 +32,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       JOIN "Area" a ON pe.area = a.id
       JOIN "City" c ON a.city = c.id
       WHERE pe.price_type = $1 AND c.name = $2 AND a.name = $3
+      AND pe.entry_date = (
+        SELECT MAX(entry_date)
+        FROM "PriceEntry" pe_sub
+        JOIN "Area" a_sub ON pe_sub.area = a_sub.id
+        JOIN "City" c_sub ON a_sub.city = c_sub.id
+        WHERE pe_sub.price_type = $1 AND c_sub.name = $2 AND a_sub.name = $3
+      )
     `;
 
     const result = await client.query(query, [priceType, city, area]);
     client.release();
-    
+
     res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error querying the database:', error);
