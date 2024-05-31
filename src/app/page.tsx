@@ -101,7 +101,7 @@ export default function Home() {
                 onClick={handleAreaButtonClick}
                 className={buttonStyle}
               >
-                Select an Area
+                {selectedArea}
               </button>
               {isAreaDropdownVisible && (
                 <div className="absolute top-1/2 transform -translate-y-1/2 w-full bg-white border border-gray-300 rounded shadow-lg z-10 text-black max-h-60 overflow-y-auto">
