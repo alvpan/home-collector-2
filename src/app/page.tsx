@@ -63,22 +63,23 @@ export default function Home() {
         align: 'center',
         style: {
           fontSize: '16px',
-          color: 'white',
+          color: 'black',
           fontFamily: 'Consolas'
         }  
       },
       xaxis: {
+        categories: [],
         labels: {
           rotate: -45,
           style: {
-            colors: 'white',
+            colors: 'black',
             fontSize: '12px'
           }
         },
         title: {
           style: {
             fontSize: '16px',
-            color: 'white',
+            color: 'black',
             fontFamily: 'Consolas'
           }
         },
@@ -87,7 +88,7 @@ export default function Home() {
         forceNiceScale: true,
         labels: {
           style: {
-            colors: 'white',
+            colors: 'black',
             fontSize: '12px'
           }
         }
