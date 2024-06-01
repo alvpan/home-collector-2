@@ -193,13 +193,13 @@ export default function Home() {
   const buttonStyle = "bg-gray-700 hover:bg-black text-white py-2 px-4 rounded w-48 h-12";
   const headerButtonStyle = (buttonName: string) => ({
     background: 'transparent',
-    color: '#4a5568', // gray-700 hex code
+    color: 'black',
     padding: '0.5rem 1rem',
     fontSize: '1.125rem', // text-lg
     border: 'none',
     cursor: 'pointer',
     textDecoration: activeHeaderButton === buttonName ? 'underline' : 'none',
-    textDecorationColor: activeHeaderButton === buttonName ? '#4a5568' : 'transparent', // gray-700 hex code
+    textDecorationColor: activeHeaderButton === buttonName ? 'black' : 'transparent', // gray-700 hex code
     textDecorationThickness: activeHeaderButton === buttonName ? '2px' : '0px',
   });
 
