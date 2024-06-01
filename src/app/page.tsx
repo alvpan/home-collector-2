@@ -71,7 +71,7 @@ export default function Home() {
     }
   };
 
-  const buttonStyle = "bg-black hover:bg-gray-700 text-white py-2 px-4 rounded w-48 h-12";
+  const buttonStyle = "bg-gray-700 hover:bg-black text-white py-2 px-4 rounded w-48 h-12";
 
   const shouldShowSeePricesButton = () => {
     if (action === "Action" || selectedCity === "Location") {
