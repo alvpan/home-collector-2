@@ -39,6 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         JOIN "City" c_sub ON a_sub.city = c_sub.id
         WHERE pe_sub.price_type = $1 AND c_sub.name = $2 AND a_sub.name = $3
       )
+      ORDER BY pe.surface ASC
     `;
 
     const result = await client.query(query, [priceType, city, area]);
