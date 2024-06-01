@@ -107,7 +107,7 @@ export default function Home() {
         <div className="flex flex-col gap-4">
           <button
             onClick={handleActionButtonClick}
-            className={`${buttonStyle} hover:bg-gray-700`}
+            className={`${buttonStyle}`}
           >
             {action}
           </button>
