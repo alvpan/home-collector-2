@@ -3,13 +3,13 @@
 import React, { useState, useEffect, CSSProperties } from "react";
 
 export default function Home() {
-  const [action, setAction] = useState("Select an Action...");
-  const [selectedCity, setSelectedCity] = useState("Select a Location...");
+  const [action, setAction] = useState("Action");
+  const [selectedCity, setSelectedCity] = useState("Location");
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [isAreaDropdownVisible, setAreaDropdownVisible] = useState(false);
   const [cities, setCities] = useState<string[]>([]);
   const [areas, setAreas] = useState<string[]>([]);
-  const [selectedArea, setSelectedArea] = useState("Select an Area...");
+  const [selectedArea, setSelectedArea] = useState("Area");
 
   useEffect(() => {
     const fetchCities = async () => {
@@ -37,7 +37,7 @@ export default function Home() {
     setSelectedCity(city);
     setDropdownVisible(false);
     setAreas([]);
-    setSelectedArea("Select an Area...");
+    setSelectedArea("Area");
     setAreaDropdownVisible(false);
   };
 
@@ -71,13 +71,13 @@ export default function Home() {
     }
   };
 
-  const buttonStyle = "bg-black hover:bg-green-950 text-white font-bold py-2 px-4 rounded w-48 h-12";
+  const buttonStyle = "bg-black hover:bg-green-950 text-white py-2 px-4 rounded w-48 h-12";
 
   const shouldShowSeePricesButton = () => {
-    if (action === "Select an Action..." || selectedCity === "Select a Location...") {
+    if (action === "Action" || selectedCity === "Location") {
       return false;
     }
-    if ((selectedCity === "Athens" || selectedCity === "Thessaloniki") && selectedArea === "Select an Area...") {
+    if ((selectedCity === "Athens" || selectedCity === "Thessaloniki") && selectedArea === "Area") {
       return false;
     }
     return true;
@@ -162,7 +162,7 @@ export default function Home() {
           {shouldShowSeePricesButton() && (
             <button 
               onClick={handleSeePricesClick}
-              className={`${buttonStyle} bg-orange-700 hover:bg-green-950`}
+              className={`${buttonStyle} bg-orange-700 hover:bg-orange-600`}
             >
               See Prices
             </button>
