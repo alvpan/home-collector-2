@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, CSSProperties } from "react";
 
 export default function Home() {
   const [action, setAction] = useState("Select an Action...");
@@ -71,7 +71,7 @@ export default function Home() {
     }
   };
 
-  const buttonStyle = "bg-transparent hover:bg-blue-900 text-white font-bold py-2 px-4 rounded w-48 h-12";
+  const buttonStyle = "bg-black hover:bg-green-950 text-white font-bold py-2 px-4 rounded w-48 h-12";
 
   const shouldShowSeePricesButton = () => {
     if (action === "Select an Action..." || selectedCity === "Select a Location...") {
@@ -83,16 +83,31 @@ export default function Home() {
     return true;
   };
 
+  const headerStyle: CSSProperties = {
+    backgroundColor: '#FFFFFF',
+    padding: '1.8rem 4rem',
+    height: 'auto'
+  };
+
+  const mainContainerStyle: CSSProperties = {
+    backgroundColor: '#F0EFEB',
+    minHeight: '100vh'
+  };
+
+  const h1Style: CSSProperties = {
+    fontFamily: 'Arial, sans-serif',
+  };
+
   return (
-    <div className="flex flex-col min-h-screen">
-      <header className="p-8">
-        <h1 className="text-5xl text-gray-700">hompare</h1>
+    <div style={mainContainerStyle}>
+      <header style={headerStyle}>
+      <h1 style={h1Style} className="text-5xl text-gray-700">hompare</h1>
       </header>
       <main className="flex flex-col items-start justify-start p-8 flex-grow">
         <div className="flex flex-col gap-4">
           <button
             onClick={handleActionButtonClick}
-            className={`${buttonStyle} hover:bg-green-900`}
+            className={`${buttonStyle} hover:bg-green-950`}
           >
             {action}
           </button>
@@ -147,7 +162,7 @@ export default function Home() {
           {shouldShowSeePricesButton() && (
             <button 
               onClick={handleSeePricesClick}
-              className={`${buttonStyle} bg-blue-900 hover:bg-blue-700`}
+              className={`${buttonStyle} bg-orange-700 hover:bg-green-950`}
             >
               See Prices
             </button>
