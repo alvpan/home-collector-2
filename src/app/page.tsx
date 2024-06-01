@@ -1,6 +1,16 @@
 "use client";
 
 import React, { useState, useEffect, CSSProperties } from "react";
+import dynamic from 'next/dynamic';
+import { ApexOptions } from 'apexcharts'; 
+
+const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
+
+interface CityData {
+  surface: number;
+  price: number;
+  price_per_sq_m: number;
+}
 
 export default function Home() {
   const [action, setAction] = useState("Action");
@@ -10,6 +20,87 @@ export default function Home() {
   const [cities, setCities] = useState<string[]>([]);
   const [areas, setAreas] = useState<string[]>([]);
   const [selectedArea, setSelectedArea] = useState("Area");
+  const [chartData, setChartData] = useState<{
+    options: ApexOptions,
+    series: { name: string, data: number[] }[]
+  }>({
+    options: {
+      chart: {
+        type: 'area',
+        background: 'transparent',
+        toolbar: {
+          show: false,
+        },
+        zoom: {
+          enabled: false,
+        }
+      },
+      tooltip: {
+        marker: {
+          show: false,
+        },
+        theme: 'dark',
+        style: {
+          fontSize: '20px',
+          fontFamily: undefined,
+        }
+      },
+      markers: {
+        size: 4,
+        colors: ['orange'],
+        strokeColors: 'orange',
+        radius: 10,
+        strokeWidth: 5
+      },
+      stroke: {
+        curve: 'smooth'
+      },
+      dataLabels: {
+        enabled: false
+      },
+      title: {
+        text: 'Latest Average Price per Property Size',
+        align: 'center',
+        style: {
+          fontSize: '16px',
+          color: 'white',
+          fontFamily: 'Consolas'
+        }  
+      },
+      xaxis: {
+        labels: {
+          rotate: -45,
+          style: {
+            colors: 'white',
+            fontSize: '12px'
+          }
+        },
+        title: {
+          style: {
+            fontSize: '16px',
+            color: 'white',
+            fontFamily: 'Consolas'
+          }
+        },
+      },
+      yaxis: {
+        forceNiceScale: true,
+        labels: {
+          style: {
+            colors: 'white',
+            fontSize: '12px'
+          }
+        }
+      },
+      colors: ['orange'],
+    },
+    series: [
+      {
+        name: '€',
+        data: [],
+      }
+    ]
+  });
 
   useEffect(() => {
     const fetchCities = async () => {
@@ -63,9 +154,28 @@ export default function Home() {
 
     try {
       const response = await fetch(`/api/getPrices?action=${action}&city=${city}&area=${area}`);
-      const data = await response.json();
+      const data: CityData[] = await response.json();
       console.log(data);
-      // Handle the data as needed (e.g., display it in the UI)
+
+      const surfaces = data.map((item: CityData) => item.surface);
+      const prices = data.map((item: CityData) => item.price);
+
+      setChartData(prevData => ({
+        ...prevData,
+        options: {
+          ...prevData.options,
+          xaxis: {
+            ...prevData.options.xaxis,
+            categories: surfaces,
+          },
+        },
+        series: [
+          {
+            name: '€',
+            data: prices,
+          }
+        ]
+      }));
     } catch (error) {
       console.error("Error fetching prices:", error);
     }
@@ -167,6 +277,14 @@ export default function Home() {
               See Prices
             </button>
           )}
+          <div className="w-full mt-8">
+            <Chart
+              options={chartData.options}
+              series={chartData.series}
+              type="area"
+              height="400"
+            />
+          </div>
         </div>
       </main>
     </div>
