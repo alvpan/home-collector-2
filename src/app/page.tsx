@@ -20,6 +20,8 @@ export default function Home() {
   const [cities, setCities] = useState<string[]>([]);
   const [areas, setAreas] = useState<string[]>([]);
   const [selectedArea, setSelectedArea] = useState("Area");
+  const [activeHeaderButton, setActiveHeaderButton] = useState<string | null>('Latest Prices');
+  const [isChartVisible, setChartVisible] = useState(false);
   const [chartData, setChartData] = useState<{
     options: ApexOptions,
     series: { name: string, data: number[] }[]
@@ -177,12 +179,29 @@ export default function Home() {
           }
         ]
       }));
+
+      setChartVisible(true); // Show the chart
     } catch (error) {
       console.error("Error fetching prices:", error);
     }
   };
 
+  const handleHeaderButtonClick = (buttonName: string) => {
+    setActiveHeaderButton(buttonName);
+  };
+
   const buttonStyle = "bg-gray-700 hover:bg-black text-white py-2 px-4 rounded w-48 h-12";
+  const headerButtonStyle = (buttonName: string) => ({
+    background: 'transparent',
+    color: '#4a5568', // gray-700 hex code
+    padding: '0.5rem 1rem',
+    fontSize: '1.125rem', // text-lg
+    border: 'none',
+    cursor: 'pointer',
+    textDecoration: activeHeaderButton === buttonName ? 'underline' : 'none',
+    textDecorationColor: activeHeaderButton === buttonName ? '#4a5568' : 'transparent', // gray-700 hex code
+    textDecorationThickness: activeHeaderButton === buttonName ? '2px' : '0px',
+  });
 
   const shouldShowSeePricesButton = () => {
     if (action === "Action" || selectedCity === "Location") {
@@ -197,7 +216,11 @@ export default function Home() {
   const headerStyle: CSSProperties = {
     backgroundColor: '#FFFFFF',
     padding: '1.8rem 4rem',
-    height: 'auto'
+    height: 'auto',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    position: 'relative'
   };
 
   const mainContainerStyle: CSSProperties = {
@@ -228,10 +251,38 @@ export default function Home() {
     marginLeft: '2rem',
   };
 
+  const headerButtonsContainerStyle: CSSProperties = {
+    display: 'flex',
+    gap: '1rem',
+    position: 'absolute',
+    left: '50%',
+    transform: 'translateX(-50%)',
+  };
+
   return (
     <div style={mainContainerStyle}>
       <header style={headerStyle}>
         <h1 style={h1Style} className="text-5xl font-extrabold text-gray-700">hompare</h1>
+        <div style={headerButtonsContainerStyle}>
+          <button
+            style={headerButtonStyle('Latest Prices')}
+            onClick={() => handleHeaderButtonClick('Latest Prices')}
+          >
+            Latest Prices
+          </button>
+          <button
+            style={headerButtonStyle('Compare Prices')}
+            onClick={() => handleHeaderButtonClick('Compare Prices')}
+          >
+            Compare Prices
+          </button>
+          <button
+            style={headerButtonStyle('Board no3')}
+            onClick={() => handleHeaderButtonClick('Board no3')}
+          >
+            Board no3
+          </button>
+        </div>
       </header>
       <main className="flex flex-col items-start justify-start p-8 flex-grow">
         <div style={contentStyle}>
@@ -299,14 +350,16 @@ export default function Home() {
               </button>
             )}
           </div>
-          <div style={chartContainerStyle}>
-            <Chart
-              options={chartData.options}
-              series={chartData.series}
-              type="area"
-              height="400"
-            />
-          </div>
+          {isChartVisible && (
+            <div style={chartContainerStyle}>
+              <Chart
+                options={chartData.options}
+                series={chartData.series}
+                type="area"
+                height="400"
+              />
+            </div>
+          )}
         </div>
       </main>
     </div>
