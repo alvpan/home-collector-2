@@ -230,6 +230,7 @@ export default function Home() {
 
   const h1Style: CSSProperties = {
     fontFamily: 'Arial, sans-serif',
+    marginRight: 'auto', // move the header to the left
   };
 
   const contentStyle: CSSProperties = {
@@ -244,6 +245,7 @@ export default function Home() {
     display: 'flex',
     flexDirection: 'column',
     gap: '1rem',
+    marginTop: '4rem',
   };
 
   const chartContainerStyle: CSSProperties = {
@@ -256,10 +258,11 @@ export default function Home() {
     gap: '1rem',
     position: 'absolute',
     left: '50%',
-    transform: 'translateX(-50%)',
+    transform: 'translateX(-25%)', // adjust the centering
   };
 
   return (
+    
     <div style={mainContainerStyle}>
       <header style={headerStyle}>
         <h1 style={h1Style} className="text-5xl font-extrabold text-gray-700">hompare</h1>
