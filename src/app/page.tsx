@@ -3,6 +3,7 @@
 import React, { useState, useEffect, CSSProperties } from "react";
 import dynamic from 'next/dynamic';
 import { ApexOptions } from 'apexcharts'; 
+import { styleText } from "util";
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -194,13 +195,14 @@ export default function Home() {
   const headerButtonStyle = (buttonName: string) => ({
     background: 'transparent',
     color: 'black',
-    padding: '0.5rem 1rem',
-    fontSize: '1.125rem', // text-lg
+    padding: '0.5rem 1.6rem',
+    fontSize: '1.125rem',
     border: 'none',
     cursor: 'pointer',
     textDecoration: activeHeaderButton === buttonName ? 'underline' : 'none',
-    textDecorationColor: activeHeaderButton === buttonName ? 'black' : 'transparent', // gray-700 hex code
+    textDecorationColor: activeHeaderButton === buttonName ? 'orange' : 'transparent', // gray-700 hex code
     textDecorationThickness: activeHeaderButton === buttonName ? '2px' : '0px',
+    fontWeight: activeHeaderButton === buttonName ? 'bold' : 'normal',
   });
 
   const shouldShowSeePricesButton = () => {
@@ -230,7 +232,19 @@ export default function Home() {
 
   const h1Style: CSSProperties = {
     fontFamily: 'Arial, sans-serif',
-    marginRight: 'auto', // move the header to the left
+    marginRight: 'auto',
+    position: 'relative',
+    display: 'inline-block',
+  };
+
+  const underlineStyle: CSSProperties = {
+    position: 'absolute',
+    content: '""',
+    width: '100%',
+    height: '2px',
+    backgroundColor: 'transparent',
+    bottom: '2px',
+    left: '0',
   };
 
   const contentStyle: CSSProperties = {
@@ -245,7 +259,7 @@ export default function Home() {
     display: 'flex',
     flexDirection: 'column',
     gap: '1rem',
-    marginTop: '4rem',
+    marginTop: '2rem',
   };
 
   const chartContainerStyle: CSSProperties = {
@@ -254,18 +268,22 @@ export default function Home() {
   };
 
   const headerButtonsContainerStyle: CSSProperties = {
+    marginTop: '0.5rem',
     display: 'flex',
     gap: '1rem',
     position: 'absolute',
     left: '50%',
-    transform: 'translateX(-25%)', // adjust the centering
+    transform: 'translateX(-25%)',
   };
 
   return (
     
     <div style={mainContainerStyle}>
       <header style={headerStyle}>
-        <h1 style={h1Style} className="text-5xl font-extrabold text-gray-700">hompare</h1>
+      <h1 style={h1Style} className="text-5xl font-extrabold text-gray-700 relative">
+        hompare
+        <span style={underlineStyle}></span>
+      </h1>
         <div style={headerButtonsContainerStyle}>
           <button
             style={headerButtonStyle('Latest Prices')}
