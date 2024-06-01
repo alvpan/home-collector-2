@@ -60,15 +60,15 @@ export default function Home() {
       dataLabels: {
         enabled: false
       },
-      title: {
-        text: 'Latest Average Price per Property Size',
-        align: 'center',
-        style: {
-          fontSize: '16px',
-          color: 'black',
-          fontFamily: 'Consolas'
-        }  
-      },
+      // title: {
+      //   text: 'Latest Average Price per Property Size',
+      //   align: 'center',
+      //   style: {
+      //     fontSize: '16px',
+      //     color: 'black',
+      //     fontFamily: 'Consolas'
+      //   }  
+      // },
       xaxis: {
         categories: [],
         labels: {
