@@ -27,7 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const client = await pool.connect();
 
     const query = `
-      SELECT pe.surface, pe.price
+      SELECT pe.surface, pe.price, pe.price_per_sq_m
       FROM "PriceEntry" pe
       JOIN "Area" a ON pe.area = a.id
       JOIN "City" c ON a.city = c.id

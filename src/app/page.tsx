@@ -71,7 +71,7 @@ export default function Home() {
     }
   };
 
-  const buttonStyle = "bg-black hover:bg-green-950 text-white py-2 px-4 rounded w-48 h-12";
+  const buttonStyle = "bg-black hover:bg-gray-700 text-white py-2 px-4 rounded w-48 h-12";
 
   const shouldShowSeePricesButton = () => {
     if (action === "Action" || selectedCity === "Location") {
@@ -101,13 +101,13 @@ export default function Home() {
   return (
     <div style={mainContainerStyle}>
       <header style={headerStyle}>
-      <h1 style={h1Style} className="text-5xl text-gray-700">hompare</h1>
+      <h1 style={h1Style} className="text-5xl font-extrabold text-gray-700">hompare</h1>
       </header>
       <main className="flex flex-col items-start justify-start p-8 flex-grow">
         <div className="flex flex-col gap-4">
           <button
             onClick={handleActionButtonClick}
-            className={`${buttonStyle} hover:bg-green-950`}
+            className={`${buttonStyle} hover:bg-gray-700`}
           >
             {action}
           </button>
