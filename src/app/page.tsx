@@ -208,76 +208,97 @@ export default function Home() {
     fontFamily: 'Arial, sans-serif',
   };
 
+  const contentStyle: CSSProperties = {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    width: '100%',
+  };
+
+  const buttonsContainerStyle: CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem',
+  };
+
+  const chartContainerStyle: CSSProperties = {
+    flex: 1,
+    marginLeft: '2rem',
+  };
+
   return (
     <div style={mainContainerStyle}>
       <header style={headerStyle}>
-      <h1 style={h1Style} className="text-5xl font-extrabold text-gray-700">hompare</h1>
+        <h1 style={h1Style} className="text-5xl font-extrabold text-gray-700">hompare</h1>
       </header>
       <main className="flex flex-col items-start justify-start p-8 flex-grow">
-        <div className="flex flex-col gap-4">
-          <button
-            onClick={handleActionButtonClick}
-            className={`${buttonStyle}`}
-          >
-            {action}
-          </button>
-          <div className="relative flex items-center w-48">
+        <div style={contentStyle}>
+          <div style={buttonsContainerStyle}>
             <button
-              onClick={handleLocationButtonClick}
+              onClick={handleActionButtonClick}
               className={buttonStyle}
             >
-              {selectedCity}
+              {action}
             </button>
-            {isDropdownVisible && (
-              <div className="absolute top-1/2 transform -translate-y-1/2 w-full bg-white border border-gray-300 rounded shadow-lg z-10 text-black max-h-60 overflow-y-auto">
-                <ul className="py-1">
-                  {cities.map((city) => (
-                    <li
-                      key={city}
-                      className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
-                      onClick={() => handleCitySelect(city)}
-                    >
-                      {city}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-          {(selectedCity === "Athens" || selectedCity === "Thessaloniki") && (
             <div className="relative flex items-center w-48">
               <button
-                onClick={handleAreaButtonClick}
+                onClick={handleLocationButtonClick}
                 className={buttonStyle}
               >
-                {selectedArea}
+                {selectedCity}
               </button>
-              {isAreaDropdownVisible && (
+              {isDropdownVisible && (
                 <div className="absolute top-1/2 transform -translate-y-1/2 w-full bg-white border border-gray-300 rounded shadow-lg z-10 text-black max-h-60 overflow-y-auto">
                   <ul className="py-1">
-                    {areas.map((area) => (
+                    {cities.map((city) => (
                       <li
-                        key={area}
+                        key={city}
                         className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
-                        onClick={() => handleAreaSelect(area)}
+                        onClick={() => handleCitySelect(city)}
                       >
-                        {area}
+                        {city}
                       </li>
                     ))}
                   </ul>
                 </div>
               )}
             </div>
-          )}
-          {shouldShowSeePricesButton() && (
-            <button 
-              onClick={handleSeePricesClick}
-              className={`${buttonStyle} bg-orange-700 hover:bg-orange-600`}
-            >
-              See Prices
-            </button>
-          )}
-          <div className="w-full mt-8">
+            {(selectedCity === "Athens" || selectedCity === "Thessaloniki") && (
+              <div className="relative flex items-center w-48">
+                <button
+                  onClick={handleAreaButtonClick}
+                  className={buttonStyle}
+                >
+                  {selectedArea}
+                </button>
+                {isAreaDropdownVisible && (
+                  <div className="absolute top-1/2 transform -translate-y-1/2 w-full bg-white border border-gray-300 rounded shadow-lg z-10 text-black max-h-60 overflow-y-auto">
+                    <ul className="py-1">
+                      {areas.map((area) => (
+                        <li
+                          key={area}
+                          className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                          onClick={() => handleAreaSelect(area)}
+                        >
+                          {area}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+            {shouldShowSeePricesButton() && (
+              <button 
+                onClick={handleSeePricesClick}
+                className={`${buttonStyle} bg-orange-700 hover:bg-orange-600`}
+              >
+                See Prices
+              </button>
+            )}
+          </div>
+          <div style={chartContainerStyle}>
             <Chart
               options={chartData.options}
               series={chartData.series}
