@@ -3,7 +3,6 @@
 import React, { useState, useEffect, CSSProperties } from "react";
 import dynamic from 'next/dynamic';
 import { ApexOptions } from 'apexcharts'; 
-import { styleText } from "util";
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -13,6 +12,35 @@ interface CityData {
   price_per_sq_m: number;
 }
 
+interface ChartData {
+  options: ApexOptions,
+  series: { name: string, data: number[] }[]
+}
+
+const LatestPrices: React.FC<{ chartData: ChartData }> = ({ chartData }) => (
+  <Chart
+    options={chartData.options}
+    series={chartData.series}
+    type="area"
+    height="400"
+  />
+);
+
+const HistoricalData: React.FC<{ chartData: ChartData }> = ({ chartData }) => (
+  <Chart
+    options={chartData.options}
+    series={chartData.series}
+    type="area"
+    height="400"
+  />
+);
+
+const ComparePrices: React.FC = () => (
+  <div>
+    <input type="text" placeholder="Enter value" className="p-2 border border-gray-400 rounded" />
+  </div>
+);
+
 export default function Home() {
   const [action, setAction] = useState("Action");
   const [selectedCity, setSelectedCity] = useState("Location");
@@ -21,89 +49,36 @@ export default function Home() {
   const [cities, setCities] = useState<string[]>([]);
   const [areas, setAreas] = useState<string[]>([]);
   const [selectedArea, setSelectedArea] = useState("Area");
-  const [activeHeaderButton, setActiveHeaderButton] = useState<string | null>('Latest Prices');
+  const [activeHeaderButton, setActiveHeaderButton] = useState<string>('Latest Prices');
   const [isChartVisible, setChartVisible] = useState(false);
-  const [chartData, setChartData] = useState<{
-    options: ApexOptions,
-    series: { name: string, data: number[] }[]
-  }>({
+  const [chartData, setChartData] = useState<ChartData>({
     options: {
       chart: {
         type: 'area',
         background: 'transparent',
-        toolbar: {
-          show: false,
-        },
-        zoom: {
-          enabled: false,
-        }
+        toolbar: { show: false },
+        zoom: { enabled: false }
       },
       tooltip: {
-        marker: {
-          show: false,
-        },
+        marker: { show: false },
         theme: 'dark',
-        style: {
-          fontSize: '20px',
-          fontFamily: undefined,
-        }
+        style: { fontSize: '20px', fontFamily: undefined }
       },
-      markers: {
-        size: 4,
-        colors: ['orange'],
-        strokeColors: 'orange',
-        radius: 10,
-        strokeWidth: 5
-      },
-      stroke: {
-        curve: 'smooth'
-      },
-      dataLabels: {
-        enabled: false
-      },
-      // title: {
-      //   text: 'Latest Average Price per Property Size',
-      //   align: 'center',
-      //   style: {
-      //     fontSize: '16px',
-      //     color: 'black',
-      //     fontFamily: 'Consolas'
-      //   }  
-      // },
+      markers: { size: 4, colors: ['orange'], strokeColors: 'orange', radius: 10, strokeWidth: 5 },
+      stroke: { curve: 'smooth' },
+      dataLabels: { enabled: false },
       xaxis: {
         categories: [],
-        labels: {
-          rotate: -45,
-          style: {
-            colors: 'black',
-            fontSize: '12px'
-          }
-        },
-        title: {
-          style: {
-            fontSize: '16px',
-            color: 'black',
-            fontFamily: 'Consolas'
-          }
-        },
+        labels: { rotate: -45, style: { colors: 'black', fontSize: '12px' } },
+        title: { style: { fontSize: '16px', color: 'black', fontFamily: 'Consolas' } }
       },
       yaxis: {
         forceNiceScale: true,
-        labels: {
-          style: {
-            colors: 'black',
-            fontSize: '12px'
-          }
-        }
+        labels: { style: { colors: 'black', fontSize: '12px' } }
       },
       colors: ['orange'],
     },
-    series: [
-      {
-        name: '€',
-        data: [],
-      }
-    ]
+    series: [{ name: '€', data: [] }]
   });
 
   useEffect(() => {
@@ -166,19 +141,8 @@ export default function Home() {
 
       setChartData(prevData => ({
         ...prevData,
-        options: {
-          ...prevData.options,
-          xaxis: {
-            ...prevData.options.xaxis,
-            categories: surfaces,
-          },
-        },
-        series: [
-          {
-            name: '€',
-            data: prices,
-          }
-        ]
+        options: { ...prevData.options, xaxis: { ...prevData.options.xaxis, categories: surfaces } },
+        series: [{ name: '€', data: prices }]
       }));
 
       setChartVisible(true); // Show the chart
@@ -200,18 +164,14 @@ export default function Home() {
     border: 'none',
     cursor: 'pointer',
     textDecoration: activeHeaderButton === buttonName ? 'underline' : 'none',
-    textDecorationColor: activeHeaderButton === buttonName ? 'orange' : 'transparent', // gray-700 hex code
+    textDecorationColor: activeHeaderButton === buttonName ? 'orange' : 'transparent',
     textDecorationThickness: activeHeaderButton === buttonName ? '2px' : '0px',
     fontWeight: activeHeaderButton === buttonName ? 'bold' : 'normal',
   });
 
   const shouldShowSeePricesButton = () => {
-    if (action === "Action" || selectedCity === "Location") {
-      return false;
-    }
-    if ((selectedCity === "Athens" || selectedCity === "Thessaloniki") && selectedArea === "Area") {
-      return false;
-    }
+    if (action === "Action" || selectedCity === "Location") return false;
+    if ((selectedCity === "Athens" || selectedCity === "Thessaloniki") && selectedArea === "Area") return false;
     return true;
   };
 
@@ -276,14 +236,26 @@ export default function Home() {
     transform: 'translateX(-25%)',
   };
 
+  const renderContent = () => {
+    switch (activeHeaderButton) {
+      case 'Latest Prices':
+        return isChartVisible && <LatestPrices chartData={chartData} />;
+      case 'Historical Data':
+        return isChartVisible && <HistoricalData chartData={chartData} />;
+      case 'Compare Prices':
+        return <ComparePrices />;
+      default:
+        return null;
+    }
+  };
+
   return (
-    
     <div style={mainContainerStyle}>
       <header style={headerStyle}>
-      <h1 style={h1Style} className="text-5xl font-extrabold text-gray-700 relative">
-        hompare
-        <span style={underlineStyle}></span>
-      </h1>
+        <h1 style={h1Style} className="text-5xl font-extrabold text-gray-700 relative">
+          hompare
+          <span style={underlineStyle}></span>
+        </h1>
         <div style={headerButtonsContainerStyle}>
           <button
             style={headerButtonStyle('Latest Prices')}
@@ -292,33 +264,27 @@ export default function Home() {
             Latest Prices
           </button>
           <button
+            style={headerButtonStyle('Historical Data')}
+            onClick={() => handleHeaderButtonClick('Historical Data')}
+          >
+            Historical Data
+          </button>
+          <button
             style={headerButtonStyle('Compare Prices')}
             onClick={() => handleHeaderButtonClick('Compare Prices')}
           >
             Compare Prices
-          </button>
-          <button
-            style={headerButtonStyle('Board no3')}
-            onClick={() => handleHeaderButtonClick('Board no3')}
-          >
-            Board no3
           </button>
         </div>
       </header>
       <main className="flex flex-col items-start justify-start p-8 flex-grow">
         <div style={contentStyle}>
           <div style={buttonsContainerStyle}>
-            <button
-              onClick={handleActionButtonClick}
-              className={buttonStyle}
-            >
+            <button onClick={handleActionButtonClick} className={buttonStyle}>
               {action}
             </button>
             <div className="relative flex items-center w-48">
-              <button
-                onClick={handleLocationButtonClick}
-                className={buttonStyle}
-              >
+              <button onClick={handleLocationButtonClick} className={buttonStyle}>
                 {selectedCity}
               </button>
               {isDropdownVisible && (
@@ -339,10 +305,7 @@ export default function Home() {
             </div>
             {(selectedCity === "Athens" || selectedCity === "Thessaloniki") && (
               <div className="relative flex items-center w-48">
-                <button
-                  onClick={handleAreaButtonClick}
-                  className={buttonStyle}
-                >
+                <button onClick={handleAreaButtonClick} className={buttonStyle}>
                   {selectedArea}
                 </button>
                 {isAreaDropdownVisible && (
@@ -363,24 +326,14 @@ export default function Home() {
               </div>
             )}
             {shouldShowSeePricesButton() && (
-              <button 
-                onClick={handleSeePricesClick}
-                className={`${buttonStyle} bg-orange-700 hover:bg-orange-600`}
-              >
+              <button onClick={handleSeePricesClick} className={`${buttonStyle} bg-orange-700 hover:bg-orange-600`}>
                 See Prices
               </button>
             )}
           </div>
-          {isChartVisible && (
-            <div style={chartContainerStyle}>
-              <Chart
-                options={chartData.options}
-                series={chartData.series}
-                type="area"
-                height="400"
-              />
-            </div>
-          )}
+          <div style={chartContainerStyle}>
+            {renderContent()}
+          </div>
         </div>
       </main>
     </div>
