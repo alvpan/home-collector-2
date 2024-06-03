@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, CSSProperties } from "react";
 import dynamic from 'next/dynamic';
-import { ApexOptions } from 'apexcharts'; 
+import { ApexOptions } from 'apexcharts';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -26,14 +26,69 @@ const LatestPrices: React.FC<{ chartData: ChartData }> = ({ chartData }) => (
   />
 );
 
-const HistoricalData: React.FC<{ chartData: ChartData }> = ({ chartData }) => (
-  <Chart
-    options={chartData.options}
-    series={chartData.series}
-    type="area"
-    height="400"
-  />
-);
+const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface: number) => void, onTimeframeChange: (timeframe: string) => void, selectedSurface: number, selectedTimeframe: string }> = ({ chartData, onSurfaceChange, onTimeframeChange, selectedSurface, selectedTimeframe }) => {
+  const [surfaceDropdownVisible, setSurfaceDropdownVisible] = useState(false);
+  const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
+
+  return (
+    <div>
+      <div className="flex space-x-4 mb-4">
+        <div className="relative">
+          <button className="bg-gray-700 hover:bg-black text-white py-2 px-4 rounded" onClick={() => setSurfaceDropdownVisible(prev => !prev)}>
+            {selectedSurface ? selectedSurface + " sqm" : "Surface"}
+          </button>
+          {surfaceDropdownVisible && (
+            <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+              <ul className="py-1">
+                {Array.from({ length: 99 }, (_, i) => (i + 2) * 5).map((surface) => (
+                  <li
+                    key={surface}
+                    className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                    onClick={() => {
+                      onSurfaceChange(surface);
+                      setSurfaceDropdownVisible(false);
+                    }}
+                  >
+                    {surface} sqm
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+        <div className="relative">
+          <button className="bg-gray-700 hover:bg-black text-white py-2 px-4 rounded" onClick={() => setTimeframeDropdownVisible(prev => !prev)}>
+            {selectedTimeframe || "Timeframe"}
+          </button>
+          {timeframeDropdownVisible && (
+            <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+              <ul className="py-1">
+                {["last week", "last month", "last 6 months", "last year", "ever"].map((timeframe) => (
+                  <li
+                    key={timeframe}
+                    className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                    onClick={() => {
+                      onTimeframeChange(timeframe);
+                      setTimeframeDropdownVisible(false);
+                    }}
+                  >
+                    {timeframe}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </div>
+      <Chart
+        options={chartData.options}
+        series={chartData.series}
+        type="area"
+        height="400"
+      />
+    </div>
+  );
+};
 
 const ComparePrices: React.FC = () => (
   <div>
@@ -80,6 +135,11 @@ export default function Home() {
     },
     series: [{ name: '€', data: [] }]
   });
+  
+  const [selectedSurface, setSelectedSurface] = useState<number>(50);
+  const [selectedTimeframe, setSelectedTimeframe] = useState<string>("last month");
+  const [surfaceDropdownVisible, setSurfaceDropdownVisible] = useState(false);
+  const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
 
   useEffect(() => {
     const fetchCities = async () => {
@@ -145,7 +205,7 @@ export default function Home() {
         series: [{ name: '€', data: prices }]
       }));
 
-      setChartVisible(true); // Show the chart
+      setChartVisible(true);
     } catch (error) {
       console.error("Error fetching prices:", error);
     }
@@ -153,6 +213,14 @@ export default function Home() {
 
   const handleHeaderButtonClick = (buttonName: string) => {
     setActiveHeaderButton(buttonName);
+  };
+
+  const handleSurfaceChange = (surface: number) => {
+    setSelectedSurface(surface);
+  };
+
+  const handleTimeframeChange = (timeframe: string) => {
+    setSelectedTimeframe(timeframe);
   };
 
   const buttonStyle = "bg-gray-700 hover:bg-black text-white py-2 px-4 rounded w-48 h-12";
@@ -241,7 +309,7 @@ export default function Home() {
       case 'Latest Prices':
         return isChartVisible && <LatestPrices chartData={chartData} />;
       case 'Historical Data':
-        return isChartVisible && <HistoricalData chartData={chartData} />;
+        return isChartVisible && <HistoricalData chartData={chartData} onSurfaceChange={handleSurfaceChange} onTimeframeChange={handleTimeframeChange} selectedSurface={selectedSurface} selectedTimeframe={selectedTimeframe} />;
       case 'Compare Prices':
         return <ComparePrices />;
       default:
