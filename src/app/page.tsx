@@ -156,10 +156,10 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (selectedSurface && selectedTimeframe && action !== "Action" && selectedCity !== "Location" && selectedArea !== "Area") {
+    if (activeHeaderButton === 'Historical Data') {
       fetchHistoricalData();
     }
-  }, [selectedSurface, selectedTimeframe]);
+  }, [activeHeaderButton, selectedSurface, selectedTimeframe]);
 
   const fetchHistoricalData = async () => {
     const city = selectedCity;
