@@ -157,9 +157,19 @@ export default function Home() {
 
   useEffect(() => {
     if (activeHeaderButton === 'Historical Data') {
+      clearChartData();
       fetchHistoricalData();
     }
   }, [activeHeaderButton, selectedSurface, selectedTimeframe]);
+
+  const clearChartData = () => {
+    setChartData(prevData => ({
+      ...prevData,
+      series: [{ name: '€', data: [] }],
+      options: { ...prevData.options, xaxis: { ...prevData.options.xaxis, categories: [] } }
+    }));
+    setChartVisible(false);
+  };
 
   const fetchHistoricalData = async () => {
     const city = selectedCity;
