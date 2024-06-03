@@ -42,7 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       startDate = subYears(now, 1);
       break;
     case 'ever':
-      startDate = new Date(0); // Epoch time
+      startDate = new Date(0);
       break;
     default:
       return res.status(400).json({ error: 'Invalid timeframe' });
@@ -66,7 +66,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const result = await client.query(query, [priceType, city, area, surfaceValue, formattedStartDate]);
     client.release();
 
-    res.status(200).json(result.rows);
+    const formattedResult = result.rows.map(row => ({
+      ...row,
+      entry_date: format(new Date(row.entry_date), 'yyyy-MM-dd')
+    }));
+
+    res.status(200).json(formattedResult);
   } catch (error) {
     console.error('Error querying the database:', error);
     res.status(500).json({ error: 'Internal Server Error' });
