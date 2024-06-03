@@ -38,7 +38,7 @@ const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface
             {selectedSurface ? selectedSurface + " sqm" : "Surface"}
           </button>
           {surfaceDropdownVisible && (
-            <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+            <div className="absolute top-full mt-1 w-full text-black bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
               <ul className="py-1">
                 {Array.from({ length: 99 }, (_, i) => (i + 2) * 5).map((surface) => (
                   <li
@@ -49,7 +49,7 @@ const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface
                       setSurfaceDropdownVisible(false);
                     }}
                   >
-                    {surface} sqm
+                    {surface}
                   </li>
                 ))}
               </ul>
@@ -61,7 +61,7 @@ const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface
             {selectedTimeframe || "Timeframe"}
           </button>
           {timeframeDropdownVisible && (
-            <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+            <div className="absolute top-full mt-1 w-full text-black bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
               <ul className="py-1">
                 {["last week", "last month", "last 6 months", "last year", "ever"].map((timeframe) => (
                   <li
