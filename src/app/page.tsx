@@ -9,7 +9,7 @@ const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 interface CityData {
   surface: number;
   price: number;
-  price_per_sq_m: number;
+  entry_date: string;
 }
 
 interface ChartData {
@@ -38,18 +38,18 @@ const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface
             {selectedSurface ? selectedSurface + " sqm" : "Surface"}
           </button>
           {surfaceDropdownVisible && (
-            <div className="absolute top-full mt-1 w-full text-black bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
-              <ul className="py-1">
+            <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+              <ul className="py-1 text-black">
                 {Array.from({ length: 99 }, (_, i) => (i + 2) * 5).map((surface) => (
                   <li
                     key={surface}
-                    className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                    className="px-4 py-2 hover:bg-gray-200 cursor-pointer text-black"
                     onClick={() => {
                       onSurfaceChange(surface);
                       setSurfaceDropdownVisible(false);
                     }}
                   >
-                    {surface}
+                    {surface} sqm
                   </li>
                 ))}
               </ul>
@@ -61,12 +61,12 @@ const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface
             {selectedTimeframe || "Timeframe"}
           </button>
           {timeframeDropdownVisible && (
-            <div className="absolute top-full mt-1 w-full text-black bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
-              <ul className="py-1">
+            <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+              <ul className="py-1 text-black">
                 {["last week", "last month", "last 6 months", "last year", "ever"].map((timeframe) => (
                   <li
                     key={timeframe}
-                    className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                    className="px-4 py-2 hover:bg-gray-200 cursor-pointer text-black"
                     onClick={() => {
                       onTimeframeChange(timeframe);
                       setTimeframeDropdownVisible(false);
@@ -135,7 +135,7 @@ export default function Home() {
     },
     series: [{ name: '€', data: [] }]
   });
-  
+
   const [selectedSurface, setSelectedSurface] = useState<number>(50);
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>("last month");
   const [surfaceDropdownVisible, setSurfaceDropdownVisible] = useState(false);
@@ -154,6 +154,36 @@ export default function Home() {
 
     fetchCities();
   }, []);
+
+  useEffect(() => {
+    if (selectedSurface && selectedTimeframe && action !== "Action" && selectedCity !== "Location" && selectedArea !== "Area") {
+      fetchHistoricalData();
+    }
+  }, [selectedSurface, selectedTimeframe]);
+
+  const fetchHistoricalData = async () => {
+    const city = selectedCity;
+    const area = (city === "Athens" || city === "Thessaloniki") ? selectedArea : city;
+
+    try {
+      const response = await fetch(`/api/getHistoricalData?action=${action}&city=${city}&area=${area}&surface=${selectedSurface}&timeframe=${selectedTimeframe}`);
+      const data: CityData[] = await response.json();
+      console.log(data);
+
+      const dates = data.map((item: CityData) => item.entry_date);
+      const prices = data.map((item: CityData) => item.price);
+
+      setChartData(prevData => ({
+        ...prevData,
+        options: { ...prevData.options, xaxis: { ...prevData.options.xaxis, categories: dates } },
+        series: [{ name: '€', data: prices }]
+      }));
+
+      setChartVisible(true);
+    } catch (error) {
+      console.error("Error fetching historical data:", error);
+    }
+  };
 
   const handleActionButtonClick = () => {
     setAction((prevAction) => (prevAction === "Rent" ? "Buy" : "Rent"));
