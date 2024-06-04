@@ -192,14 +192,10 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (activeHeaderButton === 'Historical Data') {
-      clearHistoricalChartData();
-      fetchHistoricalData();
-    } else if (activeHeaderButton === 'Latest Prices') {
-      clearLatestPricesChartData();
-      fetchLatestPricesData();
+    if (action !== "Action" && selectedCity !== "Location" && (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "Area")) {
+      setChartVisible(false);
     }
-  }, [activeHeaderButton, selectedSurface, selectedTimeframe]);
+  }, [action, selectedCity, selectedArea]);
 
   const clearLatestPricesChartData = () => {
     setLatestPricesChartData(prevData => ({
@@ -207,7 +203,6 @@ export default function Home() {
       series: [{ name: '€', data: [] }],
       options: { ...prevData.options, xaxis: { ...prevData.options.xaxis, categories: [] } }
     }));
-    setChartVisible(false);
   };
 
   const clearHistoricalChartData = () => {
@@ -216,7 +211,6 @@ export default function Home() {
       series: [{ name: '€', data: [] }],
       options: { ...prevData.options, xaxis: { ...prevData.options.xaxis, categories: [] } }
     }));
-    setChartVisible(false);
   };
 
   const addYAxisPadding = (data: number[]) => {
@@ -298,6 +292,8 @@ export default function Home() {
 
   const handleActionButtonClick = () => {
     setAction((prevAction) => (prevAction === "Rent" ? "Buy" : "Rent"));
+    clearLatestPricesChartData();
+    clearHistoricalChartData();
   };
 
   const handleLocationButtonClick = () => {
@@ -310,6 +306,8 @@ export default function Home() {
     setAreas([]);
     setSelectedArea("Area");
     setAreaDropdownVisible(false);
+    clearLatestPricesChartData();
+    clearHistoricalChartData();
   };
 
   const handleAreaButtonClick = async () => {
@@ -326,22 +324,36 @@ export default function Home() {
   const handleAreaSelect = (area: string) => {
     setSelectedArea(area);
     setAreaDropdownVisible(false);
+    clearLatestPricesChartData();
+    clearHistoricalChartData();
   };
 
   const handleSeePricesClick = async () => {
-    await fetchLatestPricesData();
+    if (activeHeaderButton === 'Latest Prices') {
+      await fetchLatestPricesData();
+    } else if (activeHeaderButton === 'Historical Data') {
+      await fetchHistoricalData();
+    }
   };
 
   const handleHeaderButtonClick = (buttonName: string) => {
     setActiveHeaderButton(buttonName);
+    setChartVisible(false);
+    if (buttonName === 'Latest Prices') {
+      clearLatestPricesChartData();
+    } else if (buttonName === 'Historical Data') {
+      clearHistoricalChartData();
+    }
   };
 
   const handleSurfaceChange = (surface: number) => {
     setSelectedSurface(surface);
+    clearHistoricalChartData();
   };
 
   const handleTimeframeChange = (timeframe: string) => {
     setSelectedTimeframe(timeframe);
+    clearHistoricalChartData();
   };
 
   const buttonStyle = "bg-gray-700 hover:bg-black text-white py-2 px-4 rounded w-48 h-12";
