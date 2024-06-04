@@ -129,7 +129,7 @@ export default function Home() {
       },
       yaxis: {
         forceNiceScale: true,
-        labels: { style: { colors: 'black', fontSize: '12px' } }
+        labels: { style: { colors: 'black', fontSize: '12px' } },
         title: { text: 'Price (€)', style: { fontSize: '16px', color: 'black', fontFamily: 'Consolas' } }
       },
       colors: ['orange'],
