@@ -223,7 +223,7 @@ export default function Home() {
     const padding = (maxValue - minValue) * 0.3;
 
     return {
-      min: minValue - padding,
+      min: Math.max(0, minValue - padding),
       max: maxValue + padding,
     };
   };
