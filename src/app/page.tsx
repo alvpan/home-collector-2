@@ -106,7 +106,8 @@ export default function Home() {
   const [selectedArea, setSelectedArea] = useState("Area");
   const [activeHeaderButton, setActiveHeaderButton] = useState<string>('Latest Prices');
   const [isChartVisible, setChartVisible] = useState(false);
-  const [chartData, setChartData] = useState<ChartData>({
+  
+  const [latestPricesChartData, setLatestPricesChartData] = useState<ChartData>({
     options: {
       chart: {
         type: 'area',
@@ -130,7 +131,41 @@ export default function Home() {
       yaxis: {
         forceNiceScale: true,
         labels: { style: { colors: 'black', fontSize: '12px' } },
-        title: { text: 'Price (€)', style: { fontSize: '16px', color: 'black', fontFamily: 'Consolas' } }
+        title: { text: 'Price (€)', style: { fontSize: '16px', color: 'black', fontFamily: 'Consolas' } },
+        min: undefined,
+        max: undefined
+      },
+      colors: ['orange'],
+    },
+    series: [{ name: '€', data: [] }]
+  });
+
+  const [historicalDataChartData, setHistoricalDataChartData] = useState<ChartData>({
+    options: {
+      chart: {
+        type: 'area',
+        background: 'transparent',
+        toolbar: { show: false },
+        zoom: { enabled: false }
+      },
+      tooltip: {
+        marker: { show: false },
+        theme: 'dark',
+        style: { fontSize: '20px', fontFamily: undefined }
+      },
+      markers: { size: 4, colors: ['orange'], strokeColors: 'orange', radius: 10, strokeWidth: 5 },
+      stroke: { curve: 'smooth' },
+      dataLabels: { enabled: true, formatter: (val) => `€${val}` },
+      xaxis: {
+        categories: [],
+        labels: { rotate: -45, style: { colors: 'black', fontSize: '12px' } }
+      },
+      yaxis: {
+        forceNiceScale: true,
+        labels: { style: { colors: 'black', fontSize: '12px' } },
+        title: { text: 'Price (€)', style: { fontSize: '16px', color: 'black', fontFamily: 'Consolas' } },
+        min: undefined,
+        max: undefined
       },
       colors: ['orange'],
     },
@@ -158,13 +193,25 @@ export default function Home() {
 
   useEffect(() => {
     if (activeHeaderButton === 'Historical Data') {
-      clearChartData();
+      clearHistoricalChartData();
       fetchHistoricalData();
+    } else if (activeHeaderButton === 'Latest Prices') {
+      clearLatestPricesChartData();
+      fetchLatestPricesData();
     }
   }, [activeHeaderButton, selectedSurface, selectedTimeframe]);
 
-  const clearChartData = () => {
-    setChartData(prevData => ({
+  const clearLatestPricesChartData = () => {
+    setLatestPricesChartData(prevData => ({
+      ...prevData,
+      series: [{ name: '€', data: [] }],
+      options: { ...prevData.options, xaxis: { ...prevData.options.xaxis, categories: [] } }
+    }));
+    setChartVisible(false);
+  };
+
+  const clearHistoricalChartData = () => {
+    setHistoricalDataChartData(prevData => ({
       ...prevData,
       series: [{ name: '€', data: [] }],
       options: { ...prevData.options, xaxis: { ...prevData.options.xaxis, categories: [] } }
@@ -175,40 +222,12 @@ export default function Home() {
   const addYAxisPadding = (data: number[]) => {
     const minValue = Math.min(...data);
     const maxValue = Math.max(...data);
-    const padding = (maxValue - minValue) * 0.2;
+    const padding = (maxValue - minValue) * 0.3;
 
     return {
       min: minValue - padding,
       max: maxValue + padding,
     };
-  };
-
-  const updateChartData = (data: CityData[], showDataLabels = false) => {
-    const surfaces = data.map((item: CityData) => item.surface);
-    const prices = data.map((item: CityData) => item.price);
-    const { min, max } = addYAxisPadding(prices);
-
-    setChartData(prevData => ({
-      ...prevData,
-      options: {
-        ...prevData.options,
-        xaxis: {
-          ...prevData.options.xaxis,
-          categories: surfaces,
-          title: { text: 'Surface (m²)', style: { fontSize: '16px', color: 'black', fontFamily: 'Consolas' } }
-        },
-        yaxis: {
-          forceNiceScale: true,
-          labels: { style: { colors: 'black', fontSize: '12px' } },
-          title: { text: 'Price (€)', style: { fontSize: '16px', color: 'black', fontFamily: 'Consolas' } },
-          min: min,
-          max: max,
-        },
-        dataLabels: { enabled: showDataLabels },
-        colors: ['orange'],
-      },
-      series: [{ name: '€', data: prices }]
-    }));
   };
 
   const fetchHistoricalData = async () => {
@@ -224,7 +243,7 @@ export default function Home() {
       const prices = data.map((item: CityData) => item.price);
       const { min, max } = addYAxisPadding(prices);
 
-      setChartData(prevData => ({
+      setHistoricalDataChartData(prevData => ({
         ...prevData,
         options: {
           ...prevData.options,
@@ -233,9 +252,7 @@ export default function Home() {
             ...prevData.options.yaxis, 
             min: min,
             max: max,
-            title: { text: 'Price (€)', style: { fontSize: '16px', color: 'black', fontFamily: 'Consolas' } }
           },
-          dataLabels: { enabled: true, formatter: (val) => `€${val}` },
         },
         series: [{ name: '€', data: prices }]
       }));
@@ -259,7 +276,7 @@ export default function Home() {
       const prices = data.map((item: CityData) => item.price);
       const { min, max } = addYAxisPadding(prices);
 
-      setChartData(prevData => ({
+      setLatestPricesChartData(prevData => ({
         ...prevData,
         options: {
           ...prevData.options,
@@ -317,11 +334,6 @@ export default function Home() {
 
   const handleHeaderButtonClick = (buttonName: string) => {
     setActiveHeaderButton(buttonName);
-    if (buttonName === 'Latest Prices') {
-      fetchLatestPricesData();
-    } else if (buttonName === 'Historical Data') {
-      fetchHistoricalData();
-    }
   };
 
   const handleSurfaceChange = (surface: number) => {
@@ -416,9 +428,9 @@ export default function Home() {
   const renderContent = () => {
     switch (activeHeaderButton) {
       case 'Latest Prices':
-        return isChartVisible && <LatestPrices chartData={chartData} />;
+        return isChartVisible && <LatestPrices chartData={latestPricesChartData} />;
       case 'Historical Data':
-        return isChartVisible && <HistoricalData chartData={chartData} onSurfaceChange={handleSurfaceChange} onTimeframeChange={handleTimeframeChange} selectedSurface={selectedSurface} selectedTimeframe={selectedTimeframe} />;
+        return isChartVisible && <HistoricalData chartData={historicalDataChartData} onSurfaceChange={handleSurfaceChange} onTimeframeChange={handleTimeframeChange} selectedSurface={selectedSurface} selectedTimeframe={selectedTimeframe} />;
       case 'Compare Prices':
         return <ComparePrices />;
       default:
