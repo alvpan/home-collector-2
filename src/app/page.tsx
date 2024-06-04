@@ -106,6 +106,8 @@ export default function Home() {
   const [selectedArea, setSelectedArea] = useState("Area");
   const [activeHeaderButton, setActiveHeaderButton] = useState<string>('Latest Prices');
   const [isChartVisible, setChartVisible] = useState(false);
+  const [latestPricesChartLoaded, setLatestPricesChartLoaded] = useState(false);
+  const [historicalDataChartLoaded, setHistoricalDataChartLoaded] = useState(false);
   
   const [latestPricesChartData, setLatestPricesChartData] = useState<ChartData>({
     options: {
@@ -194,6 +196,8 @@ export default function Home() {
   useEffect(() => {
     if (action !== "Action" && selectedCity !== "Location" && (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "Area")) {
       setChartVisible(false);
+      setLatestPricesChartLoaded(false);
+      setHistoricalDataChartLoaded(false);
     }
   }, [action, selectedCity, selectedArea]);
 
@@ -224,12 +228,12 @@ export default function Home() {
     };
   };
 
-  const fetchHistoricalData = async () => {
+  const fetchHistoricalData = async (surface: number, timeframe: string) => {
     const city = selectedCity;
     const area = (city === "Athens" || city === "Thessaloniki") ? selectedArea : city;
 
     try {
-      const response = await fetch(`/api/getHistoricalData?action=${action}&city=${city}&area=${area}&surface=${selectedSurface}&timeframe=${selectedTimeframe}`);
+      const response = await fetch(`/api/getHistoricalData?action=${action}&city=${city}&area=${area}&surface=${surface}&timeframe=${timeframe}`);
       const data: CityData[] = await response.json();
       console.log(data);
 
@@ -252,6 +256,7 @@ export default function Home() {
       }));
 
       setChartVisible(true);
+      setHistoricalDataChartLoaded(true);
     } catch (error) {
       console.error("Error fetching historical data:", error);
     }
@@ -285,6 +290,7 @@ export default function Home() {
       }));
 
       setChartVisible(true);
+      setLatestPricesChartLoaded(true);
     } catch (error) {
       console.error("Error fetching latest prices data:", error);
     }
@@ -294,6 +300,9 @@ export default function Home() {
     setAction((prevAction) => (prevAction === "Rent" ? "Buy" : "Rent"));
     clearLatestPricesChartData();
     clearHistoricalChartData();
+    setChartVisible(false);
+    setLatestPricesChartLoaded(false);
+    setHistoricalDataChartLoaded(false);
   };
 
   const handleLocationButtonClick = () => {
@@ -308,6 +317,9 @@ export default function Home() {
     setAreaDropdownVisible(false);
     clearLatestPricesChartData();
     clearHistoricalChartData();
+    setChartVisible(false);
+    setLatestPricesChartLoaded(false);
+    setHistoricalDataChartLoaded(false);
   };
 
   const handleAreaButtonClick = async () => {
@@ -326,34 +338,38 @@ export default function Home() {
     setAreaDropdownVisible(false);
     clearLatestPricesChartData();
     clearHistoricalChartData();
+    setChartVisible(false);
+    setLatestPricesChartLoaded(false);
+    setHistoricalDataChartLoaded(false);
   };
 
   const handleSeePricesClick = async () => {
     if (activeHeaderButton === 'Latest Prices') {
       await fetchLatestPricesData();
     } else if (activeHeaderButton === 'Historical Data') {
-      await fetchHistoricalData();
+      await fetchHistoricalData(selectedSurface, selectedTimeframe);
     }
   };
 
   const handleHeaderButtonClick = (buttonName: string) => {
     setActiveHeaderButton(buttonName);
     setChartVisible(false);
-    if (buttonName === 'Latest Prices') {
-      clearLatestPricesChartData();
-    } else if (buttonName === 'Historical Data') {
-      clearHistoricalChartData();
+
+    if (buttonName === 'Historical Data' && !historicalDataChartLoaded) {
+      fetchHistoricalData(selectedSurface, selectedTimeframe);
+    } else if (buttonName === 'Latest Prices' && latestPricesChartLoaded) {
+      setChartVisible(true);
     }
   };
 
-  const handleSurfaceChange = (surface: number) => {
+  const handleSurfaceChange = async (surface: number) => {
     setSelectedSurface(surface);
-    clearHistoricalChartData();
+    await fetchHistoricalData(surface, selectedTimeframe);
   };
 
-  const handleTimeframeChange = (timeframe: string) => {
+  const handleTimeframeChange = async (timeframe: string) => {
     setSelectedTimeframe(timeframe);
-    clearHistoricalChartData();
+    await fetchHistoricalData(selectedSurface, timeframe);
   };
 
   const buttonStyle = "bg-gray-700 hover:bg-black text-white py-2 px-4 rounded w-48 h-12";
