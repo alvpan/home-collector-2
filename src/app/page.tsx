@@ -125,11 +125,12 @@ export default function Home() {
       xaxis: {
         categories: [],
         labels: { rotate: -45, style: { colors: 'black', fontSize: '12px' } },
-        title: { style: { fontSize: '16px', color: 'black', fontFamily: 'Consolas' } }
+        title: { text: 'Surface (m²)', style: { fontSize: '16px', color: 'black', fontFamily: 'Consolas' } }
       },
       yaxis: {
         forceNiceScale: true,
         labels: { style: { colors: 'black', fontSize: '12px' } }
+        title: { text: 'Price (€)', style: { fontSize: '16px', color: 'black', fontFamily: 'Consolas' } }
       },
       colors: ['orange'],
     },
