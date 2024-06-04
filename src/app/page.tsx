@@ -172,6 +172,45 @@ export default function Home() {
     setChartVisible(false);
   };
 
+  const addYAxisPadding = (data: number[]) => {
+    const minValue = Math.min(...data);
+    const maxValue = Math.max(...data);
+    const padding = (maxValue - minValue) * 0.1;
+
+    return {
+      min: minValue - padding,
+      max: maxValue + padding,
+    };
+  };
+
+  const updateChartData = (data: CityData[], showDataLabels = false) => {
+    const surfaces = data.map((item: CityData) => item.surface);
+    const prices = data.map((item: CityData) => item.price);
+    const { min, max } = addYAxisPadding(prices);
+
+    setChartData(prevData => ({
+      ...prevData,
+      options: {
+        ...prevData.options,
+        xaxis: {
+          ...prevData.options.xaxis,
+          categories: surfaces,
+          title: { text: 'Surface (m²)', style: { fontSize: '16px', color: 'black', fontFamily: 'Consolas' } }
+        },
+        yaxis: {
+          forceNiceScale: true,
+          labels: { style: { colors: 'black', fontSize: '12px' } },
+          title: { text: 'Price (€)', style: { fontSize: '16px', color: 'black', fontFamily: 'Consolas' } },
+          min: min,
+          max: max,
+        },
+        dataLabels: { enabled: showDataLabels },
+        colors: ['orange'],
+      },
+      series: [{ name: '€', data: prices }]
+    }));
+  };
+
   const fetchHistoricalData = async () => {
     const city = selectedCity;
     const area = (city === "Athens" || city === "Thessaloniki") ? selectedArea : city;
@@ -183,16 +222,60 @@ export default function Home() {
 
       const dates = data.map((item: CityData) => item.entry_date);
       const prices = data.map((item: CityData) => item.price);
+      const { min, max } = addYAxisPadding(prices);
 
       setChartData(prevData => ({
         ...prevData,
-        options: { ...prevData.options, xaxis: { ...prevData.options.xaxis, categories: dates } },
+        options: {
+          ...prevData.options,
+          xaxis: { ...prevData.options.xaxis, categories: dates },
+          yaxis: { 
+            ...prevData.options.yaxis, 
+            min: min,
+            max: max,
+            title: { text: 'Price (€)', style: { fontSize: '16px', color: 'black', fontFamily: 'Consolas' } }
+          },
+          dataLabels: { enabled: true, formatter: (val) => `€${val}` },
+        },
         series: [{ name: '€', data: prices }]
       }));
 
       setChartVisible(true);
     } catch (error) {
       console.error("Error fetching historical data:", error);
+    }
+  };
+
+  const fetchLatestPricesData = async () => {
+    const city = selectedCity;
+    const area = (city === "Athens" || city === "Thessaloniki") ? selectedArea : city;
+
+    try {
+      const response = await fetch(`/api/getPrices?action=${action}&city=${city}&area=${area}`);
+      const data: CityData[] = await response.json();
+      console.log(data);
+
+      const surfaces = data.map((item: CityData) => item.surface);
+      const prices = data.map((item: CityData) => item.price);
+      const { min, max } = addYAxisPadding(prices);
+
+      setChartData(prevData => ({
+        ...prevData,
+        options: {
+          ...prevData.options,
+          xaxis: { ...prevData.options.xaxis, categories: surfaces },
+          yaxis: { 
+            ...prevData.options.yaxis, 
+            min: min,
+            max: max,
+          },
+        },
+        series: [{ name: '€', data: prices }]
+      }));
+
+      setChartVisible(true);
+    } catch (error) {
+      console.error("Error fetching latest prices data:", error);
     }
   };
 
@@ -229,31 +312,16 @@ export default function Home() {
   };
 
   const handleSeePricesClick = async () => {
-    const city = selectedCity;
-    const area = (city === "Athens" || city === "Thessaloniki") ? selectedArea : city;
-
-    try {
-      const response = await fetch(`/api/getPrices?action=${action}&city=${city}&area=${area}`);
-      const data: CityData[] = await response.json();
-      console.log(data);
-
-      const surfaces = data.map((item: CityData) => item.surface);
-      const prices = data.map((item: CityData) => item.price);
-
-      setChartData(prevData => ({
-        ...prevData,
-        options: { ...prevData.options, xaxis: { ...prevData.options.xaxis, categories: surfaces } },
-        series: [{ name: '€', data: prices }]
-      }));
-
-      setChartVisible(true);
-    } catch (error) {
-      console.error("Error fetching prices:", error);
-    }
+    await fetchLatestPricesData();
   };
 
   const handleHeaderButtonClick = (buttonName: string) => {
     setActiveHeaderButton(buttonName);
+    if (buttonName === 'Latest Prices') {
+      fetchLatestPricesData();
+    } else if (buttonName === 'Historical Data') {
+      fetchHistoricalData();
+    }
   };
 
   const handleSurfaceChange = (surface: number) => {
