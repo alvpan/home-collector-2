@@ -175,7 +175,7 @@ export default function Home() {
   const addYAxisPadding = (data: number[]) => {
     const minValue = Math.min(...data);
     const maxValue = Math.max(...data);
-    const padding = (maxValue - minValue) * 0.1;
+    const padding = (maxValue - minValue) * 0.2;
 
     return {
       min: minValue - padding,
