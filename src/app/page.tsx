@@ -359,6 +359,8 @@ export default function Home() {
       fetchHistoricalData(selectedSurface, selectedTimeframe);
     } else if (buttonName === 'Latest Prices' && latestPricesChartLoaded) {
       setChartVisible(true);
+    } else if (buttonName === 'Historical Data' && historicalDataChartLoaded) {
+      setChartVisible(true);
     }
   };
 
