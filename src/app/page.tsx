@@ -345,6 +345,8 @@ export default function Home() {
 
   const handleSeePricesClick = async () => {
     clearHistoricalChartData();
+    setActiveHeaderButton('Latest Prices');
+    setChartVisible(false);
     if (activeHeaderButton === 'Latest Prices') {
       await fetchLatestPricesData();
     } else if (activeHeaderButton === 'Historical Data') {
