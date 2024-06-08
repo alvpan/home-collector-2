@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, CSSProperties } from "react";
+import React, { useState, useEffect, useRef, CSSProperties } from "react";
 import dynamic from 'next/dynamic';
 import { ApexOptions } from 'apexcharts';
 
@@ -29,6 +29,13 @@ const LatestPrices: React.FC<{ chartData: ChartData }> = ({ chartData }) => (
 const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface: number) => void, onTimeframeChange: (timeframe: string) => void, selectedSurface: number | null, selectedTimeframe: string, onRefresh: () => void, isVisible: boolean }> = ({ chartData, onSurfaceChange, onTimeframeChange, selectedSurface, selectedTimeframe, onRefresh, isVisible }) => {
   const [surfaceDropdownVisible, setSurfaceDropdownVisible] = useState(false);
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
+  const chartRef = useRef(null);
+
+  useEffect(() => {
+    if (chartRef.current && chartData.series[0].data.length > 0) {
+      chartRef.current.chart.updateSeries(chartData.series);
+    }
+  }, [chartData]);
 
   if (!isVisible) {
     return null;
@@ -88,6 +95,7 @@ const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface
         </button>
       </div>
       <Chart
+        ref={chartRef}
         options={chartData.options}
         series={chartData.series}
         type="area"
