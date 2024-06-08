@@ -86,7 +86,6 @@ const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface
         <button className="bg-transparent hover:bg-black text-black py-2 px-4 rounded border-2 border-orange-500 hover:border-transparent hover:text-white" onClick={onRefresh}>
           Refresh Chart
         </button>
-
       </div>
       <Chart
         options={chartData.options}
@@ -191,6 +190,7 @@ export default function Home() {
   const [previousArea, setPreviousArea] = useState("Area");
   const [surfaceDropdownVisible, setSurfaceDropdownVisible] = useState(false);
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
+  const [renderHistoricalDataChart, setRenderHistoricalDataChart] = useState(true);
 
   useEffect(() => {
     const fetchCities = async () => {
@@ -267,6 +267,9 @@ export default function Home() {
         },
         series: [{ name: '€', data: prices }]
       }));
+
+      setRenderHistoricalDataChart(false);
+      setTimeout(() => setRenderHistoricalDataChart(true), 0);
 
       setChartVisible(true);
       setHistoricalDataChartLoaded(true);
@@ -495,6 +498,7 @@ export default function Home() {
         return isChartVisible && <LatestPrices chartData={latestPricesChartData} />;
       case 'Historical Data':
         return (
+          renderHistoricalDataChart &&
           <HistoricalData
             chartData={historicalDataChartData}
             onSurfaceChange={handleSurfaceChange}
