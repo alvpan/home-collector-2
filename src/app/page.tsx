@@ -29,7 +29,7 @@ const LatestPrices: React.FC<{ chartData: ChartData }> = ({ chartData }) => (
 const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface: number) => void, onTimeframeChange: (timeframe: string) => void, selectedSurface: number | null, selectedTimeframe: string, onRefresh: () => void, isVisible: boolean }> = ({ chartData, onSurfaceChange, onTimeframeChange, selectedSurface, selectedTimeframe, onRefresh, isVisible }) => {
   const [surfaceDropdownVisible, setSurfaceDropdownVisible] = useState(false);
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
-  const chartRef = useRef(null);
+  const chartRef = useRef<any>(null);
 
   useEffect(() => {
     if (chartRef.current && chartData.series[0].data.length > 0) {
