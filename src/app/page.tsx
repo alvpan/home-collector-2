@@ -93,6 +93,7 @@ const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface
   );
 };
 
+
 const ComparePrices: React.FC = () => (
   <div>
     <input type="text" placeholder="Enter value" className="p-2 border border-gray-400 rounded" />
