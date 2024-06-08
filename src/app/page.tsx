@@ -26,7 +26,7 @@ const LatestPrices: React.FC<{ chartData: ChartData }> = ({ chartData }) => (
   />
 );
 
-const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface: number) => void, onTimeframeChange: (timeframe: string) => void, selectedSurface: number, selectedTimeframe: string }> = ({ chartData, onSurfaceChange, onTimeframeChange, selectedSurface, selectedTimeframe }) => {
+const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface: number) => void, onTimeframeChange: (timeframe: string) => void, selectedSurface: number, selectedTimeframe: string, onRefresh: () => void }> = ({ chartData, onSurfaceChange, onTimeframeChange, selectedSurface, selectedTimeframe, onRefresh }) => {
   const [surfaceDropdownVisible, setSurfaceDropdownVisible] = useState(false);
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
 
@@ -79,6 +79,9 @@ const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface
             </div>
           )}
         </div>
+        <button className="bg-gray-700 hover:bg-black text-white py-2 px-4 rounded" onClick={onRefresh}>
+          Refresh Chart
+        </button>
       </div>
       <Chart
         options={chartData.options}
@@ -176,6 +179,8 @@ export default function Home() {
 
   const [selectedSurface, setSelectedSurface] = useState<number>(50);
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>("last month");
+  const [previousSurface, setPreviousSurface] = useState<number>(50);
+  const [previousTimeframe, setPreviousTimeframe] = useState<string>("last month");
   const [surfaceDropdownVisible, setSurfaceDropdownVisible] = useState(false);
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
 
@@ -367,14 +372,20 @@ export default function Home() {
     }
   };
 
-  const handleSurfaceChange = async (surface: number) => {
+  const handleSurfaceChange = (surface: number) => {
     setSelectedSurface(surface);
-    await fetchHistoricalData(surface, selectedTimeframe);
   };
 
-  const handleTimeframeChange = async (timeframe: string) => {
+  const handleTimeframeChange = (timeframe: string) => {
     setSelectedTimeframe(timeframe);
-    await fetchHistoricalData(selectedSurface, timeframe);
+  };
+
+  const handleRefreshClick = async () => {
+    if (selectedSurface !== previousSurface || selectedTimeframe !== previousTimeframe) {
+      await fetchHistoricalData(selectedSurface, selectedTimeframe);
+      setPreviousSurface(selectedSurface);
+      setPreviousTimeframe(selectedTimeframe);
+    }
   };
 
   const buttonStyle = "bg-gray-700 hover:bg-black text-white py-2 px-4 rounded w-48 h-12";
@@ -463,7 +474,7 @@ export default function Home() {
       case 'Latest Prices':
         return isChartVisible && <LatestPrices chartData={latestPricesChartData} />;
       case 'Historical Data':
-        return isChartVisible && <HistoricalData chartData={historicalDataChartData} onSurfaceChange={handleSurfaceChange} onTimeframeChange={handleTimeframeChange} selectedSurface={selectedSurface} selectedTimeframe={selectedTimeframe} />;
+        return isChartVisible && <HistoricalData chartData={historicalDataChartData} onSurfaceChange={handleSurfaceChange} onTimeframeChange={handleTimeframeChange} selectedSurface={selectedSurface} selectedTimeframe={selectedTimeframe} onRefresh={handleRefreshClick} />;
       case 'Compare Prices':
         return <ComparePrices />;
       default:
