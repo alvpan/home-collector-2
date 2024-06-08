@@ -390,12 +390,15 @@ export default function Home() {
 
   const handleRefreshClick = async () => {
     if (selectedSurface !== previousSurface || selectedTimeframe !== previousTimeframe) {
+      setChartVisible(false);
       clearHistoricalChartData();
       await fetchHistoricalData(selectedSurface as number, selectedTimeframe);
       setPreviousSurface(selectedSurface);
       setPreviousTimeframe(selectedTimeframe);
+      setChartVisible(true);
     }
   };
+  
 
   const buttonStyle = "bg-gray-700 hover:bg-black text-white py-2 px-4 rounded w-48 h-12";
   const headerButtonStyle = (buttonName: string) => ({
