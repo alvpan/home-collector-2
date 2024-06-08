@@ -178,9 +178,9 @@ export default function Home() {
   });
 
   const [selectedSurface, setSelectedSurface] = useState<number>(50);
-  const [selectedTimeframe, setSelectedTimeframe] = useState<string>("last month");
+  const [selectedTimeframe, setSelectedTimeframe] = useState<string>("last year");
   const [previousSurface, setPreviousSurface] = useState<number>(50);
-  const [previousTimeframe, setPreviousTimeframe] = useState<string>("last month");
+  const [previousTimeframe, setPreviousTimeframe] = useState<string>("last year");
   const [surfaceDropdownVisible, setSurfaceDropdownVisible] = useState(false);
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
 
@@ -355,7 +355,10 @@ export default function Home() {
     if (activeHeaderButton === 'Latest Prices') {
       await fetchLatestPricesData();
     } else if (activeHeaderButton === 'Historical Data') {
-      await fetchHistoricalData(selectedSurface, selectedTimeframe);
+      setSelectedSurface(50);
+      setSelectedTimeframe("last year");
+      setHistoricalDataChartLoaded(false);
+      setChartVisible(false);
     }
   };
 
@@ -363,11 +366,12 @@ export default function Home() {
     setActiveHeaderButton(buttonName);
     setChartVisible(false);
 
-    if (buttonName === 'Historical Data' && !historicalDataChartLoaded) {
-      fetchHistoricalData(selectedSurface, selectedTimeframe);
+    if (buttonName === 'Historical Data') {
+      setSelectedSurface(50);
+      setSelectedTimeframe("last year");
+      setHistoricalDataChartLoaded(false);
+      setChartVisible(false);
     } else if (buttonName === 'Latest Prices' && latestPricesChartLoaded) {
-      setChartVisible(true);
-    } else if (buttonName === 'Historical Data' && historicalDataChartLoaded) {
       setChartVisible(true);
     }
   };
@@ -382,6 +386,7 @@ export default function Home() {
 
   const handleRefreshClick = async () => {
     if (selectedSurface !== previousSurface || selectedTimeframe !== previousTimeframe) {
+      clearHistoricalChartData();
       await fetchHistoricalData(selectedSurface, selectedTimeframe);
       setPreviousSurface(selectedSurface);
       setPreviousTimeframe(selectedTimeframe);
