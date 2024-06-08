@@ -26,9 +26,13 @@ const LatestPrices: React.FC<{ chartData: ChartData }> = ({ chartData }) => (
   />
 );
 
-const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface: number) => void, onTimeframeChange: (timeframe: string) => void, selectedSurface: number, selectedTimeframe: string, onRefresh: () => void }> = ({ chartData, onSurfaceChange, onTimeframeChange, selectedSurface, selectedTimeframe, onRefresh }) => {
+const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface: number) => void, onTimeframeChange: (timeframe: string) => void, selectedSurface: number, selectedTimeframe: string, onRefresh: () => void, isVisible: boolean }> = ({ chartData, onSurfaceChange, onTimeframeChange, selectedSurface, selectedTimeframe, onRefresh, isVisible }) => {
   const [surfaceDropdownVisible, setSurfaceDropdownVisible] = useState(false);
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
+
+  if (!isVisible) {
+    return null;
+  }
 
   return (
     <div>
@@ -92,7 +96,6 @@ const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface
     </div>
   );
 };
-
 
 const ComparePrices: React.FC = () => (
   <div>
@@ -371,7 +374,6 @@ export default function Home() {
       setSelectedSurface(50);
       setSelectedTimeframe("last year");
       setHistoricalDataChartLoaded(false);
-      setChartVisible(false);
     } else if (buttonName === 'Latest Prices' && latestPricesChartLoaded) {
       setChartVisible(true);
     }
@@ -412,6 +414,10 @@ export default function Home() {
     if (action === "Action" || selectedCity === "Location") return false;
     if ((selectedCity === "Athens" || selectedCity === "Thessaloniki") && selectedArea === "Area") return false;
     return true;
+  };
+
+  const shouldShowHistoricalData = () => {
+    return action !== "Action" && selectedCity !== "Location" && (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "Area");
   };
 
   const headerStyle: CSSProperties = {
@@ -480,7 +486,17 @@ export default function Home() {
       case 'Latest Prices':
         return isChartVisible && <LatestPrices chartData={latestPricesChartData} />;
       case 'Historical Data':
-        return isChartVisible && <HistoricalData chartData={historicalDataChartData} onSurfaceChange={handleSurfaceChange} onTimeframeChange={handleTimeframeChange} selectedSurface={selectedSurface} selectedTimeframe={selectedTimeframe} onRefresh={handleRefreshClick} />;
+        return (
+          <HistoricalData
+            chartData={historicalDataChartData}
+            onSurfaceChange={handleSurfaceChange}
+            onTimeframeChange={handleTimeframeChange}
+            selectedSurface={selectedSurface}
+            selectedTimeframe={selectedTimeframe}
+            onRefresh={handleRefreshClick}
+            isVisible={shouldShowHistoricalData()}
+          />
+        );
       case 'Compare Prices':
         return <ComparePrices />;
       default:
