@@ -354,9 +354,11 @@ export default function Home() {
   };
 
   const handleSeePricesClick = async () => {
+    clearLatestPricesChartData();
     clearHistoricalChartData();
-    setActiveHeaderButton('Latest Prices');
     setChartVisible(false);
+    setLatestPricesChartLoaded(false);
+    setHistoricalDataChartLoaded(false);
     if (activeHeaderButton === 'Latest Prices') {
       await fetchLatestPricesData();
     } else if (activeHeaderButton === 'Historical Data') {
@@ -367,7 +369,7 @@ export default function Home() {
     }
   };
 
-  const handleHeaderButtonClick = (buttonName: string) => {
+  const handleHeaderButtonClick = async (buttonName: string) => {
     setActiveHeaderButton(buttonName);
     setChartVisible(false);
 
@@ -377,6 +379,7 @@ export default function Home() {
       setHistoricalDataChartLoaded(false);
     } else if (buttonName === 'Latest Prices' && latestPricesChartLoaded) {
       setChartVisible(true);
+      await fetchLatestPricesData();
     }
   };
 
@@ -398,7 +401,6 @@ export default function Home() {
       setChartVisible(true);
     }
   };
-  
 
   const buttonStyle = "bg-gray-700 hover:bg-black text-white py-2 px-4 rounded w-48 h-12";
   const headerButtonStyle = (buttonName: string) => ({
