@@ -60,7 +60,7 @@ const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface
                       setSurfaceDropdownVisible(false);
                     }}
                   >
-                    {surface} sqm
+                    {surface}
                   </li>
                 ))}
               </ul>
@@ -123,7 +123,7 @@ export default function Home() {
   const [isChartVisible, setChartVisible] = useState(false);
   const [latestPricesChartLoaded, setLatestPricesChartLoaded] = useState(false);
   const [historicalDataChartLoaded, setHistoricalDataChartLoaded] = useState(false);
-  
+
   const [latestPricesChartData, setLatestPricesChartData] = useState<ChartData>({
     options: {
       chart: {
@@ -272,14 +272,20 @@ export default function Home() {
         ...prevData,
         options: {
           ...prevData.options,
-          xaxis: { ...prevData.options.xaxis, categories: dates },
+          xaxis: { 
+            ...prevData.options.xaxis, 
+            categories: dates
+          },
           yaxis: { 
             ...prevData.options.yaxis, 
             min: min,
             max: max,
           },
         },
-        series: [{ name: '€', data: prices }]
+        series: [{ 
+          name: '€', 
+          data: prices
+        }]
       }));
 
       setRenderHistoricalDataChart(false);
