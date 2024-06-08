@@ -219,6 +219,7 @@ export default function Home() {
       setChartVisible(false);
       setLatestPricesChartLoaded(false);
       setHistoricalDataChartLoaded(false);
+      clearCharts();
     }
   }, [action, selectedCity, selectedArea]);
 
@@ -236,6 +237,11 @@ export default function Home() {
       series: [{ name: '€', data: [] }],
       options: { ...prevData.options, xaxis: { ...prevData.options.xaxis, categories: [] } }
     }));
+  };
+
+  const clearCharts = () => {
+    clearLatestPricesChartData();
+    clearHistoricalChartData();
   };
 
   const addYAxisPadding = (data: number[]) => {
@@ -322,8 +328,7 @@ export default function Home() {
 
   const handleActionButtonClick = () => {
     setAction((prevAction) => (prevAction === "Rent" ? "Buy" : "Rent"));
-    clearLatestPricesChartData();
-    clearHistoricalChartData();
+    clearCharts();
     setChartVisible(false);
     setLatestPricesChartLoaded(false);
     setHistoricalDataChartLoaded(false);
@@ -339,8 +344,7 @@ export default function Home() {
     setAreas([]);
     setSelectedArea("Area");
     setAreaDropdownVisible(false);
-    clearLatestPricesChartData();
-    clearHistoricalChartData();
+    clearCharts();
     setChartVisible(false);
     setLatestPricesChartLoaded(false);
     setHistoricalDataChartLoaded(false);
@@ -360,8 +364,7 @@ export default function Home() {
   const handleAreaSelect = (area: string) => {
     setSelectedArea(area);
     setAreaDropdownVisible(false);
-    clearLatestPricesChartData();
-    clearHistoricalChartData();
+    clearCharts();
     setChartVisible(false);
     setLatestPricesChartLoaded(false);
     setHistoricalDataChartLoaded(false);
@@ -369,8 +372,7 @@ export default function Home() {
 
   const handleSeePricesClick = async () => {
     setActiveHeaderButton('Latest Prices');
-    clearLatestPricesChartData();
-    clearHistoricalChartData();
+    clearCharts();
     setChartVisible(false);
     setLatestPricesChartLoaded(false);
     setHistoricalDataChartLoaded(false);
