@@ -186,6 +186,9 @@ export default function Home() {
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>("");
   const [previousSurface, setPreviousSurface] = useState<number | null>(null);
   const [previousTimeframe, setPreviousTimeframe] = useState<string>("");
+  const [previousAction, setPreviousAction] = useState("Action");
+  const [previousCity, setPreviousCity] = useState("Location");
+  const [previousArea, setPreviousArea] = useState("Area");
   const [surfaceDropdownVisible, setSurfaceDropdownVisible] = useState(false);
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
 
@@ -354,18 +357,17 @@ export default function Home() {
   };
 
   const handleSeePricesClick = async () => {
+    setActiveHeaderButton('Latest Prices');
     clearLatestPricesChartData();
     clearHistoricalChartData();
     setChartVisible(false);
     setLatestPricesChartLoaded(false);
     setHistoricalDataChartLoaded(false);
-    if (activeHeaderButton === 'Latest Prices') {
+    if (action !== previousAction || selectedCity !== previousCity || selectedArea !== previousArea) {
       await fetchLatestPricesData();
-    } else if (activeHeaderButton === 'Historical Data') {
-      setSelectedSurface(null);
-      setSelectedTimeframe("");
-      setHistoricalDataChartLoaded(false);
-      setChartVisible(false);
+      setPreviousAction(action);
+      setPreviousCity(selectedCity);
+      setPreviousArea(selectedArea);
     }
   };
 
