@@ -83,7 +83,7 @@ const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface
             </div>
           )}
         </div>
-        <button className="bg-transparent hover:bg-black text-black py-2 px-4 rounded border border-orange-500 hover:text-white" onClick={onRefresh}>
+        <button className="bg-transparent hover:bg-black text-black py-2 px-4 rounded border-2 border-orange-500 hover:border-transparent hover:text-white" onClick={onRefresh}>
           Refresh Chart
         </button>
 
