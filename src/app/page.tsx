@@ -26,7 +26,7 @@ const LatestPrices: React.FC<{ chartData: ChartData }> = ({ chartData }) => (
   />
 );
 
-const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface: number) => void, onTimeframeChange: (timeframe: string) => void, selectedSurface: number, selectedTimeframe: string, onRefresh: () => void, isVisible: boolean }> = ({ chartData, onSurfaceChange, onTimeframeChange, selectedSurface, selectedTimeframe, onRefresh, isVisible }) => {
+const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface: number) => void, onTimeframeChange: (timeframe: string) => void, selectedSurface: number | null, selectedTimeframe: string, onRefresh: () => void, isVisible: boolean }> = ({ chartData, onSurfaceChange, onTimeframeChange, selectedSurface, selectedTimeframe, onRefresh, isVisible }) => {
   const [surfaceDropdownVisible, setSurfaceDropdownVisible] = useState(false);
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
 
@@ -181,10 +181,10 @@ export default function Home() {
     series: [{ name: '€', data: [] }]
   });
 
-  const [selectedSurface, setSelectedSurface] = useState<number>(50);
-  const [selectedTimeframe, setSelectedTimeframe] = useState<string>("last year");
-  const [previousSurface, setPreviousSurface] = useState<number>(50);
-  const [previousTimeframe, setPreviousTimeframe] = useState<string>("last year");
+  const [selectedSurface, setSelectedSurface] = useState<number | null>(null);
+  const [selectedTimeframe, setSelectedTimeframe] = useState<string>("");
+  const [previousSurface, setPreviousSurface] = useState<number | null>(null);
+  const [previousTimeframe, setPreviousTimeframe] = useState<string>("");
   const [surfaceDropdownVisible, setSurfaceDropdownVisible] = useState(false);
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
 
@@ -359,8 +359,8 @@ export default function Home() {
     if (activeHeaderButton === 'Latest Prices') {
       await fetchLatestPricesData();
     } else if (activeHeaderButton === 'Historical Data') {
-      setSelectedSurface(50);
-      setSelectedTimeframe("last year");
+      setSelectedSurface(null);
+      setSelectedTimeframe("");
       setHistoricalDataChartLoaded(false);
       setChartVisible(false);
     }
@@ -371,8 +371,8 @@ export default function Home() {
     setChartVisible(false);
 
     if (buttonName === 'Historical Data') {
-      setSelectedSurface(50);
-      setSelectedTimeframe("last year");
+      setSelectedSurface(null);
+      setSelectedTimeframe("");
       setHistoricalDataChartLoaded(false);
     } else if (buttonName === 'Latest Prices' && latestPricesChartLoaded) {
       setChartVisible(true);
@@ -390,7 +390,7 @@ export default function Home() {
   const handleRefreshClick = async () => {
     if (selectedSurface !== previousSurface || selectedTimeframe !== previousTimeframe) {
       clearHistoricalChartData();
-      await fetchHistoricalData(selectedSurface, selectedTimeframe);
+      await fetchHistoricalData(selectedSurface as number, selectedTimeframe);
       setPreviousSurface(selectedSurface);
       setPreviousTimeframe(selectedTimeframe);
     }
