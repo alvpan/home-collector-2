@@ -157,7 +157,7 @@ export default function Home() {
     series: [{ name: '€', data: [] }]
   });
 
-  const [historicalDataChartData, setHistoricalDataChartData] = useState<ChartData>({
+  const initialHistoricalChartData: ChartData = {
     options: {
       chart: {
         type: 'area',
@@ -187,7 +187,9 @@ export default function Home() {
       colors: ['orange'],
     },
     series: [{ name: '€', data: [] }]
-  });
+  };
+
+  const [historicalDataChartData, setHistoricalDataChartData] = useState<ChartData>(initialHistoricalChartData);
 
   const [selectedSurface, setSelectedSurface] = useState<number | null>(null);
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>("");
@@ -260,6 +262,8 @@ export default function Home() {
     const area = (city === "Athens" || city === "Thessaloniki") ? selectedArea : city;
 
     try {
+      setHistoricalDataChartData(initialHistoricalChartData);
+
       const response = await fetch(`/api/getHistoricalData?action=${action}&city=${city}&area=${area}&surface=${surface}&timeframe=${timeframe}`);
       const data: CityData[] = await response.json();
       console.log(data);
@@ -388,6 +392,8 @@ export default function Home() {
       setPreviousCity(selectedCity);
       setPreviousArea(selectedArea);
     }
+
+    setHistoricalDataChartData(initialHistoricalChartData);
   };
 
   const handleHeaderButtonClick = async (buttonName: string) => {
