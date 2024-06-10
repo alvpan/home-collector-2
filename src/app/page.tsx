@@ -118,12 +118,12 @@ const ComparePrices: React.FC = () => {
   };
 
   const handleSurfaceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value.replace(/\./g, ''); // Remove existing dots
+    const value = event.target.value.replace(/\./g, '');
     event.target.value = formatNumber(value);
   };
 
   const handlePriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value.replace(/\./g, ''); // Remove existing dots
+    const value = event.target.value.replace(/\./g, '');
     event.target.value = formatNumber(value);
   };
 
@@ -134,16 +134,16 @@ const ComparePrices: React.FC = () => {
     paddingRight: "2.5rem",
     borderColor: "gray",
     backgroundColor: "white",
-    outline: "none", // Remove default outline
-    borderWidth: "2px", // Default border width
-    width: "100%", // Full width
+    outline: "none",
+    borderWidth: "2px",
+    width: "100%",
   };
 
   const wrapperStyle: CSSProperties = {
     position: "relative",
     display: "flex",
     alignItems: "center",
-    width: "192px", // Same width as the buttons
+    width: "192px",
   };
 
   const symbolStyle: CSSProperties = {
@@ -346,18 +346,18 @@ export default function Home() {
   const fetchHistoricalData = async (surface: number, timeframe: string) => {
     const city = selectedCity;
     const area = (city === "Athens" || city === "Thessaloniki") ? selectedArea : city;
-
+  
     try {
       setHistoricalDataChartData(initialHistoricalChartData);
-
+  
       const response = await fetch(`/api/getHistoricalData?action=${action}&city=${city}&area=${area}&surface=${surface}&timeframe=${timeframe}`);
       const data: CityData[] = await response.json();
       console.log(data);
-
+  
       const dates = data.map((item: CityData) => item.entry_date);
       const prices = data.map((item: CityData) => item.price);
       const { min, max } = addYAxisPadding(prices);
-
+  
       setHistoricalDataChartData(prevData => ({
         ...prevData,
         options: {
@@ -377,16 +377,17 @@ export default function Home() {
           data: prices
         }]
       }));
-
+  
       setRenderHistoricalDataChart(false);
       setTimeout(() => setRenderHistoricalDataChart(true), 0);
-
+  
       setChartVisible(true);
       setHistoricalDataChartLoaded(true);
     } catch (error) {
       console.error("Error fetching historical data:", error);
     }
   };
+  
 
   const fetchLatestPricesData = async () => {
     const city = selectedCity;
