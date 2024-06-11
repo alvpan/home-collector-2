@@ -692,9 +692,8 @@ export default function Home() {
                     placeholder="Search City"
                     value={citySearchTerm}
                     onChange={(e) => setCitySearchTerm(e.target.value)}
-                    className="p-2 border-b w-full text-orange-500"
+                    className="sticky top-0 p-2 border-b w-full text-orange-500 bg-white z-20"
                   />
-
                   <ul className="py-1 text-black">
                     {filteredCities.map((city) => (
                       <li
@@ -708,6 +707,7 @@ export default function Home() {
                   </ul>
                 </div>
               )}
+
             </div>
             {(selectedCity === "Athens" || selectedCity === "Thessaloniki") && (
               <div className="relative flex items-center w-48">
@@ -721,7 +721,7 @@ export default function Home() {
                       placeholder="Search Area"
                       value={areaSearchTerm}
                       onChange={(e) => setAreaSearchTerm(e.target.value)}
-                      className="p-2 border-b w-full"
+                      className="sticky top-0 p-2 border-b w-full text-orange-500 bg-white z-20"
                     />
                     <ul className="py-1 text-black">
                       {filteredAreas.map((area) => (
