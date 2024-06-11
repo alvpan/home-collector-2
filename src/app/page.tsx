@@ -198,7 +198,7 @@ const ComparePrices: React.FC = () => {
 
 export default function Home() {
   const [action, setAction] = useState("Rent");
-  const [selectedCity, setSelectedCity] = useState("Location");
+  const [selectedCity, setSelectedCity] = useState("City");
   const [citySearchTerm, setCitySearchTerm] = useState("");
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [isAreaDropdownVisible, setAreaDropdownVisible] = useState(false);
@@ -283,7 +283,7 @@ export default function Home() {
   const [previousSurface, setPreviousSurface] = useState<number | null>(null);
   const [previousTimeframe, setPreviousTimeframe] = useState<string>("");
   const [previousAction, setPreviousAction] = useState("Rent");
-  const [previousCity, setPreviousCity] = useState("Location");
+  const [previousCity, setPreviousCity] = useState("City");
   const [previousArea, setPreviousArea] = useState("Area");
   const [surfaceDropdownVisible, setSurfaceDropdownVisible] = useState(false);
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
@@ -304,7 +304,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (action !== "Rent" && selectedCity !== "Location" && (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "Area")) {
+    if (action !== "Rent" && selectedCity !== "City" && (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "Area")) {
       setChartVisible(false);
       setLatestPricesChartLoaded(false);
       setHistoricalDataChartLoaded(false);
@@ -541,13 +541,13 @@ export default function Home() {
   });
 
   const shouldShowSeePricesButton = () => {
-    if (selectedCity === "Location") return false;
+    if (selectedCity === "City") return false;
     if ((selectedCity === "Athens" || selectedCity === "Thessaloniki") && selectedArea === "Area") return false;
     return true;
   };
 
   const shouldShowHistoricalData = () => {
-    return selectedCity !== "Location" && (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "Area");
+    return selectedCity !== "City" && (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "Area");
   };
 
   const headerStyle: CSSProperties = {
@@ -682,18 +682,19 @@ export default function Home() {
               </button>
             </div>
             <div className="relative flex items-center w-48">
-              <input 
-                type="text"
-                placeholder="Search City"
-                value={citySearchTerm}
-                onChange={(e) => setCitySearchTerm(e.target.value)}
-                className="p-2 border rounded text-black w-full"
-              />
               <button onClick={handleLocationButtonClick} className={buttonStyle}>
                 {selectedCity}
               </button>
               {isDropdownVisible && (
                 <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+                  <input 
+                    type="text"
+                    placeholder="Search City"
+                    value={citySearchTerm}
+                    onChange={(e) => setCitySearchTerm(e.target.value)}
+                    className="p-2 border-b w-full text-orange-500"
+                  />
+
                   <ul className="py-1 text-black">
                     {filteredCities.map((city) => (
                       <li
@@ -710,18 +711,18 @@ export default function Home() {
             </div>
             {(selectedCity === "Athens" || selectedCity === "Thessaloniki") && (
               <div className="relative flex items-center w-48">
-                <input 
-                  type="text"
-                  placeholder="Search Area"
-                  value={areaSearchTerm}
-                  onChange={(e) => setAreaSearchTerm(e.target.value)}
-                  className="p-2 border rounded text-black w-full"
-                />
                 <button onClick={handleAreaButtonClick} className={buttonStyle}>
                   {selectedArea}
                 </button>
                 {isAreaDropdownVisible && (
                   <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+                    <input 
+                      type="text"
+                      placeholder="Search Area"
+                      value={areaSearchTerm}
+                      onChange={(e) => setAreaSearchTerm(e.target.value)}
+                      className="p-2 border-b w-full"
+                    />
                     <ul className="py-1 text-black">
                       {filteredAreas.map((area) => (
                         <li
