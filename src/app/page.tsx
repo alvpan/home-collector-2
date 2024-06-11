@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useRef, CSSProperties } from "react";
 import dynamic from 'next/dynamic';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import { ApexOptions } from 'apexcharts';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
@@ -21,6 +23,8 @@ const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface
   const [surfaceDropdownVisible, setSurfaceDropdownVisible] = useState(false);
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
   const chartRef = useRef<any>(null);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
 
   useEffect(() => {
     if (chartRef.current && chartData.series[0].data.length > 0) {
@@ -80,6 +84,27 @@ const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface
               </ul>
             </div>
           )}
+        </div>
+        <div className="relative flex space-x-2 items-center">
+          <DatePicker
+            selected={startDate}
+            onChange={(date: Date | null) => setStartDate(date)}
+            selectsStart
+            startDate={startDate}
+            endDate={endDate}
+            placeholderText="Start Date"
+            className="bg-white border border-gray-300 rounded py-2 px-4"
+          />
+          <DatePicker
+            selected={endDate}
+            onChange={(date: Date | null) => setEndDate(date)}
+            selectsEnd
+            startDate={startDate}
+            endDate={endDate}
+            minDate={startDate}
+            placeholderText="End Date"
+            className="bg-white border border-gray-300 rounded py-2 px-4"
+          />
         </div>
         <button className="bg-transparent hover:bg-black text-black py-2 px-4 rounded border-2 border-orange-500 hover:border-transparent hover:text-white" onClick={onRefresh}>
           Refresh Chart
