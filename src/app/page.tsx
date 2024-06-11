@@ -199,8 +199,10 @@ const ComparePrices: React.FC = () => {
 export default function Home() {
   const [action, setAction] = useState("Rent");
   const [selectedCity, setSelectedCity] = useState("Location");
+  const [citySearchTerm, setCitySearchTerm] = useState("");
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [isAreaDropdownVisible, setAreaDropdownVisible] = useState(false);
+  const [areaSearchTerm, setAreaSearchTerm] = useState("");
   const [cities, setCities] = useState<string[]>([]);
   const [areas, setAreas] = useState<string[]>([]);
   const [selectedArea, setSelectedArea] = useState("Area");
@@ -435,6 +437,7 @@ export default function Home() {
 
   const handleCitySelect = (city: string) => {
     setSelectedCity(city);
+    setCitySearchTerm("");
     setDropdownVisible(false);
     setAreas([]);
     setSelectedArea("Area");
@@ -458,6 +461,7 @@ export default function Home() {
 
   const handleAreaSelect = (area: string) => {
     setSelectedArea(area);
+    setAreaSearchTerm("");
     setAreaDropdownVisible(false);
     clearCharts();
     setChartVisible(false);
@@ -513,6 +517,14 @@ export default function Home() {
       setChartVisible(true);
     }
   };
+
+  const filteredCities = cities.filter(city =>
+    city.toLowerCase().includes(citySearchTerm.toLowerCase())
+  );
+
+  const filteredAreas = areas.filter(area =>
+    area.toLowerCase().includes(areaSearchTerm.toLowerCase())
+  );
 
   const buttonStyle = "bg-gray-700 hover:bg-black text-white py-2 px-4 rounded w-48 h-12";
   const headerButtonStyle = (buttonName: string) => ({
@@ -670,13 +682,20 @@ export default function Home() {
               </button>
             </div>
             <div className="relative flex items-center w-48">
+              <input 
+                type="text"
+                placeholder="Search City"
+                value={citySearchTerm}
+                onChange={(e) => setCitySearchTerm(e.target.value)}
+                className="p-2 border rounded text-black w-full"
+              />
               <button onClick={handleLocationButtonClick} className={buttonStyle}>
                 {selectedCity}
               </button>
               {isDropdownVisible && (
-                <div className="absolute top-1/2 transform -translate-y-1/2 w-full bg-white border border-gray-300 rounded shadow-lg z-10 text-black max-h-60 overflow-y-auto">
-                  <ul className="py-1">
-                    {cities.map((city) => (
+                <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+                  <ul className="py-1 text-black">
+                    {filteredCities.map((city) => (
                       <li
                         key={city}
                         className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
@@ -691,13 +710,20 @@ export default function Home() {
             </div>
             {(selectedCity === "Athens" || selectedCity === "Thessaloniki") && (
               <div className="relative flex items-center w-48">
+                <input 
+                  type="text"
+                  placeholder="Search Area"
+                  value={areaSearchTerm}
+                  onChange={(e) => setAreaSearchTerm(e.target.value)}
+                  className="p-2 border rounded text-black w-full"
+                />
                 <button onClick={handleAreaButtonClick} className={buttonStyle}>
                   {selectedArea}
                 </button>
                 {isAreaDropdownVisible && (
-                  <div className="absolute top-1/2 transform -translate-y-1/2 w-full bg-white border border-gray-300 rounded shadow-lg z-10 text-black max-h-60 overflow-y-auto">
-                    <ul className="py-1">
-                      {areas.map((area) => (
+                  <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+                    <ul className="py-1 text-black">
+                      {filteredAreas.map((area) => (
                         <li
                           key={area}
                           className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
