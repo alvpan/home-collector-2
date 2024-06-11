@@ -196,9 +196,8 @@ const ComparePrices: React.FC = () => {
   );
 };
 
-
 export default function Home() {
-  const [action, setAction] = useState("Action");
+  const [action, setAction] = useState("Rent");
   const [selectedCity, setSelectedCity] = useState("Location");
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [isAreaDropdownVisible, setAreaDropdownVisible] = useState(false);
@@ -281,7 +280,7 @@ export default function Home() {
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>("");
   const [previousSurface, setPreviousSurface] = useState<number | null>(null);
   const [previousTimeframe, setPreviousTimeframe] = useState<string>("");
-  const [previousAction, setPreviousAction] = useState("Action");
+  const [previousAction, setPreviousAction] = useState("Rent");
   const [previousCity, setPreviousCity] = useState("Location");
   const [previousArea, setPreviousArea] = useState("Area");
   const [surfaceDropdownVisible, setSurfaceDropdownVisible] = useState(false);
@@ -303,7 +302,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (action !== "Action" && selectedCity !== "Location" && (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "Area")) {
+    if (action !== "Rent" && selectedCity !== "Location" && (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "Area")) {
       setChartVisible(false);
       setLatestPricesChartLoaded(false);
       setHistoricalDataChartLoaded(false);
@@ -346,18 +345,18 @@ export default function Home() {
   const fetchHistoricalData = async (surface: number, timeframe: string) => {
     const city = selectedCity;
     const area = (city === "Athens" || city === "Thessaloniki") ? selectedArea : city;
-  
+
     try {
       setHistoricalDataChartData(initialHistoricalChartData);
-  
+
       const response = await fetch(`/api/getHistoricalData?action=${action}&city=${city}&area=${area}&surface=${surface}&timeframe=${timeframe}`);
       const data: CityData[] = await response.json();
       console.log(data);
-  
+
       const dates = data.map((item: CityData) => item.entry_date);
       const prices = data.map((item: CityData) => item.price);
       const { min, max } = addYAxisPadding(prices);
-  
+
       setHistoricalDataChartData(prevData => ({
         ...prevData,
         options: {
@@ -377,17 +376,16 @@ export default function Home() {
           data: prices
         }]
       }));
-  
+
       setRenderHistoricalDataChart(false);
       setTimeout(() => setRenderHistoricalDataChart(true), 0);
-  
+
       setChartVisible(true);
       setHistoricalDataChartLoaded(true);
     } catch (error) {
       console.error("Error fetching historical data:", error);
     }
   };
-  
 
   const fetchLatestPricesData = async () => {
     const city = selectedCity;
@@ -423,8 +421,8 @@ export default function Home() {
     }
   };
 
-  const handleActionButtonClick = () => {
-    setAction((prevAction) => (prevAction === "Rent" ? "Buy" : "Rent"));
+  const handleActionButtonClick = (selectedAction: string) => {
+    setAction(selectedAction);
     clearCharts();
     setChartVisible(false);
     setLatestPricesChartLoaded(false);
@@ -531,13 +529,13 @@ export default function Home() {
   });
 
   const shouldShowSeePricesButton = () => {
-    if (action === "Action" || selectedCity === "Location") return false;
+    if (selectedCity === "Location") return false;
     if ((selectedCity === "Athens" || selectedCity === "Thessaloniki") && selectedArea === "Area") return false;
     return true;
   };
 
   const shouldShowHistoricalData = () => {
-    return action !== "Action" && selectedCity !== "Location" && (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "Area");
+    return selectedCity !== "Location" && (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "Area");
   };
 
   const headerStyle: CSSProperties = {
@@ -656,9 +654,21 @@ export default function Home() {
       <main className="flex flex-col items-start justify-start p-8 flex-grow">
         <div style={contentStyle}>
           <div style={buttonsContainerStyle}>
-            <button onClick={handleActionButtonClick} className={buttonStyle}>
-              {action}
-            </button>
+            <div className="flex items-center w-48">
+              <button 
+                onClick={() => handleActionButtonClick("Rent")} 
+                className={`${buttonStyle} ${action === "Rent" ? "bg-orange-700" : "bg-gray-700"} hover:bg-orange-600`}
+                style={{ marginRight: "8px" }}
+              >
+                Rent
+              </button>
+              <button 
+                onClick={() => handleActionButtonClick("Buy")} 
+                className={`${buttonStyle} ${action === "Buy" ? "bg-orange-700" : "bg-gray-700"} hover:bg-orange-600`}
+              >
+                Buy
+              </button>
+            </div>
             <div className="relative flex items-center w-48">
               <button onClick={handleLocationButtonClick} className={buttonStyle}>
                 {selectedCity}
