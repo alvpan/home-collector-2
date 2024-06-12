@@ -498,7 +498,8 @@ export default function Home() {
   };
 
   const shouldShowHistoricalData = () => {
-    return selectedCity !== "City" && (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "Area");
+    // return selectedCity !== "City" && (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "Area");
+    return true;
   };
 
   const headerStyle: CSSProperties = {
