@@ -61,7 +61,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const pricePerSqmByDate = Object.entries(aggregation).map(([date, { totalSurface, totalPrice }]) => ({
       date,
-      pricePerSqm: totalPrice / totalSurface
+      pricePerSqm: parseFloat((totalPrice / totalSurface).toFixed(1))
     }));
 
     res.status(200).json(pricePerSqmByDate);
