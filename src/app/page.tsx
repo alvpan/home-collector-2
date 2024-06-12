@@ -337,8 +337,6 @@ export default function Home() {
     const fetchEndDate = endDate ? endDate.toISOString().split('T')[0] : "";
 
     try {
-      setHistoricalDataChartData(initialHistoricalChartData);
-
       const response = await fetch(`/api/getHistoricalPpm?action=${action}&city=${city}&area=${area}&startDate=${fetchStartDate}&endDate=${fetchEndDate}`);
       const data: CityData[] = await response.json();
       console.log(data);
@@ -366,9 +364,6 @@ export default function Home() {
           data: prices
         }]
       }));
-
-      setRenderHistoricalDataChart(false);
-      setTimeout(() => setRenderHistoricalDataChart(true), 0);
 
       setChartVisible(true);
       setHistoricalDataChartLoaded(true);
@@ -462,11 +457,9 @@ export default function Home() {
   };
 
   const handleRefreshClick = async () => {
-    setChartVisible(true);
     clearHistoricalChartData();
     await fetchHistoricalData(selectedTimeframe, startDate, endDate);
     setPreviousTimeframe(selectedTimeframe);
-    setChartVisible(true);
   };
 
   const filteredCities = cities.filter(city =>
@@ -498,7 +491,6 @@ export default function Home() {
   };
 
   const shouldShowHistoricalData = () => {
-    // return selectedCity !== "City" && (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "Area");
     return true;
   };
 
