@@ -19,11 +19,9 @@ interface ChartData {
   series: { name: string, data: number[] }[]
 }
 
-const HistoricalData: React.FC<{ chartData: ChartData, onTimeframeChange: (timeframe: string) => void, selectedTimeframe: string, onRefresh: () => void, isVisible: boolean }> = ({ chartData, onTimeframeChange, selectedTimeframe, onRefresh, isVisible }) => {
+const HistoricalData: React.FC<{ chartData: ChartData, onTimeframeChange: (timeframe: string) => void, selectedTimeframe: string, onRefresh: () => void, isVisible: boolean, startDate: Date | null, endDate: Date | null, setStartDate: (date: Date | null) => void, setEndDate: (date: Date | null) => void }> = ({ chartData, onTimeframeChange, selectedTimeframe, onRefresh, isVisible, startDate, endDate, setStartDate, setEndDate }) => {
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
   const chartRef = useRef<any>(null);
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
 
   const buttonStyle = "bg-gray-700 hover:bg-black text-white py-2 px-4 rounded w-48 h-12";
   const datePickerStyle = "bg-white border border-gray-300 rounded py-2 px-4 text-black w-48";
@@ -214,6 +212,8 @@ export default function Home() {
   const [activeHeaderButton, setActiveHeaderButton] = useState<string>('Historical Data');
   const [isChartVisible, setChartVisible] = useState(false);
   const [historicalDataChartLoaded, setHistoricalDataChartLoaded] = useState(false);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
 
   const initialHistoricalChartData: ChartData = {
     options: {
@@ -302,14 +302,44 @@ export default function Home() {
     };
   };
 
-  const fetchHistoricalData = async (timeframe: string) => {
+  const calculateStartDate = (timeframe: string) => {
+    const currentDate = new Date();
+    let startDate = new Date();
+
+    switch (timeframe) {
+      case "last week":
+        startDate.setDate(currentDate.getDate() - 7);
+        break;
+      case "last month":
+        startDate.setMonth(currentDate.getMonth() - 1);
+        break;
+      case "last 6 months":
+        startDate.setMonth(currentDate.getMonth() - 6);
+        break;
+      case "last year":
+        startDate.setFullYear(currentDate.getFullYear() - 1);
+        break;
+      case "ever":
+        startDate = new Date(2000, 0, 1);
+        break;
+      default:
+        break;
+    }
+
+    return startDate;
+  };
+
+  const fetchHistoricalData = async (timeframe: string, startDate: Date | null, endDate: Date | null) => {
     const city = selectedCity;
     const area = (city === "Athens" || city === "Thessaloniki") ? selectedArea : city;
+
+    const fetchStartDate = startDate ? startDate.toISOString().split('T')[0] : "";
+    const fetchEndDate = endDate ? endDate.toISOString().split('T')[0] : "";
 
     try {
       setHistoricalDataChartData(initialHistoricalChartData);
 
-      const response = await fetch(`/api/getHistoricalData?action=${action}&city=${city}&area=${area}&timeframe=${timeframe}`);
+      const response = await fetch(`/api/getHistoricalPpm?action=${action}&city=${city}&area=${area}&startDate=${fetchStartDate}&endDate=${fetchEndDate}`);
       const data: CityData[] = await response.json();
       console.log(data);
 
@@ -396,7 +426,7 @@ export default function Home() {
     setChartVisible(false);
     setHistoricalDataChartLoaded(false);
     if (action !== previousAction || selectedCity !== previousCity || selectedArea !== previousArea) {
-      await fetchHistoricalData(selectedTimeframe);
+      await fetchHistoricalData(selectedTimeframe, startDate, endDate);
       setPreviousAction(action);
       setPreviousCity(selectedCity);
       setPreviousArea(selectedArea);
@@ -417,13 +447,25 @@ export default function Home() {
 
   const handleTimeframeChange = (timeframe: string) => {
     setSelectedTimeframe(timeframe);
+
+    if (timeframe === "custom") {
+      setStartDate(null);
+      setEndDate(null);
+    } else if (timeframe === "ever") {
+      setStartDate(new Date(2000, 0, 1));
+      setEndDate(new Date());
+    } else {
+      const calculatedStartDate = calculateStartDate(timeframe);
+      setStartDate(calculatedStartDate);
+      setEndDate(new Date());
+    }
   };
 
   const handleRefreshClick = async () => {
     if (selectedTimeframe !== previousTimeframe) {
       setChartVisible(false);
       clearHistoricalChartData();
-      await fetchHistoricalData(selectedTimeframe);
+      await fetchHistoricalData(selectedTimeframe, startDate, endDate);
       setPreviousTimeframe(selectedTimeframe);
       setChartVisible(true);
     }
@@ -533,6 +575,10 @@ export default function Home() {
             selectedTimeframe={selectedTimeframe}
             onRefresh={handleRefreshClick}
             isVisible={shouldShowHistoricalData()}
+            startDate={startDate}
+            endDate={endDate}
+            setStartDate={setStartDate}
+            setEndDate={setEndDate}
           />
         );
       case 'Compare Prices':
