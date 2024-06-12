@@ -462,13 +462,11 @@ export default function Home() {
   };
 
   const handleRefreshClick = async () => {
-    if (selectedTimeframe !== previousTimeframe) {
-      setChartVisible(false);
-      clearHistoricalChartData();
-      await fetchHistoricalData(selectedTimeframe, startDate, endDate);
-      setPreviousTimeframe(selectedTimeframe);
-      setChartVisible(true);
-    }
+    setChartVisible(false);
+    clearHistoricalChartData();
+    await fetchHistoricalData(selectedTimeframe, startDate, endDate);
+    setPreviousTimeframe(selectedTimeframe);
+    setChartVisible(true);
   };
 
   const filteredCities = cities.filter(city =>
