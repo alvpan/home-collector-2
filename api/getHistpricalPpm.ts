@@ -33,23 +33,44 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const client = await pool.connect();
 
+    const countryCheck = await client.query('SELECT id FROM "Country" WHERE name = $1', [country]);
+    if (countryCheck.rows.length === 0) {
+      client.release();
+      return res.status(404).json({ error: `Country '${country}' not found` });
+    }
+    const countryId = countryCheck.rows[0].id;
+
+    const provinceCheck = await client.query('SELECT id FROM "Province" WHERE name = $1 AND country = $2', [province, countryId]);
+    if (provinceCheck.rows.length === 0) {
+      client.release();
+      return res.status(404).json({ error: `Province '${province}' not found in country '${country}'` });
+    }
+    const provinceId = provinceCheck.rows[0].id;
+
+    const cityCheck = await client.query('SELECT id FROM "City" WHERE name = $1 AND province = $2', [city, provinceId]);
+    if (cityCheck.rows.length === 0) {
+      client.release();
+      return res.status(404).json({ error: `City '${city}' not found in province '${province}'` });
+    }
+    const cityId = cityCheck.rows[0].id;
+
+    const areaCheck = await client.query('SELECT id FROM "Area" WHERE name = $1 AND city = $2', [area, cityId]);
+    if (areaCheck.rows.length === 0) {
+      client.release();
+      return res.status(404).json({ error: `Area '${area}' not found in city '${city}'` });
+    }
+    const areaId = areaCheck.rows[0].id;
+
     const query = `
       SELECT pe.surface, pe.price, pe.entry_date
       FROM "PriceEntry" pe
-      JOIN "Area" a ON pe.area = a.id
-      JOIN "City" c ON a.city = c.id
-      JOIN "Province" p ON c.province = p.id
-      JOIN "Country" co ON p.country = co.id
       WHERE pe.price_type = $1
-        AND c.name = $2
-        AND a.name = $3
-        AND co.name = $4
-        AND p.name = $5
-        AND pe.entry_date BETWEEN $6 AND $7
+        AND pe.area = $2
+        AND pe.entry_date BETWEEN $3 AND $4
       ORDER BY pe.entry_date ASC
     `;
 
-    const result = await client.query(query, [priceType, city, area, country, province, startDate, endDate]);
+    const result = await client.query(query, [priceType, areaId, startDate, endDate]);
     client.release();
 
     if (result.rows.length === 0) {
@@ -66,9 +87,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   } catch (error) {
     console.error('Error querying the database:', error);
 
-    // Type assertion for the error
     if (error instanceof Error) {
-      res.status(500).json({ error: 'Internal Server Error', details: error.message });
+      res.status(500).json({ error: 'Internal Server Error', details: error.message, stack: error.stack });
     } else {
       res.status(500).json({ error: 'Internal Server Error', details: 'Unknown error' });
     }
