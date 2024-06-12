@@ -34,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const client = await pool.connect();
 
     const query = `
-      SELECT pe.entry_date, pe.price, pe.surface
+      SELECT pe.surface, pe.price, pe.entry_date
       FROM "PriceEntry" pe
       JOIN "Area" a ON pe.area = a.id
       JOIN "City" c ON a.city = c.id
@@ -57,7 +57,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const formattedResult = result.rows.map(row => ({
-      ...row,
+      surface: row.surface,
+      price: row.price,
       entry_date: format(new Date(row.entry_date), 'yyyy-MM-dd')
     }));
 
