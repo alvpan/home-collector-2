@@ -40,9 +40,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       JOIN "City" c ON a.city = c.id
       JOIN "Province" p ON c.province = p.id
       JOIN "Country" co ON p.country = co.id
-      WHERE pe.price_type = $1 AND c.name = $2 AND a.name = $3
-      AND co.name = $4 AND p.name = $5
-      AND pe.entry_date BETWEEN $6 AND $7
+      WHERE pe.price_type = $1
+        AND c.name = $2
+        AND a.name = $3
+        AND co.name = $4
+        AND p.name = $5
+        AND pe.entry_date BETWEEN $6 AND $7
       ORDER BY pe.entry_date ASC
     `;
 
