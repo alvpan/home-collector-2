@@ -15,6 +15,13 @@ const pool = new Pool({
   }
 });
 
+type Aggregation = {
+  [key: string]: {
+    totalSurface: number;
+    totalPrice: number;
+  }
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { action, city, area, startDate, endDate } = req.query;
 
@@ -42,12 +49,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const result = await client.query(query, [priceType, city, area, formattedStartDate, formattedEndDate]);
     client.release();
 
-    const formattedResult = result.rows.map(row => ({
-      ...row,
-      entry_date: format(new Date(row.entry_date), 'yyyy-MM-dd')
+    const aggregation: Aggregation = result.rows.reduce((acc: Aggregation, row: { surface: number, price: number, entry_date: string }) => {
+      const date = format(new Date(row.entry_date), 'yyyy-MM-dd');
+      if (!acc[date]) {
+        acc[date] = { totalSurface: 0, totalPrice: 0 };
+      }
+      acc[date].totalSurface += row.surface;
+      acc[date].totalPrice += row.price;
+      return acc;
+    }, {});
+
+    const pricePerSqmByDate = Object.entries(aggregation).map(([date, { totalSurface, totalPrice }]) => ({
+      date,
+      pricePerSqm: totalPrice / totalSurface
     }));
 
-    res.status(200).json(formattedResult);
+    res.status(200).json(pricePerSqmByDate);
   } catch (error) {
     console.error('Error querying the database:', error);
     res.status(500).json({ error: 'Internal Server Error' });
