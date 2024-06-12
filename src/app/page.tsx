@@ -48,7 +48,7 @@ const HistoricalData: React.FC<{ chartData: ChartData, onTimeframeChange: (timef
           {timeframeDropdownVisible && (
             <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
               <ul className="py-1 text-black">
-                {["last week", "last month", "last 6 months", "last year", "ever"].map((timeframe) => (
+                {["last week", "last month", "last 6 months", "last year", "ever", "custom"].map((timeframe) => (
                   <li
                     key={timeframe}
                     className="px-4 py-2 hover:bg-gray-200 cursor-pointer text-black"
@@ -64,35 +64,37 @@ const HistoricalData: React.FC<{ chartData: ChartData, onTimeframeChange: (timef
             </div>
           )}
         </div>
-        <div className="relative flex space-x-2 items-center">
-          <DatePicker
-            selected={startDate}
-            onChange={(date: Date | null) => setStartDate(date)}
-            selectsStart
-            startDate={startDate}
-            endDate={endDate}
-            maxDate={new Date()}
-            dateFormat="dd MMMM yyyy"
-            placeholderText="Start Date"
-            className={datePickerStyle}
-            showPopperArrow={false}
-            shouldCloseOnSelect={false}
-          />
-          <DatePicker
-            selected={endDate}
-            onChange={(date: Date | null) => setEndDate(date)}
-            selectsEnd
-            startDate={startDate}
-            endDate={endDate}
-            minDate={startDate}
-            maxDate={new Date()}
-            dateFormat="dd MMMM yyyy"
-            placeholderText="End Date"
-            className={datePickerStyle}
-            showPopperArrow={false}
-            shouldCloseOnSelect={false}
-          />
-        </div>
+        {selectedTimeframe === "custom" && (
+          <div className="relative flex space-x-2 items-center">
+            <DatePicker
+              selected={startDate}
+              onChange={(date: Date | null) => setStartDate(date)}
+              selectsStart
+              startDate={startDate}
+              endDate={endDate}
+              maxDate={new Date()}
+              dateFormat="dd MMMM yyyy"
+              placeholderText="Start Date"
+              className={datePickerStyle}
+              showPopperArrow={false}
+              shouldCloseOnSelect={false}
+            />
+            <DatePicker
+              selected={endDate}
+              onChange={(date: Date | null) => setEndDate(date)}
+              selectsEnd
+              startDate={startDate}
+              endDate={endDate}
+              minDate={startDate}
+              maxDate={new Date()}
+              dateFormat="dd MMMM yyyy"
+              placeholderText="End Date"
+              className={datePickerStyle}
+              showPopperArrow={false}
+              shouldCloseOnSelect={false}
+            />
+          </div>
+        )}
         <button className={`${buttonStyle} border-2 border-orange-500 hover:border-transparent hover:text-white`} onClick={onRefresh}>
           Refresh Chart
         </button>
