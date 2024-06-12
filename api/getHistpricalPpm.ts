@@ -27,6 +27,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: 'Invalid action' });
   }
 
+  const formattedStartDate = format(new Date(startDate as string), 'yyyy-MM-dd');
+  const formattedEndDate = format(new Date(endDate as string), 'yyyy-MM-dd');
+
   const country = 'Greece';
   const province = 'No Province';
 
@@ -70,7 +73,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       ORDER BY pe.entry_date ASC
     `;
 
-    const result = await client.query(query, [priceType, areaId, startDate, endDate]);
+    const result = await client.query(query, [priceType, areaId, formattedStartDate, formattedEndDate]);
     client.release();
 
     if (result.rows.length === 0) {
