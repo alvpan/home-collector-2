@@ -27,6 +27,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: 'Invalid action' });
   }
 
+  const country = 'Greece';
+  const province = 'No Province';
+
   try {
     const client = await pool.connect();
 
@@ -35,13 +38,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       FROM "PriceEntry" pe
       JOIN "Area" a ON pe.area = a.id
       JOIN "City" c ON a.city = c.id
+      JOIN "Province" p ON c.province = p.id
+      JOIN "Country" co ON p.country = co.id
       WHERE pe.price_type = $1 AND c.name = $2 AND a.name = $3
-      AND pe.entry_date BETWEEN $4 AND $5
+      AND co.name = $4 AND p.name = $5
+      AND pe.entry_date BETWEEN $6 AND $7
       ORDER BY pe.entry_date ASC
     `;
 
-    const result = await client.query(query, [priceType, city, area, startDate, endDate]);
+    const result = await client.query(query, [priceType, city, area, country, province, startDate, endDate]);
     client.release();
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'No data found for the specified parameters' });
+    }
 
     const formattedResult = result.rows.map(row => ({
       ...row,
@@ -51,6 +61,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(200).json(formattedResult);
   } catch (error) {
     console.error('Error querying the database:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+
+    // Type assertion for the error
+    if (error instanceof Error) {
+      res.status(500).json({ error: 'Internal Server Error', details: error.message });
+    } else {
+      res.status(500).json({ error: 'Internal Server Error', details: 'Unknown error' });
+    }
   }
 }
