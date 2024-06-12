@@ -19,8 +19,7 @@ interface ChartData {
   series: { name: string, data: number[] }[]
 }
 
-const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface: number) => void, onTimeframeChange: (timeframe: string) => void, selectedSurface: number | null, selectedTimeframe: string, onRefresh: () => void, isVisible: boolean }> = ({ chartData, onSurfaceChange, onTimeframeChange, selectedSurface, selectedTimeframe, onRefresh, isVisible }) => {
-  const [surfaceDropdownVisible, setSurfaceDropdownVisible] = useState(false);
+const HistoricalData: React.FC<{ chartData: ChartData, onTimeframeChange: (timeframe: string) => void, selectedTimeframe: string, onRefresh: () => void, isVisible: boolean }> = ({ chartData, onTimeframeChange, selectedTimeframe, onRefresh, isVisible }) => {
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
   const chartRef = useRef<any>(null);
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -42,29 +41,6 @@ const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface
   return (
     <div>
       <div className="flex space-x-4 mb-4">
-        <div className="relative">
-          <button className={`${buttonStyle}`} onClick={() => setSurfaceDropdownVisible(prev => !prev)}>
-            {selectedSurface ? selectedSurface + " sqm" : "Surface"}
-          </button>
-          {surfaceDropdownVisible && (
-            <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
-              <ul className="py-1 text-black">
-                {Array.from({ length: 99 }, (_, i) => (i + 2) * 5).map((surface) => (
-                  <li
-                    key={surface}
-                    className="px-4 py-2 hover:bg-gray-200 cursor-pointer text-black"
-                    onClick={() => {
-                      onSurfaceChange(surface);
-                      setSurfaceDropdownVisible(false);
-                    }}
-                  >
-                    {surface}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
         <div className="relative">
           <button className={`${buttonStyle}`} onClick={() => setTimeframeDropdownVisible(prev => !prev)}>
             {selectedTimeframe || "Timeframe"}
@@ -271,14 +247,11 @@ export default function Home() {
 
   const [historicalDataChartData, setHistoricalDataChartData] = useState<ChartData>(initialHistoricalChartData);
 
-  const [selectedSurface, setSelectedSurface] = useState<number | null>(null);
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>("");
-  const [previousSurface, setPreviousSurface] = useState<number | null>(null);
   const [previousTimeframe, setPreviousTimeframe] = useState<string>("");
   const [previousAction, setPreviousAction] = useState("Rent");
   const [previousCity, setPreviousCity] = useState("City");
   const [previousArea, setPreviousArea] = useState("Area");
-  const [surfaceDropdownVisible, setSurfaceDropdownVisible] = useState(false);
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
   const [renderHistoricalDataChart, setRenderHistoricalDataChart] = useState(true);
 
@@ -327,14 +300,14 @@ export default function Home() {
     };
   };
 
-  const fetchHistoricalData = async (surface: number, timeframe: string) => {
+  const fetchHistoricalData = async (timeframe: string) => {
     const city = selectedCity;
     const area = (city === "Athens" || city === "Thessaloniki") ? selectedArea : city;
 
     try {
       setHistoricalDataChartData(initialHistoricalChartData);
 
-      const response = await fetch(`/api/getHistoricalData?action=${action}&city=${city}&area=${area}&surface=${surface}&timeframe=${timeframe}`);
+      const response = await fetch(`/api/getHistoricalData?action=${action}&city=${city}&area=${area}&timeframe=${timeframe}`);
       const data: CityData[] = await response.json();
       console.log(data);
 
@@ -421,7 +394,7 @@ export default function Home() {
     setChartVisible(false);
     setHistoricalDataChartLoaded(false);
     if (action !== previousAction || selectedCity !== previousCity || selectedArea !== previousArea) {
-      await fetchHistoricalData(selectedSurface as number, selectedTimeframe);
+      await fetchHistoricalData(selectedTimeframe);
       setPreviousAction(action);
       setPreviousCity(selectedCity);
       setPreviousArea(selectedArea);
@@ -435,14 +408,9 @@ export default function Home() {
     setChartVisible(false);
 
     if (buttonName === 'Historical Data') {
-      setSelectedSurface(null);
       setSelectedTimeframe("");
       setHistoricalDataChartLoaded(false);
     }
-  };
-
-  const handleSurfaceChange = (surface: number) => {
-    setSelectedSurface(surface);
   };
 
   const handleTimeframeChange = (timeframe: string) => {
@@ -450,11 +418,10 @@ export default function Home() {
   };
 
   const handleRefreshClick = async () => {
-    if (selectedSurface !== previousSurface || selectedTimeframe !== previousTimeframe) {
+    if (selectedTimeframe !== previousTimeframe) {
       setChartVisible(false);
       clearHistoricalChartData();
-      await fetchHistoricalData(selectedSurface as number, selectedTimeframe);
-      setPreviousSurface(selectedSurface);
+      await fetchHistoricalData(selectedTimeframe);
       setPreviousTimeframe(selectedTimeframe);
       setChartVisible(true);
     }
@@ -560,9 +527,7 @@ export default function Home() {
           renderHistoricalDataChart &&
           <HistoricalData
             chartData={historicalDataChartData}
-            onSurfaceChange={handleSurfaceChange}
             onTimeframeChange={handleTimeframeChange}
-            selectedSurface={selectedSurface}
             selectedTimeframe={selectedTimeframe}
             onRefresh={handleRefreshClick}
             isVisible={shouldShowHistoricalData()}
