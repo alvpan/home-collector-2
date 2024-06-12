@@ -273,7 +273,7 @@ export default function Home() {
 
   useEffect(() => {
     if (action !== "Rent" && selectedCity !== "City" && (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "Area")) {
-      setChartVisible(false);
+      setChartVisible(true);
       setHistoricalDataChartLoaded(false);
       clearCharts();
     }
@@ -380,7 +380,7 @@ export default function Home() {
   const handleActionButtonClick = (selectedAction: string) => {
     setAction(selectedAction);
     clearCharts();
-    setChartVisible(false);
+    setChartVisible(true);
     setHistoricalDataChartLoaded(false);
   };
 
@@ -396,7 +396,7 @@ export default function Home() {
     setSelectedArea("Area");
     setAreaDropdownVisible(false);
     clearCharts();
-    setChartVisible(false);
+    setChartVisible(true);
     setHistoricalDataChartLoaded(false);
   };
 
@@ -416,14 +416,14 @@ export default function Home() {
     setAreaSearchTerm("");
     setAreaDropdownVisible(false);
     clearCharts();
-    setChartVisible(false);
+    setChartVisible(true);
     setHistoricalDataChartLoaded(false);
   };
 
   const handleSeePricesClick = async () => {
     setActiveHeaderButton('Historical Data');
     clearCharts();
-    setChartVisible(false);
+    setChartVisible(true);
     setHistoricalDataChartLoaded(false);
     if (action !== previousAction || selectedCity !== previousCity || selectedArea !== previousArea) {
       await fetchHistoricalData(selectedTimeframe, startDate, endDate);
@@ -437,7 +437,7 @@ export default function Home() {
 
   const handleHeaderButtonClick = async (buttonName: string) => {
     setActiveHeaderButton(buttonName);
-    setChartVisible(false);
+    setChartVisible(true);
 
     if (buttonName === 'Historical Data') {
       setSelectedTimeframe("");
@@ -462,7 +462,7 @@ export default function Home() {
   };
 
   const handleRefreshClick = async () => {
-    setChartVisible(false);
+    setChartVisible(true);
     clearHistoricalChartData();
     await fetchHistoricalData(selectedTimeframe, startDate, endDate);
     setPreviousTimeframe(selectedTimeframe);
