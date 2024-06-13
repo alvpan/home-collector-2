@@ -19,7 +19,7 @@ interface ChartData {
   series: { name: string, data: number[] }[]
 }
 
-const HistoricalDataChart: React.FC<{ chartData: ChartData, onTimeframeChange: (timeframe: string) => void, selectedTimeframe: string, onRefresh: () => void, isVisible: boolean, startDate: Date | null, endDate: Date | null, setStartDate: (date: Date | null) => void, setEndDate: (date: Date | null) => void }> = ({ chartData, onTimeframeChange, selectedTimeframe, onRefresh, isVisible, startDate, endDate, setStartDate, setEndDate }) => {
+const HistoricalDataChart: React.FC<{ chartData: ChartData, onTimeframeChange: (timeframe: string) => void, selectedTimeframe: string, onRefresh: () => void, startDate: Date | null, endDate: Date | null, setStartDate: (date: Date | null) => void, setEndDate: (date: Date | null) => void }> = ({ chartData, onTimeframeChange, selectedTimeframe, onRefresh, startDate, endDate, setStartDate, setEndDate }) => {
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
   const chartRef = useRef<any>(null);
 
@@ -93,7 +93,7 @@ const HistoricalDataChart: React.FC<{ chartData: ChartData, onTimeframeChange: (
           Refresh Chart
         </button>
       </div>
-      {isVisible && (
+      {chartData.series[0].data.length > 0 && (
         <Chart
           ref={chartRef}
           options={chartData.options}
@@ -354,7 +354,6 @@ export default function Home() {
   };
 
   const handleRefreshClick = async () => {
-    clearHistoricalChartData();
     await fetchHistoricalData(selectedTimeframe, startDate, endDate);
   };
 
@@ -461,7 +460,6 @@ export default function Home() {
             onTimeframeChange={handleTimeframeChange}
             selectedTimeframe={selectedTimeframe}
             onRefresh={handleRefreshClick}
-            isVisible={shouldShowHistoricalData()}
             startDate={startDate}
             endDate={endDate}
             setStartDate={setStartDate}
