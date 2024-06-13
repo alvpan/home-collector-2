@@ -24,7 +24,7 @@ const HistoricalData: React.FC<{ chartData: ChartData, onTimeframeChange: (timef
   const chartRef = useRef<any>(null);
 
   const buttonStyle = "bg-gray-700 hover:bg-black text-white py-2 px-4 rounded w-48 h-12";
-  const datePickerStyle = "bg-white border border-gray-300 rounded py-2 px-4 text-black w-48";
+  const datePickerStyle = "bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full";
 
   useEffect(() => {
     if (chartRef.current && chartData.series[0].data.length > 0) {
@@ -38,7 +38,7 @@ const HistoricalData: React.FC<{ chartData: ChartData, onTimeframeChange: (timef
 
   return (
     <div>
-      <div className="flex space-x-4 mb-4">
+      <div className="flex flex-col space-y-4 mb-4">
         <div className="relative">
           <button className={`${buttonStyle}`} onClick={() => setTimeframeDropdownVisible(prev => !prev)}>
             {selectedTimeframe || "Timeframe"}
@@ -63,34 +63,38 @@ const HistoricalData: React.FC<{ chartData: ChartData, onTimeframeChange: (timef
           )}
         </div>
         {selectedTimeframe === "custom" && (
-          <div className="relative flex space-x-2 items-center">
-            <DatePicker
-              selected={startDate}
-              onChange={(date: Date | null) => setStartDate(date)}
-              selectsStart
-              startDate={startDate}
-              endDate={endDate}
-              maxDate={new Date()}
-              dateFormat="dd MMMM yyyy"
-              placeholderText="Start Date"
-              className={datePickerStyle}
-              showPopperArrow={false}
-              shouldCloseOnSelect={false}
-            />
-            <DatePicker
-              selected={endDate}
-              onChange={(date: Date | null) => setEndDate(date)}
-              selectsEnd
-              startDate={startDate}
-              endDate={endDate}
-              minDate={startDate}
-              maxDate={new Date()}
-              dateFormat="dd MMMM yyyy"
-              placeholderText="End Date"
-              className={datePickerStyle}
-              showPopperArrow={false}
-              shouldCloseOnSelect={false}
-            />
+          <div className="relative flex flex-col space-y-2 items-start w-48">
+            <div className="w-48 h-12">
+              <DatePicker
+                selected={startDate}
+                onChange={(date: Date | null) => setStartDate(date)}
+                selectsStart
+                startDate={startDate}
+                endDate={endDate}
+                maxDate={new Date()}
+                dateFormat="dd MMMM yyyy"
+                placeholderText="Start Date"
+                className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
+                showPopperArrow={false}
+                shouldCloseOnSelect={false}
+              />
+            </div>
+            <div className="w-48 h-12">
+              <DatePicker
+                selected={endDate}
+                onChange={(date: Date | null) => setEndDate(date)}
+                selectsEnd
+                startDate={startDate}
+                endDate={endDate}
+                minDate={startDate}
+                maxDate={new Date()}
+                dateFormat="dd MMMM yyyy"
+                placeholderText="End Date"
+                className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
+                showPopperArrow={false}
+                shouldCloseOnSelect={false}
+              />
+            </div>
           </div>
         )}
         <button className={`${buttonStyle} border-2 border-orange-500 hover:border-transparent hover:text-white`} onClick={onRefresh}>
@@ -412,13 +416,6 @@ export default function Home() {
     setHistoricalDataChartLoaded(false);
   };
 
-  const handleSeePricesClick = async () => {
-    setActiveHeaderButton('Historical Data');
-    clearCharts();
-    setChartVisible(false);
-    setHistoricalDataChartLoaded(false);
-  };
-
   const handleHeaderButtonClick = async (buttonName: string) => {
     setActiveHeaderButton(buttonName);
     setChartVisible(false);
@@ -464,12 +461,6 @@ export default function Home() {
     textDecorationThickness: activeHeaderButton === buttonName ? '2px' : '0px',
     fontWeight: activeHeaderButton === buttonName ? 'bold' : 'normal',
   });
-
-  const shouldShowSeePricesButton = () => {
-    if (selectedCity === "City") return false;
-    if ((selectedCity === "Athens" || selectedCity === "Thessaloniki") && selectedArea === "Area") return false;
-    return true;
-  };
 
   const shouldShowHistoricalData = () => {
     return selectedCity !== "City" && (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "Area");
@@ -572,7 +563,7 @@ export default function Home() {
             style={headerButtonStyle('Historical Data')}
             onClick={() => handleHeaderButtonClick('Historical Data')}
           >
-            Historical Data
+            Data Graph
           </button>
           <button
             style={headerButtonStyle('Compare Prices')}
@@ -656,11 +647,69 @@ export default function Home() {
                 )}
               </div>
             )}
-            {shouldShowSeePricesButton() && (
-              <button onClick={handleSeePricesClick} className={`${buttonStyle} bg-orange-700 hover:bg-orange-600`}>
-                See Prices
+            <div className="flex flex-col space-y-4 mt-4">
+              <div className="relative">
+                <button className={`${buttonStyle}`} onClick={() => setTimeframeDropdownVisible(prev => !prev)}>
+                  {selectedTimeframe || "Timeframe"}
+                </button>
+                {timeframeDropdownVisible && (
+                  <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+                    <ul className="py-1 text-black">
+                      {["last week", "last month", "last 6 months", "last year", "ever", "custom"].map((timeframe) => (
+                        <li
+                          key={timeframe}
+                          className="px-4 py-2 hover:bg-gray-200 cursor-pointer text-black"
+                          onClick={() => {
+                            handleTimeframeChange(timeframe);
+                            setTimeframeDropdownVisible(false);
+                          }}
+                        >
+                          {timeframe}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+              {selectedTimeframe === "custom" && (
+                <div className="relative flex flex-col space-y-2 items-start w-48">
+                  <div className="w-48 h-12">
+                    <DatePicker
+                      selected={startDate}
+                      onChange={(date: Date | null) => setStartDate(date)}
+                      selectsStart
+                      startDate={startDate}
+                      endDate={endDate}
+                      maxDate={new Date()}
+                      dateFormat="dd MMMM yyyy"
+                      placeholderText="Start Date"
+                      className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
+                      showPopperArrow={false}
+                      shouldCloseOnSelect={false}
+                    />
+                  </div>
+                  <div className="w-48 h-12">
+                    <DatePicker
+                      selected={endDate}
+                      onChange={(date: Date | null) => setEndDate(date)}
+                      selectsEnd
+                      startDate={startDate}
+                      endDate={endDate}
+                      minDate={startDate}
+                      maxDate={new Date()}
+                      dateFormat="dd MMMM yyyy"
+                      placeholderText="End Date"
+                      className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
+                      showPopperArrow={false}
+                      shouldCloseOnSelect={false}
+                    />
+                  </div>
+                </div>
+              )}
+              <button className={`${buttonStyle} border-2 border-orange-500 hover:border-transparent hover:text-white`} onClick={handleRefreshClick}>
+                Refresh Chart
               </button>
-            )}
+            </div>
           </div>
           <div style={chartContainerStyle}>
             {renderContent()}
