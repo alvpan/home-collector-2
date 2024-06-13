@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useRef, CSSProperties } from "react";
 import dynamic from 'next/dynamic';
 import { ApexOptions } from 'apexcharts';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -26,10 +28,12 @@ const LatestPrices: React.FC<{ chartData: ChartData }> = ({ chartData }) => (
   />
 );
 
-const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface: number) => void, onTimeframeChange: (timeframe: string) => void, selectedSurface: number | null, selectedTimeframe: string, onRefresh: () => void, isVisible: boolean }> = ({ chartData, onSurfaceChange, onTimeframeChange, selectedSurface, selectedTimeframe, onRefresh, isVisible }) => {
-  const [surfaceDropdownVisible, setSurfaceDropdownVisible] = useState(false);
+const HistoricalData: React.FC<{ chartData: ChartData, onTimeframeChange: (timeframe: string) => void, selectedTimeframe: string, onRefresh: () => void, startDate: Date | null, endDate: Date | null, setStartDate: (date: Date | null) => void, setEndDate: (date: Date | null) => void, isVisible: boolean }> = ({ chartData, onTimeframeChange, selectedTimeframe, onRefresh, startDate, endDate, setStartDate, setEndDate, isVisible }) => {
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
   const chartRef = useRef<any>(null);
+
+  const buttonStyle = "bg-gray-700 hover:bg-black text-white py-2 px-4 rounded w-48 h-12";
+  const datePickerStyle = "bg-white border border-gray-300 rounded py-2 px-4 text-black w-48";
 
   useEffect(() => {
     if (chartRef.current && chartData.series[0].data.length > 0) {
@@ -45,36 +49,13 @@ const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface
     <div>
       <div className="flex space-x-4 mb-4">
         <div className="relative">
-          <button className="bg-gray-700 hover:bg-black text-white py-2 px-4 rounded" onClick={() => setSurfaceDropdownVisible(prev => !prev)}>
-            {selectedSurface ? selectedSurface + " sqm" : "Surface"}
-          </button>
-          {surfaceDropdownVisible && (
-            <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
-              <ul className="py-1 text-black">
-                {Array.from({ length: 99 }, (_, i) => (i + 2) * 5).map((surface) => (
-                  <li
-                    key={surface}
-                    className="px-4 py-2 hover:bg-gray-200 cursor-pointer text-black"
-                    onClick={() => {
-                      onSurfaceChange(surface);
-                      setSurfaceDropdownVisible(false);
-                    }}
-                  >
-                    {surface}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-        <div className="relative">
-          <button className="bg-gray-700 hover:bg-black text-white py-2 px-4 rounded" onClick={() => setTimeframeDropdownVisible(prev => !prev)}>
+          <button className={`${buttonStyle}`} onClick={() => setTimeframeDropdownVisible(prev => !prev)}>
             {selectedTimeframe || "Timeframe"}
           </button>
           {timeframeDropdownVisible && (
             <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
               <ul className="py-1 text-black">
-                {["last week", "last month", "last 6 months", "last year", "ever"].map((timeframe) => (
+                {["last week", "last month", "last 6 months", "last year", "ever", "custom"].map((timeframe) => (
                   <li
                     key={timeframe}
                     className="px-4 py-2 hover:bg-gray-200 cursor-pointer text-black"
@@ -90,17 +71,51 @@ const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface
             </div>
           )}
         </div>
-        <button className="bg-transparent hover:bg-black text-black py-2 px-4 rounded border-2 border-orange-500 hover:border-transparent hover:text-white" onClick={onRefresh}>
+        {selectedTimeframe === "custom" && (
+          <div className="relative flex space-x-2 items-center">
+            <DatePicker
+              selected={startDate}
+              onChange={(date: Date | null) => setStartDate(date)}
+              selectsStart
+              startDate={startDate}
+              endDate={endDate}
+              maxDate={new Date()}
+              dateFormat="dd MMMM yyyy"
+              placeholderText="Start Date"
+              className={datePickerStyle}
+              showPopperArrow={false}
+              shouldCloseOnSelect={false}
+            />
+            <DatePicker
+              selected={endDate}
+              onChange={(date: Date | null) => setEndDate(date)}
+              selectsEnd
+              startDate={startDate}
+              endDate={endDate}
+              minDate={startDate}
+              maxDate={new Date()}
+              dateFormat="dd MMMM yyyy"
+              placeholderText="End Date"
+              className={datePickerStyle}
+              showPopperArrow={false}
+              shouldCloseOnSelect={false}
+            />
+          </div>
+        )}
+        <button className={`${buttonStyle} border-2 border-orange-500 hover:border-transparent hover:text-white`} onClick={onRefresh}>
           Refresh Chart
         </button>
       </div>
-      <Chart
-        ref={chartRef}
-        options={chartData.options}
-        series={chartData.series}
-        type="area"
-        height="400"
-      />
+      {chartData.series[0].data.length > 0 && (
+        <Chart
+          ref={chartRef}
+          options={chartData.options}
+          series={chartData.series}
+          type="area"
+          height={400}
+          width="100%"
+        />
+      )}
     </div>
   );
 };
@@ -289,6 +304,9 @@ export default function Home() {
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
   const [renderHistoricalDataChart, setRenderHistoricalDataChart] = useState(true);
 
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+
   useEffect(() => {
     const fetchCities = async () => {
       try {
@@ -344,14 +362,19 @@ export default function Home() {
     };
   };
 
-  const fetchHistoricalData = async (surface: number, timeframe: string) => {
+  const fetchHistoricalData = async (timeframe: string) => {
     const city = selectedCity;
     const area = (city === "Athens" || city === "Thessaloniki") ? selectedArea : city;
 
     try {
       setHistoricalDataChartData(initialHistoricalChartData);
 
-      const response = await fetch(`/api/getHistoricalData?action=${action}&city=${city}&area=${area}&surface=${surface}&timeframe=${timeframe}`);
+      let url = `/api/getHistoricalData?action=${action}&city=${city}&area=${area}&timeframe=${timeframe}`;
+      if (timeframe === "custom" && startDate && endDate) {
+        url += `&startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`;
+      }
+
+      const response = await fetch(url);
       const data: CityData[] = await response.json();
       console.log(data);
 
@@ -490,7 +513,6 @@ export default function Home() {
     setChartVisible(false);
 
     if (buttonName === 'Historical Data') {
-      setSelectedSurface(null);
       setSelectedTimeframe("");
       setHistoricalDataChartLoaded(false);
     } else if (buttonName === 'Latest Prices' && latestPricesChartLoaded) {
@@ -499,20 +521,15 @@ export default function Home() {
     }
   };
 
-  const handleSurfaceChange = (surface: number) => {
-    setSelectedSurface(surface);
-  };
-
   const handleTimeframeChange = (timeframe: string) => {
     setSelectedTimeframe(timeframe);
   };
 
   const handleRefreshClick = async () => {
-    if (selectedSurface !== previousSurface || selectedTimeframe !== previousTimeframe) {
+    if (selectedTimeframe !== previousTimeframe) {
       setChartVisible(false);
       clearHistoricalChartData();
-      await fetchHistoricalData(selectedSurface as number, selectedTimeframe);
-      setPreviousSurface(selectedSurface);
+      await fetchHistoricalData(selectedTimeframe);
       setPreviousTimeframe(selectedTimeframe);
       setChartVisible(true);
     }
@@ -620,11 +637,13 @@ export default function Home() {
           renderHistoricalDataChart &&
           <HistoricalData
             chartData={historicalDataChartData}
-            onSurfaceChange={handleSurfaceChange}
             onTimeframeChange={handleTimeframeChange}
-            selectedSurface={selectedSurface}
             selectedTimeframe={selectedTimeframe}
             onRefresh={handleRefreshClick}
+            startDate={startDate}
+            endDate={endDate}
+            setStartDate={setStartDate}
+            setEndDate={setEndDate}
             isVisible={shouldShowHistoricalData()}
           />
         );
