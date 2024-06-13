@@ -362,13 +362,13 @@ export default function Home() {
   const fetchHistoricalData = async (timeframe: string) => {
     const city = selectedCity;
     const area = (city === "Athens" || city === "Thessaloniki") ? selectedArea : city;
-
+  
     try {
       setHistoricalDataChartData(initialHistoricalChartData);
-
+  
       let fetchStartDate = '';
       let fetchEndDate = new Date().toISOString();
-
+  
       if (timeframe === "last week") {
         fetchStartDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
       } else if (timeframe === "last month") {
@@ -383,15 +383,15 @@ export default function Home() {
         fetchStartDate = startDate.toISOString();
         fetchEndDate = endDate.toISOString();
       }
-
+  
       const response = await fetch(`/api/getHistoricalPpm?action=${action}&city=${city}&area=${area}&startDate=${fetchStartDate}&endDate=${fetchEndDate}`);
-      const data: CityData[] = await response.json();
+      const data = await response.json();
       console.log(data);
-
-      const dates = data.map((item: CityData) => item.entry_date);
-      const prices = data.map((item: CityData) => item.price);
+  
+      const dates = data.map((item: { date: string }) => item.date);
+      const prices = data.map((item: { pricePerSqm: number }) => item.pricePerSqm);
       const { min, max } = addYAxisPadding(prices);
-
+  
       setHistoricalDataChartData(prevData => ({
         ...prevData,
         options: {
@@ -407,20 +407,21 @@ export default function Home() {
           },
         },
         series: [{ 
-          name: '€', 
+          name: '€ per m²', 
           data: prices
         }]
       }));
-
+  
       setRenderHistoricalDataChart(false);
       setTimeout(() => setRenderHistoricalDataChart(true), 0);
-
+  
       setChartVisible(true);
       setHistoricalDataChartLoaded(true);
     } catch (error) {
       console.error("Error fetching historical data:", error);
     }
   };
+  
 
   const fetchLatestPricesData = async () => {
     const city = selectedCity;
