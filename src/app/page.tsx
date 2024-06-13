@@ -192,10 +192,7 @@ export default function Home() {
   const [historicalDataChartData, setHistoricalDataChartData] = useState<ChartData>(initialHistoricalChartData);
 
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>("");
-  const [previousTimeframe, setPreviousTimeframe] = useState<string>("");
-  const [previousAction, setPreviousAction] = useState("Rent");
-  const [previousCity, setPreviousCity] = useState("City");
-  const [previousArea, setPreviousArea] = useState("Area");
+  const [previousValues, setPreviousValues] = useState({action: "", city: "", area: "", timeframe: "", startDate: null as Date | null, endDate: null as Date | null});
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
   const [renderHistoricalDataChart, setRenderHistoricalDataChart] = useState(true);
 
@@ -305,6 +302,15 @@ export default function Home() {
 
       setChartVisible(true);
       setHistoricalDataChartLoaded(true);
+
+      setPreviousValues({
+        action,
+        city: selectedCity,
+        area: selectedArea,
+        timeframe: selectedTimeframe,
+        startDate,
+        endDate
+      });
     } catch (error) {
       console.error("Error fetching historical data:", error);
     }
@@ -368,21 +374,38 @@ export default function Home() {
   };
 
   const handleRefreshClick = async () => {
-    if (selectedTimeframe && selectedCity !== "City" && (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "Area")) {
+    const currentValues = {
+      action,
+      city: selectedCity,
+      area: selectedArea,
+      timeframe: selectedTimeframe,
+      startDate,
+      endDate
+    };
+
+    if (
+      selectedTimeframe && selectedCity !== "City" &&
+      (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "Area") &&
+      (
+        currentValues.action !== previousValues.action ||
+        currentValues.city !== previousValues.city ||
+        currentValues.area !== previousValues.area ||
+        currentValues.timeframe !== previousValues.timeframe ||
+        currentValues.startDate !== previousValues.startDate ||
+        currentValues.endDate !== previousValues.endDate
+      )
+    ) {
       if (selectedTimeframe === "custom" && (!startDate || !endDate)) {
         alert("Please select both start and end dates for custom timeframe.");
         return;
       }
 
-      if (selectedTimeframe !== previousTimeframe) {
-        setChartVisible(false);
-        clearHistoricalChartData();
-        await fetchHistoricalData(selectedTimeframe);
-        setPreviousTimeframe(selectedTimeframe);
-        setChartVisible(true);
-      }
+      setChartVisible(false);
+      clearHistoricalChartData();
+      await fetchHistoricalData(selectedTimeframe);
+      setChartVisible(true);
     } else {
-      alert("Please select a valid City, Area, and Timeframe before refreshing the chart.");
+      alert("Please select valid inputs and ensure that they have changed before refreshing the chart.");
     }
   };
 
