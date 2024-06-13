@@ -32,10 +32,6 @@ const HistoricalData: React.FC<{ chartData: ChartData, onTimeframeChange: (timef
     }
   }, [chartData]);
 
-  if (!isVisible) {
-    return null;
-  }
-
   return (
     <div>
       <div className="flex space-x-4 mb-4">
@@ -97,13 +93,15 @@ const HistoricalData: React.FC<{ chartData: ChartData, onTimeframeChange: (timef
           Refresh Chart
         </button>
       </div>
-      <Chart
-        ref={chartRef}
-        options={chartData.options}
-        series={chartData.series}
-        type="area"
-        height="400"
-      />
+      {isVisible && (
+        <Chart
+          ref={chartRef}
+          options={chartData.options}
+          series={chartData.series}
+          type="area"
+          height="400"
+        />
+      )}
     </div>
   );
 };
@@ -210,7 +208,7 @@ export default function Home() {
   const [areas, setAreas] = useState<string[]>([]);
   const [selectedArea, setSelectedArea] = useState("Area");
   const [activeHeaderButton, setActiveHeaderButton] = useState<string>('Historical Data');
-  const [isChartVisible, setChartVisible] = useState(false);
+  const [isChartVisible, setChartVisible] = useState(true);
   const [historicalDataChartLoaded, setHistoricalDataChartLoaded] = useState(false);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -250,11 +248,7 @@ export default function Home() {
   const [historicalDataChartData, setHistoricalDataChartData] = useState<ChartData>(initialHistoricalChartData);
 
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>("");
-  const [previousTimeframe, setPreviousTimeframe] = useState<string>("");
-  const [previousAction, setPreviousAction] = useState("Rent");
-  const [previousCity, setPreviousCity] = useState("City");
-  const [previousArea, setPreviousArea] = useState("Area");
-  const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
+
   const [renderHistoricalDataChart, setRenderHistoricalDataChart] = useState(true);
 
   useEffect(() => {
@@ -459,7 +453,6 @@ export default function Home() {
   const handleRefreshClick = async () => {
     clearHistoricalChartData();
     await fetchHistoricalData(selectedTimeframe, startDate, endDate);
-    setPreviousTimeframe(selectedTimeframe);
   };
 
   const filteredCities = cities.filter(city =>
