@@ -37,80 +37,68 @@ const HistoricalData: React.FC<{ chartData: ChartData, onTimeframeChange: (timef
   }
 
   return (
-    <div>
-      <div className="flex flex-col space-y-4 mb-4">
-        <div className="relative">
-          <button className={`${buttonStyle}`} onClick={() => setTimeframeDropdownVisible(prev => !prev)}>
-            {selectedTimeframe || "Timeframe"}
-          </button>
-          {timeframeDropdownVisible && (
-            <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
-              <ul className="py-1 text-black">
-                {["last week", "last month", "last 6 months", "last year", "ever", "custom"].map((timeframe) => (
-                  <li
-                    key={timeframe}
-                    className="px-4 py-2 hover:bg-gray-200 cursor-pointer text-black"
-                    onClick={() => {
-                      onTimeframeChange(timeframe);
-                      setTimeframeDropdownVisible(false);
-                    }}
-                  >
-                    {timeframe}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-        {selectedTimeframe === "custom" && (
-          <div className="relative flex flex-col space-y-2 items-start w-48">
-            <div className="w-48 h-12">
-              <DatePicker
-                selected={startDate}
-                onChange={(date: Date | null) => setStartDate(date)}
-                selectsStart
-                startDate={startDate}
-                endDate={endDate}
-                maxDate={new Date()}
-                dateFormat="dd MMMM yyyy"
-                placeholderText="Start Date"
-                className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
-                showPopperArrow={false}
-                shouldCloseOnSelect={false}
-              />
-            </div>
-            <div className="w-48 h-12">
-              <DatePicker
-                selected={endDate}
-                onChange={(date: Date | null) => setEndDate(date)}
-                selectsEnd
-                startDate={startDate}
-                endDate={endDate}
-                minDate={startDate}
-                maxDate={new Date()}
-                dateFormat="dd MMMM yyyy"
-                placeholderText="End Date"
-                className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
-                showPopperArrow={false}
-                shouldCloseOnSelect={false}
-              />
-            </div>
+    <div className="flex flex-col space-y-4">
+      <div className="relative">
+        <button className={`${buttonStyle}`} onClick={() => setTimeframeDropdownVisible(prev => !prev)}>
+          {selectedTimeframe || "Timeframe"}
+        </button>
+        {timeframeDropdownVisible && (
+          <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+            <ul className="py-1 text-black">
+              {["last week", "last month", "last 6 months", "last year", "ever", "custom"].map((timeframe) => (
+                <li
+                  key={timeframe}
+                  className="px-4 py-2 hover:bg-gray-200 cursor-pointer text-black"
+                  onClick={() => {
+                    onTimeframeChange(timeframe);
+                    setTimeframeDropdownVisible(false);
+                  }}
+                >
+                  {timeframe}
+                </li>
+              ))}
+            </ul>
           </div>
         )}
-        <button className={`${buttonStyle} border-2 border-orange-500 hover:border-transparent hover:text-white`} onClick={onRefresh}>
-          Refresh Chart
-        </button>
       </div>
-      {chartData.series[0].data.length > 0 && (
-        <Chart
-          ref={chartRef}
-          options={chartData.options}
-          series={chartData.series}
-          type="area"
-          height={400}
-          width="100%"
-        />
+      {selectedTimeframe === "custom" && (
+        <div className="relative flex flex-col space-y-2 items-start w-48">
+          <div className="w-48 h-12">
+            <DatePicker
+              selected={startDate}
+              onChange={(date: Date | null) => setStartDate(date)}
+              selectsStart
+              startDate={startDate}
+              endDate={endDate}
+              maxDate={new Date()}
+              dateFormat="dd MMMM yyyy"
+              placeholderText="Start Date"
+              className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
+              showPopperArrow={false}
+              shouldCloseOnSelect={false}
+            />
+          </div>
+          <div className="w-48 h-12">
+            <DatePicker
+              selected={endDate}
+              onChange={(date: Date | null) => setEndDate(date)}
+              selectsEnd
+              startDate={startDate}
+              endDate={endDate}
+              minDate={startDate}
+              maxDate={new Date()}
+              dateFormat="dd MMMM yyyy"
+              placeholderText="End Date"
+              className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
+              showPopperArrow={false}
+              shouldCloseOnSelect={false}
+            />
+          </div>
+        </div>
       )}
+      <button className={`${buttonStyle} border-2 border-orange-500 hover:border-transparent hover:text-white`} onClick={onRefresh}>
+        Refresh Chart
+      </button>
     </div>
   );
 };
