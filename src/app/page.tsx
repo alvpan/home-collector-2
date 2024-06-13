@@ -19,7 +19,7 @@ interface ChartData {
   series: { name: string, data: number[] }[]
 }
 
-const HistoricalData: React.FC<{ chartData: ChartData, onTimeframeChange: (timeframe: string) => void, selectedTimeframe: string, onRefresh: () => void, isVisible: boolean, startDate: Date | null, endDate: Date | null, setStartDate: (date: Date | null) => void, setEndDate: (date: Date | null) => void }> = ({ chartData, onTimeframeChange, selectedTimeframe, onRefresh, isVisible, startDate, endDate, setStartDate, setEndDate }) => {
+const HistoricalDataChart: React.FC<{ chartData: ChartData, onTimeframeChange: (timeframe: string) => void, selectedTimeframe: string, onRefresh: () => void, isVisible: boolean, startDate: Date | null, endDate: Date | null, setStartDate: (date: Date | null) => void, setEndDate: (date: Date | null) => void }> = ({ chartData, onTimeframeChange, selectedTimeframe, onRefresh, isVisible, startDate, endDate, setStartDate, setEndDate }) => {
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
   const chartRef = useRef<any>(null);
 
@@ -103,97 +103,6 @@ const HistoricalData: React.FC<{ chartData: ChartData, onTimeframeChange: (timef
         />
       )}
     </div>
-  );
-};
-
-const ComparePrices: React.FC = () => {
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    const charCode = event.charCode;
-    if (charCode < 48 || charCode > 57) {
-      event.preventDefault();
-    }
-  };
-
-  const formatNumber = (value: string) => {
-    return value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  };
-
-  const handleSurfaceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value.replace(/\./g, '');
-    event.target.value = formatNumber(value);
-  };
-
-  const handlePriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value.replace(/\./g, '');
-    event.target.value = formatNumber(value);
-  };
-
-  const inputStyle = {
-    WebkitAppearance: "none" as const,
-    MozAppearance: "textfield" as const,
-    fontWeight: "600",
-    paddingRight: "2.5rem",
-    borderColor: "gray",
-    backgroundColor: "white",
-    outline: "none",
-    borderWidth: "2px",
-    width: "100%",
-  };
-
-  const wrapperStyle: CSSProperties = {
-    position: "relative",
-    display: "flex",
-    alignItems: "center",
-    width: "192px",
-  };
-
-  const symbolStyle: CSSProperties = {
-    position: "absolute",
-    right: "0.5rem",
-    color: "gray", 
-    pointerEvents: "none",
-  };
-
-  const customStyles = `
-    input:focus {
-      border-color: orange !important; // Change border color on focus
-      border-width: 4px !important; // Increase border width on focus
-    }
-  `;
-
-  return (
-    <>
-      <style>{customStyles}</style> {/* Add the custom styles */}
-      <div className="flex flex-col space-y-2 max-w-xs">
-        <div style={wrapperStyle}>
-          <input
-            type="text"
-            inputMode="numeric"
-            placeholder="Enter Surface"
-            className="p-2 border rounded text-orange-500"
-            onKeyPress={handleKeyPress}
-            onChange={handleSurfaceChange}
-            style={inputStyle}
-          />
-          <span style={symbolStyle}>m²</span>
-        </div>
-        <div style={wrapperStyle}>
-          <input
-            type="text"
-            inputMode="numeric"
-            placeholder="Enter Price"
-            className="p-2 border rounded text-orange-500"
-            onKeyPress={handleKeyPress}
-            onChange={handlePriceChange}
-            style={inputStyle}
-          />
-          <span style={symbolStyle}>€</span>
-        </div>
-        <button className="bg-transparent hover:bg-black text-black py-2 px-4 rounded border-2 border-orange-500 hover:border-transparent hover:text-white w-48 h-12">
-          Evaluate
-        </button>
-      </div>
-    </>
   );
 };
 
@@ -547,7 +456,7 @@ export default function Home() {
       case 'Historical Data':
         return (
           renderHistoricalDataChart &&
-          <HistoricalData
+          <HistoricalDataChart
             chartData={historicalDataChartData}
             onTimeframeChange={handleTimeframeChange}
             selectedTimeframe={selectedTimeframe}
@@ -559,8 +468,6 @@ export default function Home() {
             setEndDate={setEndDate}
           />
         );
-      case 'Compare Prices':
-        return <ComparePrices />;
       default:
         return null;
     }
@@ -579,12 +486,6 @@ export default function Home() {
             onClick={() => handleHeaderButtonClick('Historical Data')}
           >
             Historical Data
-          </button>
-          <button
-            style={headerButtonStyle('Compare Prices')}
-            onClick={() => handleHeaderButtonClick('Compare Prices')}
-          >
-            Compare Prices
           </button>
         </div>
       </header>
