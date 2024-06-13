@@ -293,14 +293,11 @@ export default function Home() {
 
   const [historicalDataChartData, setHistoricalDataChartData] = useState<ChartData>(initialHistoricalChartData);
 
-  const [selectedSurface, setSelectedSurface] = useState<number | null>(null);
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>("");
-  const [previousSurface, setPreviousSurface] = useState<number | null>(null);
   const [previousTimeframe, setPreviousTimeframe] = useState<string>("");
   const [previousAction, setPreviousAction] = useState("Rent");
   const [previousCity, setPreviousCity] = useState("City");
   const [previousArea, setPreviousArea] = useState("Area");
-  const [surfaceDropdownVisible, setSurfaceDropdownVisible] = useState(false);
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
   const [renderHistoricalDataChart, setRenderHistoricalDataChart] = useState(true);
 
@@ -369,12 +366,25 @@ export default function Home() {
     try {
       setHistoricalDataChartData(initialHistoricalChartData);
 
-      let url = `/api/getHistoricalData?action=${action}&city=${city}&area=${area}&timeframe=${timeframe}`;
-      if (timeframe === "custom" && startDate && endDate) {
-        url += `&startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`;
+      let fetchStartDate = '';
+      let fetchEndDate = new Date().toISOString();
+
+      if (timeframe === "last week") {
+        fetchStartDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+      } else if (timeframe === "last month") {
+        fetchStartDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+      } else if (timeframe === "last 6 months") {
+        fetchStartDate = new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000).toISOString();
+      } else if (timeframe === "last year") {
+        fetchStartDate = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString();
+      } else if (timeframe === "ever") {
+        fetchStartDate = new Date(0).toISOString();
+      } else if (timeframe === "custom" && startDate && endDate) {
+        fetchStartDate = startDate.toISOString();
+        fetchEndDate = endDate.toISOString();
       }
 
-      const response = await fetch(url);
+      const response = await fetch(`/api/getHistoricalPpm?action=${action}&city=${city}&area=${area}&startDate=${fetchStartDate}&endDate=${fetchEndDate}`);
       const data: CityData[] = await response.json();
       console.log(data);
 
