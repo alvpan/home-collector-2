@@ -2,8 +2,6 @@
 
 import React, { useState, useEffect, useRef, CSSProperties } from "react";
 import dynamic from 'next/dynamic';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import { ApexOptions } from 'apexcharts';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
@@ -28,12 +26,10 @@ const LatestPrices: React.FC<{ chartData: ChartData }> = ({ chartData }) => (
   />
 );
 
-const HistoricalDataChart: React.FC<{ chartData: ChartData, onTimeframeChange: (timeframe: string) => void, selectedTimeframe: string, onRefresh: () => void, startDate: Date | null, endDate: Date | null, setStartDate: (date: Date | null) => void, setEndDate: (date: Date | null) => void }> = ({ chartData, onTimeframeChange, selectedTimeframe, onRefresh, startDate, endDate, setStartDate, setEndDate }) => {
+const HistoricalData: React.FC<{ chartData: ChartData, onSurfaceChange: (surface: number) => void, onTimeframeChange: (timeframe: string) => void, selectedSurface: number | null, selectedTimeframe: string, onRefresh: () => void, isVisible: boolean }> = ({ chartData, onSurfaceChange, onTimeframeChange, selectedSurface, selectedTimeframe, onRefresh, isVisible }) => {
+  const [surfaceDropdownVisible, setSurfaceDropdownVisible] = useState(false);
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
   const chartRef = useRef<any>(null);
-
-  const buttonStyle = "bg-gray-700 hover:bg-black text-white py-2 px-4 rounded w-48 h-12";
-  const datePickerStyle = "bg-white border border-gray-300 rounded py-2 px-4 text-black w-48";
 
   useEffect(() => {
     if (chartRef.current && chartData.series[0].data.length > 0) {
@@ -41,17 +37,44 @@ const HistoricalDataChart: React.FC<{ chartData: ChartData, onTimeframeChange: (
     }
   }, [chartData]);
 
+  if (!isVisible) {
+    return null;
+  }
+
   return (
     <div>
       <div className="flex space-x-4 mb-4">
         <div className="relative">
-          <button className={`${buttonStyle}`} onClick={() => setTimeframeDropdownVisible(prev => !prev)}>
+          <button className="bg-gray-700 hover:bg-black text-white py-2 px-4 rounded" onClick={() => setSurfaceDropdownVisible(prev => !prev)}>
+            {selectedSurface ? selectedSurface + " sqm" : "Surface"}
+          </button>
+          {surfaceDropdownVisible && (
+            <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+              <ul className="py-1 text-black">
+                {Array.from({ length: 99 }, (_, i) => (i + 2) * 5).map((surface) => (
+                  <li
+                    key={surface}
+                    className="px-4 py-2 hover:bg-gray-200 cursor-pointer text-black"
+                    onClick={() => {
+                      onSurfaceChange(surface);
+                      setSurfaceDropdownVisible(false);
+                    }}
+                  >
+                    {surface}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+        <div className="relative">
+          <button className="bg-gray-700 hover:bg-black text-white py-2 px-4 rounded" onClick={() => setTimeframeDropdownVisible(prev => !prev)}>
             {selectedTimeframe || "Timeframe"}
           </button>
           {timeframeDropdownVisible && (
             <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
               <ul className="py-1 text-black">
-                {["last week", "last month", "last 6 months", "last year", "ever", "custom"].map((timeframe) => (
+                {["last week", "last month", "last 6 months", "last year", "ever"].map((timeframe) => (
                   <li
                     key={timeframe}
                     className="px-4 py-2 hover:bg-gray-200 cursor-pointer text-black"
@@ -67,51 +90,17 @@ const HistoricalDataChart: React.FC<{ chartData: ChartData, onTimeframeChange: (
             </div>
           )}
         </div>
-        {selectedTimeframe === "custom" && (
-          <div className="relative flex space-x-2 items-center">
-            <DatePicker
-              selected={startDate}
-              onChange={(date: Date | null) => setStartDate(date)}
-              selectsStart
-              startDate={startDate}
-              endDate={endDate}
-              maxDate={new Date()}
-              dateFormat="dd MMMM yyyy"
-              placeholderText="Start Date"
-              className={datePickerStyle}
-              showPopperArrow={false}
-              shouldCloseOnSelect={false}
-            />
-            <DatePicker
-              selected={endDate}
-              onChange={(date: Date | null) => setEndDate(date)}
-              selectsEnd
-              startDate={startDate}
-              endDate={endDate}
-              minDate={startDate}
-              maxDate={new Date()}
-              dateFormat="dd MMMM yyyy"
-              placeholderText="End Date"
-              className={datePickerStyle}
-              showPopperArrow={false}
-              shouldCloseOnSelect={false}
-            />
-          </div>
-        )}
-        <button className={`${buttonStyle} border-2 border-orange-500 hover:border-transparent hover:text-white`} onClick={onRefresh}>
+        <button className="bg-transparent hover:bg-black text-black py-2 px-4 rounded border-2 border-orange-500 hover:border-transparent hover:text-white" onClick={onRefresh}>
           Refresh Chart
         </button>
       </div>
-      {chartData.series[0].data.length > 0 && (
-        <Chart
-          ref={chartRef}
-          options={chartData.options}
-          series={chartData.series}
-          type="area"
-          height={400}
-          width="100%"
-        />
-      )}
+      <Chart
+        ref={chartRef}
+        options={chartData.options}
+        series={chartData.series}
+        type="area"
+        height="400"
+      />
     </div>
   );
 };
@@ -217,17 +206,16 @@ export default function Home() {
   const [cities, setCities] = useState<string[]>([]);
   const [areas, setAreas] = useState<string[]>([]);
   const [selectedArea, setSelectedArea] = useState("Area");
-  const [activeHeaderButton, setActiveHeaderButton] = useState<string>('Historical Data');
-  const [isChartVisible, setChartVisible] = useState(true);
+  const [activeHeaderButton, setActiveHeaderButton] = useState<string>('Latest Prices');
+  const [isChartVisible, setChartVisible] = useState(false);
+  const [latestPricesChartLoaded, setLatestPricesChartLoaded] = useState(false);
   const [historicalDataChartLoaded, setHistoricalDataChartLoaded] = useState(false);
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
 
-  const initialHistoricalChartData: ChartData = {
+  const [latestPricesChartData, setLatestPricesChartData] = useState<ChartData>({
     options: {
       chart: {
         type: 'area',
-        background: '#000000',
+        background: 'transparent',
         toolbar: { show: false },
         zoom: { enabled: false }
       },
@@ -236,29 +224,69 @@ export default function Home() {
         theme: 'dark',
         style: { fontSize: '20px', fontFamily: undefined }
       },
-      markers: { size: 4, colors: ['#FFA500'], strokeColors: '#FFA500', radius: 10, strokeWidth: 5 },
+      markers: { size: 4, colors: ['orange'], strokeColors: 'orange', radius: 10, strokeWidth: 5 },
       stroke: { curve: 'smooth' },
-      dataLabels: { enabled: true, formatter: (val) => `€${val}`, style: { colors: ['#FFFFFF'] } },
+      dataLabels: { enabled: false },
       xaxis: {
         categories: [],
-        labels: { rotate: -45, style: { colors: '#FFFFFF', fontSize: '12px' } }
+        labels: { rotate: -45, style: { colors: 'black', fontSize: '12px' } },
+        title: { text: 'Surface (m²)', style: { fontSize: '16px', color: 'black', fontFamily: 'Consolas' } }
       },
       yaxis: {
         forceNiceScale: true,
-        labels: { style: { colors: '#FFFFFF', fontSize: '12px' } },
-        title: { text: 'Price (€)', style: { fontSize: '16px', color: '#FFFFFF', fontFamily: 'Consolas' } },
+        labels: { style: { colors: 'black', fontSize: '12px' } },
+        title: { text: 'Price (€)', style: { fontSize: '16px', color: 'black', fontFamily: 'Consolas' } },
         min: undefined,
         max: undefined
       },
-      colors: ['#FFA500'],
+      colors: ['orange'],
+    },
+    series: [{ name: '€', data: [] }]
+  });
+
+  const initialHistoricalChartData: ChartData = {
+    options: {
+      chart: {
+        type: 'area',
+        background: 'transparent',
+        toolbar: { show: false },
+        zoom: { enabled: false }
+      },
+      tooltip: {
+        marker: { show: false },
+        theme: 'dark',
+        style: { fontSize: '20px', fontFamily: undefined }
+      },
+      markers: { size: 4, colors: ['orange'], strokeColors: 'orange', radius: 10, strokeWidth: 5 },
+      stroke: { curve: 'smooth' },
+      dataLabels: { enabled: true, formatter: (val) => `€${val}` },
+      xaxis: {
+        categories: [],
+        labels: { rotate: -45, style: { colors: 'black', fontSize: '12px' } }
+      },
+      yaxis: {
+        forceNiceScale: true,
+        labels: { style: { colors: 'black', fontSize: '12px' } },
+        title: { text: 'Price (€)', style: { fontSize: '16px', color: 'black', fontFamily: 'Consolas' } },
+        min: undefined,
+        max: undefined
+      },
+      colors: ['orange'],
     },
     series: [{ name: '€', data: [] }]
   };
 
   const [historicalDataChartData, setHistoricalDataChartData] = useState<ChartData>(initialHistoricalChartData);
 
+  const [selectedSurface, setSelectedSurface] = useState<number | null>(null);
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>("");
-
+  const [previousSurface, setPreviousSurface] = useState<number | null>(null);
+  const [previousTimeframe, setPreviousTimeframe] = useState<string>("");
+  const [previousAction, setPreviousAction] = useState("Rent");
+  const [previousCity, setPreviousCity] = useState("City");
+  const [previousArea, setPreviousArea] = useState("Area");
+  const [surfaceDropdownVisible, setSurfaceDropdownVisible] = useState(false);
+  const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
   const [renderHistoricalDataChart, setRenderHistoricalDataChart] = useState(true);
 
   useEffect(() => {
@@ -277,11 +305,20 @@ export default function Home() {
 
   useEffect(() => {
     if (action !== "Rent" && selectedCity !== "City" && (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "Area")) {
-      setChartVisible(true);
+      setChartVisible(false);
+      setLatestPricesChartLoaded(false);
       setHistoricalDataChartLoaded(false);
       clearCharts();
     }
   }, [action, selectedCity, selectedArea]);
+
+  const clearLatestPricesChartData = () => {
+    setLatestPricesChartData(prevData => ({
+      ...prevData,
+      series: [{ name: '€', data: [] }],
+      options: { ...prevData.options, xaxis: { ...prevData.options.xaxis, categories: [] } }
+    }));
+  };
 
   const clearHistoricalChartData = () => {
     setHistoricalDataChartData(prevData => ({
@@ -292,6 +329,7 @@ export default function Home() {
   };
 
   const clearCharts = () => {
+    clearLatestPricesChartData();
     clearHistoricalChartData();
   };
 
@@ -306,42 +344,14 @@ export default function Home() {
     };
   };
 
-  const calculateStartDate = (timeframe: string) => {
-    const currentDate = new Date();
-    let startDate = new Date();
-
-    switch (timeframe) {
-      case "last week":
-        startDate.setDate(currentDate.getDate() - 7);
-        break;
-      case "last month":
-        startDate.setMonth(currentDate.getMonth() - 1);
-        break;
-      case "last 6 months":
-        startDate.setMonth(currentDate.getMonth() - 6);
-        break;
-      case "last year":
-        startDate.setFullYear(currentDate.getFullYear() - 1);
-        break;
-      case "ever":
-        startDate = new Date(2000, 0, 1);
-        break;
-      default:
-        break;
-    }
-
-    return startDate;
-  };
-
-  const fetchHistoricalData = async (timeframe: string, startDate: Date | null, endDate: Date | null) => {
+  const fetchHistoricalData = async (surface: number, timeframe: string) => {
     const city = selectedCity;
     const area = (city === "Athens" || city === "Thessaloniki") ? selectedArea : city;
 
-    const fetchStartDate = startDate ? startDate.toISOString().split('T')[0] : "";
-    const fetchEndDate = endDate ? endDate.toISOString().split('T')[0] : "";
-
     try {
-      const response = await fetch(`/api/getHistoricalPpm?action=${action}&city=${city}&area=${area}&startDate=${fetchStartDate}&endDate=${fetchEndDate}`);
+      setHistoricalDataChartData(initialHistoricalChartData);
+
+      const response = await fetch(`/api/getHistoricalData?action=${action}&city=${city}&area=${area}&surface=${surface}&timeframe=${timeframe}`);
       const data: CityData[] = await response.json();
       console.log(data);
 
@@ -369,6 +379,9 @@ export default function Home() {
         }]
       }));
 
+      setRenderHistoricalDataChart(false);
+      setTimeout(() => setRenderHistoricalDataChart(true), 0);
+
       setChartVisible(true);
       setHistoricalDataChartLoaded(true);
     } catch (error) {
@@ -376,10 +389,45 @@ export default function Home() {
     }
   };
 
+  const fetchLatestPricesData = async () => {
+    const city = selectedCity;
+    const area = (city === "Athens" || city === "Thessaloniki") ? selectedArea : city;
+
+    try {
+      const response = await fetch(`/api/getPrices?action=${action}&city=${city}&area=${area}`);
+      const data: CityData[] = await response.json();
+      console.log(data);
+
+      const surfaces = data.map((item: CityData) => item.surface);
+      const prices = data.map((item: CityData) => item.price);
+      const { min, max } = addYAxisPadding(prices);
+
+      setLatestPricesChartData(prevData => ({
+        ...prevData,
+        options: {
+          ...prevData.options,
+          xaxis: { ...prevData.options.xaxis, categories: surfaces },
+          yaxis: { 
+            ...prevData.options.yaxis, 
+            min: min,
+            max: max,
+          },
+        },
+        series: [{ name: '€', data: prices }]
+      }));
+
+      setChartVisible(true);
+      setLatestPricesChartLoaded(true);
+    } catch (error) {
+      console.error("Error fetching latest prices data:", error);
+    }
+  };
+
   const handleActionButtonClick = (selectedAction: string) => {
     setAction(selectedAction);
     clearCharts();
-    setChartVisible(true);
+    setChartVisible(false);
+    setLatestPricesChartLoaded(false);
     setHistoricalDataChartLoaded(false);
   };
 
@@ -395,7 +443,8 @@ export default function Home() {
     setSelectedArea("Area");
     setAreaDropdownVisible(false);
     clearCharts();
-    setChartVisible(true);
+    setChartVisible(false);
+    setLatestPricesChartLoaded(false);
     setHistoricalDataChartLoaded(false);
   };
 
@@ -415,47 +464,58 @@ export default function Home() {
     setAreaSearchTerm("");
     setAreaDropdownVisible(false);
     clearCharts();
-    setChartVisible(true);
+    setChartVisible(false);
+    setLatestPricesChartLoaded(false);
     setHistoricalDataChartLoaded(false);
   };
 
   const handleSeePricesClick = async () => {
-    setActiveHeaderButton('Historical Data');
+    setActiveHeaderButton('Latest Prices');
     clearCharts();
-    setChartVisible(true);
+    setChartVisible(false);
+    setLatestPricesChartLoaded(false);
     setHistoricalDataChartLoaded(false);
-    await fetchHistoricalData(selectedTimeframe, startDate, endDate);
+    if (action !== previousAction || selectedCity !== previousCity || selectedArea !== previousArea) {
+      await fetchLatestPricesData();
+      setPreviousAction(action);
+      setPreviousCity(selectedCity);
+      setPreviousArea(selectedArea);
+    }
+
     setHistoricalDataChartData(initialHistoricalChartData);
   };
 
   const handleHeaderButtonClick = async (buttonName: string) => {
     setActiveHeaderButton(buttonName);
-    setChartVisible(true);
+    setChartVisible(false);
 
     if (buttonName === 'Historical Data') {
+      setSelectedSurface(null);
       setSelectedTimeframe("");
       setHistoricalDataChartLoaded(false);
+    } else if (buttonName === 'Latest Prices' && latestPricesChartLoaded) {
+      setChartVisible(true);
+      await fetchLatestPricesData();
     }
+  };
+
+  const handleSurfaceChange = (surface: number) => {
+    setSelectedSurface(surface);
   };
 
   const handleTimeframeChange = (timeframe: string) => {
     setSelectedTimeframe(timeframe);
-
-    if (timeframe === "custom") {
-      setStartDate(null);
-      setEndDate(null);
-    } else if (timeframe === "ever") {
-      setStartDate(new Date(2000, 0, 1));
-      setEndDate(new Date());
-    } else {
-      const calculatedStartDate = calculateStartDate(timeframe);
-      setStartDate(calculatedStartDate);
-      setEndDate(new Date());
-    }
   };
 
   const handleRefreshClick = async () => {
-    await fetchHistoricalData(selectedTimeframe, startDate, endDate);
+    if (selectedSurface !== previousSurface || selectedTimeframe !== previousTimeframe) {
+      setChartVisible(false);
+      clearHistoricalChartData();
+      await fetchHistoricalData(selectedSurface as number, selectedTimeframe);
+      setPreviousSurface(selectedSurface);
+      setPreviousTimeframe(selectedTimeframe);
+      setChartVisible(true);
+    }
   };
 
   const filteredCities = cities.filter(city =>
@@ -487,7 +547,7 @@ export default function Home() {
   };
 
   const shouldShowHistoricalData = () => {
-    return true;
+    return selectedCity !== "City" && (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "Area");
   };
 
   const headerStyle: CSSProperties = {
@@ -553,20 +613,23 @@ export default function Home() {
 
   const renderContent = () => {
     switch (activeHeaderButton) {
+      case 'Latest Prices':
+        return isChartVisible && <LatestPrices chartData={latestPricesChartData} />;
       case 'Historical Data':
         return (
           renderHistoricalDataChart &&
-          <HistoricalDataChart
+          <HistoricalData
             chartData={historicalDataChartData}
+            onSurfaceChange={handleSurfaceChange}
             onTimeframeChange={handleTimeframeChange}
+            selectedSurface={selectedSurface}
             selectedTimeframe={selectedTimeframe}
             onRefresh={handleRefreshClick}
-            startDate={startDate}
-            endDate={endDate}
-            setStartDate={setStartDate}
-            setEndDate={setEndDate}
+            isVisible={shouldShowHistoricalData()}
           />
         );
+      case 'Compare Prices':
+        return <ComparePrices />;
       default:
         return null;
     }
@@ -581,10 +644,22 @@ export default function Home() {
         </h1>
         <div style={headerButtonsContainerStyle}>
           <button
+            style={headerButtonStyle('Latest Prices')}
+            onClick={() => handleHeaderButtonClick('Latest Prices')}
+          >
+            Latest Prices
+          </button>
+          <button
             style={headerButtonStyle('Historical Data')}
             onClick={() => handleHeaderButtonClick('Historical Data')}
           >
             Historical Data
+          </button>
+          <button
+            style={headerButtonStyle('Compare Prices')}
+            onClick={() => handleHeaderButtonClick('Compare Prices')}
+          >
+            Compare Prices
           </button>
         </div>
       </header>
