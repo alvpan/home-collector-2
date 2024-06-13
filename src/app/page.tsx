@@ -100,6 +100,7 @@ const HistoricalDataChart: React.FC<{ chartData: ChartData, onTimeframeChange: (
           series={chartData.series}
           type="area"
           height="400"
+          width="100%"
         />
       )}
     </div>
@@ -126,7 +127,8 @@ export default function Home() {
     options: {
       chart: {
         type: 'area',
-        background: 'transparent',
+        // background: 'transparent',
+        background: '#000000',
         toolbar: { show: false },
         zoom: { enabled: false }
       },
