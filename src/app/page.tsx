@@ -99,7 +99,7 @@ const HistoricalDataChart: React.FC<{ chartData: ChartData, onTimeframeChange: (
           options={chartData.options}
           series={chartData.series}
           type="area"
-          height="400"
+          height={400}
           width="100%"
         />
       )}
@@ -127,7 +127,6 @@ export default function Home() {
     options: {
       chart: {
         type: 'area',
-        // background: 'transparent',
         background: '#000000',
         toolbar: { show: false },
         zoom: { enabled: false }
@@ -137,21 +136,21 @@ export default function Home() {
         theme: 'dark',
         style: { fontSize: '20px', fontFamily: undefined }
       },
-      markers: { size: 4, colors: ['orange'], strokeColors: 'orange', radius: 10, strokeWidth: 5 },
+      markers: { size: 4, colors: ['#FFA500'], strokeColors: '#FFA500', radius: 10, strokeWidth: 5 },
       stroke: { curve: 'smooth' },
-      dataLabels: { enabled: true, formatter: (val) => `€${val}` },
+      dataLabels: { enabled: true, formatter: (val) => `€${val}`, style: { colors: ['#FFFFFF'] } },
       xaxis: {
         categories: [],
-        labels: { rotate: -45, style: { colors: 'black', fontSize: '12px' } }
+        labels: { rotate: -45, style: { colors: '#FFFFFF', fontSize: '12px' } }
       },
       yaxis: {
         forceNiceScale: true,
-        labels: { style: { colors: 'black', fontSize: '12px' } },
-        title: { text: 'Price (€)', style: { fontSize: '16px', color: 'black', fontFamily: 'Consolas' } },
+        labels: { style: { colors: '#FFFFFF', fontSize: '12px' } },
+        title: { text: 'Price (€)', style: { fontSize: '16px', color: '#FFFFFF', fontFamily: 'Consolas' } },
         min: undefined,
         max: undefined
       },
-      colors: ['orange'],
+      colors: ['#FFA500'],
     },
     series: [{ name: '€', data: [] }]
   };
