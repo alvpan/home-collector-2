@@ -368,12 +368,21 @@ export default function Home() {
   };
 
   const handleRefreshClick = async () => {
-    if (selectedTimeframe !== previousTimeframe) {
-      setChartVisible(false);
-      clearHistoricalChartData();
-      await fetchHistoricalData(selectedTimeframe);
-      setPreviousTimeframe(selectedTimeframe);
-      setChartVisible(true);
+    if (selectedTimeframe && selectedCity !== "City" && (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "Area")) {
+      if (selectedTimeframe === "custom" && (!startDate || !endDate)) {
+        alert("Please select both start and end dates for custom timeframe.");
+        return;
+      }
+
+      if (selectedTimeframe !== previousTimeframe) {
+        setChartVisible(false);
+        clearHistoricalChartData();
+        await fetchHistoricalData(selectedTimeframe);
+        setPreviousTimeframe(selectedTimeframe);
+        setChartVisible(true);
+      }
+    } else {
+      alert("Please select a valid City, Area, and Timeframe before refreshing the chart.");
     }
   };
 
