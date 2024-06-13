@@ -208,7 +208,7 @@ export default function Home() {
   const [areas, setAreas] = useState<string[]>([]);
   const [selectedArea, setSelectedArea] = useState("Area");
   const [activeHeaderButton, setActiveHeaderButton] = useState<string>('Historical Data');
-  const [isChartVisible, setChartVisible] = useState(true);  // Ensure the chart is always visible
+  const [isChartVisible, setChartVisible] = useState(true);
   const [historicalDataChartLoaded, setHistoricalDataChartLoaded] = useState(false);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
