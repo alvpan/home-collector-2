@@ -229,6 +229,7 @@ export default function Home() {
     }));
   };
 
+  
   const clearCharts = () => {
     clearHistoricalChartData();
   };
