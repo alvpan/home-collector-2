@@ -652,7 +652,7 @@ export default function Home() {
                       endDate={endDate}
                       maxDate={new Date()}
                       dateFormat="dd MMMM yyyy"
-                      placeholderText="Start Date"
+                      placeholderText="From:"
                       className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
                       showPopperArrow={false}
                       shouldCloseOnSelect={false}
@@ -668,7 +668,7 @@ export default function Home() {
                       minDate={startDate}
                       maxDate={new Date()}
                       dateFormat="dd MMMM yyyy"
-                      placeholderText="End Date"
+                      placeholderText="To:"
                       className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
                       showPopperArrow={false}
                       shouldCloseOnSelect={false}
