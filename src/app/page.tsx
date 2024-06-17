@@ -102,21 +102,21 @@ const ComparePrices: React.FC = () => {
 
   const customStyles = `
     input:focus {
-      border-color: orange !important; // Change border color on focus
+      border-color: #F57C00 !important; // Change border color on focus
       border-width: 4px !important; // Increase border width on focus
     }
   `;
 
   return (
     <>
-      <style>{customStyles}</style> {/* Add the custom styles */}
+      <style>{customStyles}</style>
       <div className="flex flex-col space-y-2 max-w-xs">
         <div style={wrapperStyle}>
           <input
             type="text"
             inputMode="numeric"
             placeholder="Enter Surface"
-            className="p-2 border rounded text-orange-500"
+            className="p-2 border text-orange-600 py-2 px-4 rounded w-48 h-12"
             onKeyPress={handleKeyPress}
             onChange={handleSurfaceChange}
             style={inputStyle}
@@ -128,14 +128,14 @@ const ComparePrices: React.FC = () => {
             type="text"
             inputMode="numeric"
             placeholder="Enter Price"
-            className="p-2 border rounded text-orange-500"
+            className="p-2 border text-orange-600 py-2 px-4 rounded w-48 h-12"
             onKeyPress={handleKeyPress}
             onChange={handlePriceChange}
             style={inputStyle}
           />
           <span style={symbolStyle}>€</span>
         </div>
-        <button className="bg-transparent hover:bg-black text-black py-2 px-4 rounded border-2 border-orange-500 hover:border-transparent hover:text-white w-48 h-12">
+        <button className="bg-orange-700 hover:bg-orange-600 text-white py-2 px-4 rounded w-48 h-12">
           Evaluate
         </button>
       </div>
@@ -572,7 +572,7 @@ export default function Home() {
                     placeholder="Search City"
                     value={citySearchTerm}
                     onChange={(e) => setCitySearchTerm(e.target.value)}
-                    className="sticky top-0 p-2 border-b w-full text-orange-500 bg-white z-20"
+                    className="sticky top-0 p-2 border-b w-full text-orange-600 bg-white z-20"
                   />
                   <ul className="py-1 text-black">
                     {filteredCities.map((city) => (
@@ -600,7 +600,7 @@ export default function Home() {
                       placeholder="Search Area"
                       value={areaSearchTerm}
                       onChange={(e) => setAreaSearchTerm(e.target.value)}
-                      className="sticky top-0 p-2 border-b w-full text-orange-500 bg-white z-20"
+                      className="sticky top-0 p-2 border-b w-full text-orange-600 bg-white z-20"
                     />
                     <ul className="py-1 text-black">
                       {filteredAreas.map((area) => (
@@ -676,9 +676,10 @@ export default function Home() {
                   </div>
                 </div>
               )}
-              <button className={`${buttonStyle} border-2 border-orange-500 hover:border-transparent hover:text-white`} onClick={handleRefreshClick}>
+              <button className="bg-orange-700 hover:bg-orange-600 text-white py-2 px-4 rounded w-48 h-12" onClick={handleRefreshClick}>
                 Refresh Chart
               </button>
+
             </div>
           </div>
           <div style={chartContainerStyle}>
