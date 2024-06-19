@@ -1,0 +1,18 @@
+{
+    "actionRent": "Rent",
+    "actionBuy": "Buy",
+    "dataGraph": "Data Graph",
+    "comparePrices": "Compare Prices",
+    "refreshChart": "Refresh Chart",
+    "timeframe": "Timeframe",
+    "from": "From:",
+    "to": "To:",
+    "enterSurface": "Enter Surface",
+    "enterPrice": "Enter Price",
+    "evaluate": "Evaluate",
+    "city": "City",
+    "area": "Area",
+    "searchCity": "Search City",
+    "searchArea": "Search Area"
+  }
+  

@@ -1,0 +1,18 @@
+{
+    "actionRent": "Ενοικίαση",
+    "actionBuy": "Αγορά",
+    "dataGraph": "Γράφημα",
+    "comparePrices": "Σύγκριση Τιμών",
+    "refreshChart": "Ανανέωση",
+    "timeframe": "Χρονικό Πλαίσιο",
+    "from": "Από:",
+    "to": "Έως:",
+    "enterSurface": "Επιφάνεια",
+    "enterPrice": "Τιμή",
+    "evaluate": "Αξιολόγηση",
+    "city": "Πόλη",
+    "area": "Περιοχή",
+    "searchCity": "Αναζήτηση Πόλης",
+    "searchArea": "Αναζήτηση Περιοχής"
+  }
+  

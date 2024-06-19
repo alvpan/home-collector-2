@@ -5,6 +5,8 @@ import dynamic from 'next/dynamic';
 import { ApexOptions } from 'apexcharts';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import enTranslations from './locales/en.json';
+import grTranslations from './locales/gr.json';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -15,16 +17,18 @@ interface CityData {
 }
 
 interface ChartData {
-  options: ApexOptions,
-  series: { name: string, data: number[] }[]
+  options: ApexOptions;
+  series: { name: string; data: number[] }[];
 }
+
+const translations = {
+  en: enTranslations,
+  gr: grTranslations,
+};
 
 const HistoricalData: React.FC<{ chartData: ChartData, onTimeframeChange: (timeframe: string) => void, selectedTimeframe: string, onRefresh: () => void, startDate: Date | null, endDate: Date | null, setStartDate: (date: Date | null) => void, setEndDate: (date: Date | null) => void, isVisible: boolean }> = ({ chartData, onTimeframeChange, selectedTimeframe, onRefresh, startDate, endDate, setStartDate, setEndDate, isVisible }) => {
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
   const chartRef = useRef<any>(null);
-
-  const buttonStyle = "bg-gray-700 hover:bg-black text-white py-2 px-4 rounded w-48 h-12";
-  const datePickerStyle = "bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full";
 
   useEffect(() => {
     if (chartRef.current && chartData.series[0].data.length > 0) {
@@ -52,7 +56,7 @@ const HistoricalData: React.FC<{ chartData: ChartData, onTimeframeChange: (timef
   );
 };
 
-const ComparePrices: React.FC = () => {
+const ComparePrices: React.FC<{ t: (key: string) => string }> = ({ t }) => {
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     const charCode = event.charCode;
     if (charCode < 48 || charCode > 57) {
@@ -115,7 +119,7 @@ const ComparePrices: React.FC = () => {
           <input
             type="text"
             inputMode="numeric"
-            placeholder="Enter Surface"
+            placeholder={t('enterSurface')}
             className="p-2 border text-orange-600 py-2 px-4 rounded w-48 h-12"
             onKeyPress={handleKeyPress}
             onChange={handleSurfaceChange}
@@ -127,7 +131,7 @@ const ComparePrices: React.FC = () => {
           <input
             type="text"
             inputMode="numeric"
-            placeholder="Enter Price"
+            placeholder={t('enterPrice')}
             className="p-2 border text-orange-600 py-2 px-4 rounded w-48 h-12"
             onKeyPress={handleKeyPress}
             onChange={handlePriceChange}
@@ -136,7 +140,7 @@ const ComparePrices: React.FC = () => {
           <span style={symbolStyle}>€</span>
         </div>
         <button className="bg-orange-700 hover:bg-orange-600 text-white py-2 px-4 rounded w-48 h-12">
-          Evaluate
+          {t('evaluate')}
         </button>
       </div>
     </>
@@ -144,6 +148,7 @@ const ComparePrices: React.FC = () => {
 };
 
 export default function Home() {
+  const [language, setLanguage] = useState<'en' | 'gr'>('en');
   const [action, setAction] = useState("Rent");
   const [selectedCity, setSelectedCity] = useState("City");
   const [citySearchTerm, setCitySearchTerm] = useState("");
@@ -172,7 +177,7 @@ export default function Home() {
       },
       markers: { size: 4, colors: ['orange'], strokeColors: 'orange', radius: 10, strokeWidth: 5 },
       stroke: { curve: 'smooth' },
-      dataLabels: { enabled: true, formatter: (val) => `€${val}` },
+      dataLabels: { enabled: true, formatter: (val: number) => `€${val}` },
       xaxis: {
         categories: [],
         labels: { rotate: -45, style: { colors: 'black', fontSize: '12px' } }
@@ -222,14 +227,13 @@ export default function Home() {
   }, [action, selectedCity, selectedArea]);
 
   const clearHistoricalChartData = () => {
-    setHistoricalDataChartData(prevData => ({
+    setHistoricalDataChartData((prevData: ChartData) => ({
       ...prevData,
       series: [{ name: '€', data: [] }],
       options: { ...prevData.options, xaxis: { ...prevData.options.xaxis, categories: [] } }
     }));
   };
 
-  
   const clearCharts = () => {
     clearHistoricalChartData();
   };
@@ -278,7 +282,7 @@ export default function Home() {
       const prices = data.map((item: { pricePerSqm: number }) => item.pricePerSqm);
       const { min, max } = addYAxisPadding(prices);
 
-      setHistoricalDataChartData(prevData => ({
+      setHistoricalDataChartData((prevData: ChartData) => ({
         ...prevData,
         options: {
           ...prevData.options,
@@ -515,11 +519,13 @@ export default function Home() {
           />
         );
       case 'Compare Prices':
-        return <ComparePrices />;
+        return <ComparePrices t={t} />;
       default:
         return null;
     }
   };
+
+  const t = (key: string) => translations[language][key as keyof typeof translations['en']] || key;
 
   return (
     <div style={mainContainerStyle}>
@@ -528,18 +534,22 @@ export default function Home() {
           hompare
           <span style={underlineStyle}></span>
         </h1>
+        <select onChange={(e) => setLanguage(e.target.value as 'en' | 'gr')} value={language} className="bg-transparent hover:bg-gray-100 text-black py-2 px-4 rounded">
+          <option value="en">English</option>
+          <option value="gr">Ελληνικά</option>
+        </select>
         <div style={headerButtonsContainerStyle}>
           <button
             style={headerButtonStyle('Historical Data')}
             onClick={() => handleHeaderButtonClick('Historical Data')}
           >
-            Data Graph
+            {t('dataGraph')}
           </button>
           <button
             style={headerButtonStyle('Compare Prices')}
             onClick={() => handleHeaderButtonClick('Compare Prices')}
           >
-            Compare Prices
+            {t('comparePrices')}
           </button>
         </div>
       </header>
@@ -552,13 +562,13 @@ export default function Home() {
                 className={`${buttonStyle} ${action === "Rent" ? "bg-orange-700" : "bg-gray-700"} hover:bg-orange-600`}
                 style={{ marginRight: "8px" }}
               >
-                Rent
+                {t('actionRent')}
               </button>
               <button 
                 onClick={() => handleActionButtonClick("Buy")} 
                 className={`${buttonStyle} ${action === "Buy" ? "bg-orange-700" : "bg-gray-700"} hover:bg-orange-600`}
               >
-                Buy
+                {t('actionBuy')}
               </button>
             </div>
             <div className="relative flex items-center w-48">
@@ -569,7 +579,7 @@ export default function Home() {
                 <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
                   <input 
                     type="text"
-                    placeholder="Search City"
+                    placeholder={t('searchCity')}
                     value={citySearchTerm}
                     onChange={(e) => setCitySearchTerm(e.target.value)}
                     className="sticky top-0 p-2 border-b w-full text-orange-600 bg-white z-20"
@@ -597,7 +607,7 @@ export default function Home() {
                   <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
                     <input 
                       type="text"
-                      placeholder="Search Area"
+                      placeholder={t('searchArea')}
                       value={areaSearchTerm}
                       onChange={(e) => setAreaSearchTerm(e.target.value)}
                       className="sticky top-0 p-2 border-b w-full text-orange-600 bg-white z-20"
@@ -620,7 +630,7 @@ export default function Home() {
             <div className="flex flex-col space-y-4 mt-4">
               <div className="relative">
                 <button className={`${buttonStyle}`} onClick={() => setTimeframeDropdownVisible(prev => !prev)}>
-                  {selectedTimeframe || "Timeframe"}
+                  {selectedTimeframe || t('timeframe')}
                 </button>
                 {timeframeDropdownVisible && (
                   <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
@@ -652,7 +662,7 @@ export default function Home() {
                       endDate={endDate}
                       maxDate={new Date()}
                       dateFormat="dd MMMM yyyy"
-                      placeholderText="From:"
+                      placeholderText={t('from')}
                       className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
                       showPopperArrow={false}
                       shouldCloseOnSelect={false}
@@ -668,7 +678,7 @@ export default function Home() {
                       minDate={startDate}
                       maxDate={new Date()}
                       dateFormat="dd MMMM yyyy"
-                      placeholderText="To:"
+                      placeholderText={t('to')}
                       className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
                       showPopperArrow={false}
                       shouldCloseOnSelect={false}
@@ -677,7 +687,7 @@ export default function Home() {
                 </div>
               )}
               <button className="bg-orange-700 hover:bg-orange-600 text-white py-2 px-4 rounded w-48 h-12" onClick={handleRefreshClick}>
-                Refresh Chart
+                {t('refreshChart')}
               </button>
 
             </div>
