@@ -597,7 +597,7 @@ export default function Home() {
             </div>
             <div className="relative flex items-center w-48">
               <button onClick={handleLocationButtonClick} className={buttonStyle}>
-                {selectedCity}
+                {t(selectedCity === "City" ? "city" : selectedCity)}
               </button>
               {isDropdownVisible && (
                 <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
@@ -625,7 +625,7 @@ export default function Home() {
             {(selectedCity === "Athens" || selectedCity === "Thessaloniki") && (
               <div className="relative flex items-center w-48">
                 <button onClick={handleAreaButtonClick} className={buttonStyle}>
-                  {selectedArea}
+                  {t(selectedArea === "Area" ? "area" : selectedArea)}
                 </button>
                 {isAreaDropdownVisible && (
                   <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
