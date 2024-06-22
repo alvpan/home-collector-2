@@ -493,13 +493,17 @@ export default function Home() {
   };
 
   const headerButtonsContainerStyle: CSSProperties = {
-    marginTop: '0.5rem',
     display: 'flex',
     gap: '1rem',
+    alignItems: 'center',
     position: 'absolute',
-    left: '50%',
-    transform: 'translateX(-25%)',
+    right: '4rem',
   };
+  
+  const languageDropdownStyle: CSSProperties = {
+    marginLeft: '8rem',
+  };
+  
 
   const renderTimeframeOptions = () => {
     const timeframeOptions = [
@@ -553,30 +557,37 @@ export default function Home() {
 
   return (
     <div style={mainContainerStyle}>
-      <header style={headerStyle}>
-        <h1 style={h1Style} className="text-5xl font-extrabold text-gray-700 relative">
-          hompare
-          <span style={underlineStyle}></span>
-        </h1>
-        <select onChange={(e) => setLanguage(e.target.value as 'en' | 'gr')} value={language} className="bg-transparent hover:bg-gray-100 text-black py-2 px-4 rounded">
-          <option value="en">English</option>
-          <option value="gr">Ελληνικά</option>
-        </select>
-        <div style={headerButtonsContainerStyle}>
-          <button
-            style={headerButtonStyle('Historical Data')}
-            onClick={() => handleHeaderButtonClick('Historical Data')}
-          >
-            {t('dataGraph')}
-          </button>
-          <button
-            style={headerButtonStyle('Compare Prices')}
-            onClick={() => handleHeaderButtonClick('Compare Prices')}
-          >
-            {t('comparePrices')}
-          </button>
-        </div>
-      </header>
+<header style={headerStyle}>
+  <h1 style={h1Style} className="text-5xl font-extrabold text-gray-700 relative">
+    hompare
+    <span style={underlineStyle}></span>
+  </h1>
+  <div style={headerButtonsContainerStyle}>
+    <button
+      style={headerButtonStyle('Historical Data')}
+      onClick={() => handleHeaderButtonClick('Historical Data')}
+    >
+      {t('dataGraph')}
+    </button>
+    <button
+      style={headerButtonStyle('Compare Prices')}
+      onClick={() => handleHeaderButtonClick('Compare Prices')}
+    >
+      {t('comparePrices')}
+    </button>
+    <select 
+      onChange={(e) => setLanguage(e.target.value as 'en' | 'gr')} 
+      value={language} 
+      className="bg-transparent hover:bg-gray-100 text-black py-2 px-4 rounded" 
+      style={languageDropdownStyle}
+    >
+      <option value="en">English</option>
+      <option value="gr">Ελληνικά</option>
+    </select>
+  </div>
+</header>
+
+
       <main className="flex flex-col items-start justify-start p-8 flex-grow">
         <div style={contentStyle}>
           <div style={buttonsContainerStyle}>
@@ -651,58 +662,59 @@ export default function Home() {
                 )}
               </div>
             )}
-            <div className="flex flex-col space-y-4 mt-4">
-              <div className="relative">
-                <button className={`${buttonStyle}`} onClick={() => setTimeframeDropdownVisible(prev => !prev)}>
-                  {selectedTimeframe || t('timeframe')}
-                </button>
-                {timeframeDropdownVisible && (
-                  <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
-                    <ul className="py-1 text-black">
-                      {renderTimeframeOptions()}
-                    </ul>
-                  </div>
-                )}
-              </div>
-              {selectedTimeframe === "custom" && (
-                <div className="relative flex flex-col space-y-2 items-start w-48">
-                  <div className="w-48 h-12">
-                    <DatePicker
-                      selected={startDate}
-                      onChange={(date: Date | null) => setStartDate(date)}
-                      selectsStart
-                      startDate={startDate}
-                      endDate={endDate}
-                      maxDate={new Date()}
-                      dateFormat="dd MMMM yyyy"
-                      placeholderText={t('from')}
-                      className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
-                      showPopperArrow={false}
-                      shouldCloseOnSelect={false}
-                    />
-                  </div>
-                  <div className="w-48 h-12">
-                    <DatePicker
-                      selected={endDate}
-                      onChange={(date: Date | null) => setEndDate(date)}
-                      selectsEnd
-                      startDate={startDate}
-                      endDate={endDate}
-                      minDate={startDate}
-                      maxDate={new Date()}
-                      dateFormat="dd MMMM yyyy"
-                      placeholderText={t('to')}
-                      className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
-                      showPopperArrow={false}
-                      shouldCloseOnSelect={false}
-                    />
-                  </div>
-                </div>
-              )}
-              <button className="bg-orange-700 hover:bg-orange-600 text-white py-2 px-4 rounded w-48 h-12" onClick={handleRefreshClick}>
-                {t('refreshChart')}
-              </button>
-            </div>
+<div className="flex flex-col space-y-4 mt-0">
+  <div className="relative">
+    <button className={`${buttonStyle} mt-0`} onClick={() => setTimeframeDropdownVisible(prev => !prev)}>
+      {selectedTimeframe || t('timeframe')}
+    </button>
+    {timeframeDropdownVisible && (
+      <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+        <ul className="py-1 text-black">
+          {renderTimeframeOptions()}
+        </ul>
+      </div>
+    )}
+  </div>
+  {selectedTimeframe === "custom" && (
+    <div className="relative flex flex-col space-y-2 items-start w-48">
+      <div className="w-48 h-12">
+        <DatePicker
+          selected={startDate}
+          onChange={(date: Date | null) => setStartDate(date)}
+          selectsStart
+          startDate={startDate}
+          endDate={endDate}
+          maxDate={new Date()}
+          dateFormat="dd MMMM yyyy"
+          placeholderText={t('from')}
+          className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
+          showPopperArrow={false}
+          shouldCloseOnSelect={false}
+        />
+      </div>
+      <div className="w-48 h-12">
+        <DatePicker
+          selected={endDate}
+          onChange={(date: Date | null) => setEndDate(date)}
+          selectsEnd
+          startDate={startDate}
+          endDate={endDate}
+          minDate={startDate}
+          maxDate={new Date()}
+          dateFormat="dd MMMM yyyy"
+          placeholderText={t('to')}
+          className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
+          showPopperArrow={false}
+          shouldCloseOnSelect={false}
+        />
+      </div>
+    </div>
+  )}
+  <button className="bg-orange-700 hover:bg-orange-600 text-white py-2 px-4 rounded w-48 h-12 mt-2">
+    {t('refreshChart')}
+  </button>
+</div>
+
           </div>
           <div style={chartContainerStyle}>
             {renderContent()}
