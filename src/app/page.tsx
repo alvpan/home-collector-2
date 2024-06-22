@@ -501,6 +501,30 @@ export default function Home() {
     transform: 'translateX(-25%)',
   };
 
+  const renderTimeframeOptions = () => {
+    const timeframeOptions = [
+      { key: "last week", label: t("lastWeek") },
+      { key: "last month", label: t("lastMonth") },
+      { key: "last 6 months", label: t("last6Months") },
+      { key: "last year", label: t("lastYear") },
+      { key: "ever", label: t("ever") },
+      { key: "custom", label: t("custom") }
+    ];
+
+    return timeframeOptions.map(option => (
+      <li
+        key={option.key}
+        className="px-4 py-2 hover:bg-gray-200 cursor-pointer text-black"
+        onClick={() => {
+          handleTimeframeChange(option.key);
+          setTimeframeDropdownVisible(false);
+        }}
+      >
+        {option.label}
+      </li>
+    ));
+  };
+
   const renderContent = () => {
     switch (activeHeaderButton) {
       case 'Historical Data':
@@ -635,18 +659,7 @@ export default function Home() {
                 {timeframeDropdownVisible && (
                   <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
                     <ul className="py-1 text-black">
-                      {["last week", "last month", "last 6 months", "last year", "ever", "custom"].map((timeframe) => (
-                        <li
-                          key={timeframe}
-                          className="px-4 py-2 hover:bg-gray-200 cursor-pointer text-black"
-                          onClick={() => {
-                            handleTimeframeChange(timeframe);
-                            setTimeframeDropdownVisible(false);
-                          }}
-                        >
-                          {timeframe}
-                        </li>
-                      ))}
+                      {renderTimeframeOptions()}
                     </ul>
                   </div>
                 )}
@@ -689,7 +702,6 @@ export default function Home() {
               <button className="bg-orange-700 hover:bg-orange-600 text-white py-2 px-4 rounded w-48 h-12" onClick={handleRefreshClick}>
                 {t('refreshChart')}
               </button>
-
             </div>
           </div>
           <div style={chartContainerStyle}>
