@@ -189,7 +189,7 @@ export default function Home() {
         min: undefined,
         max: undefined
       },
-      colors: ['#D97706'],
+      colors: ['#ff4d00'],
     },
     series: [{ name: '€', data: [] }]
   };
