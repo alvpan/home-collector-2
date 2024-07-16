@@ -175,7 +175,7 @@ export default function Home() {
         theme: 'dark',
         style: { fontSize: '20px', fontFamily: undefined }
       },
-      markers: { size: 4, colors: ['orange'], strokeColors: 'orange', radius: 10, strokeWidth: 5 },
+      markers: { size: 4, colors: ['#ff4d00'], strokeColors: '#ff4d00', radius: 10, strokeWidth: 5 },
       stroke: { curve: 'smooth' },
       dataLabels: { enabled: true, formatter: (val: number) => `€${val}` },
       xaxis: {
