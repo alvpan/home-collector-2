@@ -100,7 +100,7 @@ const ComparePrices: React.FC<{ t: (key: string) => string }> = ({ t }) => {
   const symbolStyle: CSSProperties = {
     position: "absolute",
     right: "0.5rem",
-    color: "gray", 
+    color: "gray",
     pointerEvents: "none",
   };
 
@@ -225,15 +225,6 @@ export default function Home() {
       clearCharts();
     }
   }, [action, selectedCity, selectedArea]);
-
-  useEffect(() => {
-    // Update translations for area and timeframe options
-    const translatedCities = cities.map(city => translations[language][city as keyof typeof translations.en] || city);
-    const translatedAreas = areas.map(area => translations[language][area as keyof typeof translations.en] || area);
-
-    setCities(translatedCities);
-    setAreas(translatedAreas);
-  }, [language, cities, areas]);
 
   const clearHistoricalChartData = () => {
     setHistoricalDataChartData((prevData: ChartData) => ({
@@ -512,7 +503,6 @@ export default function Home() {
   const languageDropdownStyle: CSSProperties = {
     marginLeft: '8rem',
   };
-  
 
   const renderTimeframeOptions = () => {
     const timeframeOptions = [
@@ -564,6 +554,28 @@ export default function Home() {
 
   const t = (key: string) => translations[language][key as keyof typeof translations['en']] || key;
 
+  const handleLanguageChange = (lang: 'en' | 'gr') => {
+    setLanguage(lang);
+    setSelectedTimeframe(prev => {
+      switch (prev) {
+        case "last week":
+          return translations[lang].lastWeek;
+        case "last month":
+          return translations[lang].lastMonth;
+        case "last 6 months":
+          return translations[lang].last6Months;
+        case "last year":
+          return translations[lang].lastYear;
+        case "ever":
+          return translations[lang].ever;
+        case "custom":
+          return translations[lang].custom;
+        default:
+          return prev;
+      }
+    });
+  };
+
   return (
     <div style={mainContainerStyle}>
       <header style={headerStyle}>
@@ -585,7 +597,7 @@ export default function Home() {
             {t('comparePrices')}
           </button>
           <select 
-            onChange={(e) => setLanguage(e.target.value as 'en' | 'gr')} 
+            onChange={(e) => handleLanguageChange(e.target.value as 'en' | 'gr')} 
             value={language} 
             className="bg-transparent hover:bg-gray-100 text-black py-2 px-4 rounded" 
             style={languageDropdownStyle}
@@ -673,7 +685,7 @@ export default function Home() {
             <div className="flex flex-col space-y-4 mt-0">
               <div className="relative">
                 <button className={`${buttonStyle} mt-0`} onClick={() => setTimeframeDropdownVisible(prev => !prev)}>
-                  {selectedTimeframe || t('timeframe')}
+                  {t(selectedTimeframe) || t('timeframe')}
                 </button>
                 {timeframeDropdownVisible && (
                   <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
@@ -731,4 +743,3 @@ export default function Home() {
     </div>
   );
 }
-
