@@ -173,7 +173,10 @@ export default function Home() {
       tooltip: {
         marker: { show: false },
         theme: 'dark',
-        style: { fontSize: '20px', fontFamily: undefined }
+        style: { fontSize: '20px', fontFamily: undefined },
+        x: {
+          format: 'dd MMM yyyy'
+        }
       },
       markers: { size: 4, colors: ['#ff4d00'], strokeColors: '#ff4d00', radius: 10, strokeWidth: 5 },
       stroke: { curve: 'smooth' },
@@ -185,7 +188,7 @@ export default function Home() {
           style: { colors: 'black', fontSize: '12px' },
           formatter: (() => {
             let previousLabel: string | null = null;
-            return (value: string) => {
+            return (value: string, timestamp: number, index: number) => {
               if (value === previousLabel) {
                 return '';
               } else {
@@ -199,7 +202,7 @@ export default function Home() {
       yaxis: {
         forceNiceScale: true,
         labels: { style: { colors: 'black', fontSize: '12px' } },
-        title: { text: 'Price (€)', style: { fontSize: '16px', color: '#ff4d00', fontFamily: 'Consolas' } },
+        title: { text: 'Price (€)', style: { fontSize: '16px', color: 'black', fontFamily: 'Consolas' } },
         min: undefined,
         max: undefined
       },
@@ -207,7 +210,6 @@ export default function Home() {
     },
     series: [{ name: '€', data: [] }]
   };
-  
 
   const [historicalDataChartData, setHistoricalDataChartData] = useState<ChartData>(initialHistoricalChartData);
 
