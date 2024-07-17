@@ -226,6 +226,15 @@ export default function Home() {
     }
   }, [action, selectedCity, selectedArea]);
 
+  useEffect(() => {
+    // Update translations for area and timeframe options
+    const translatedCities = cities.map(city => translations[language][city as keyof typeof translations.en] || city);
+    const translatedAreas = areas.map(area => translations[language][area as keyof typeof translations.en] || area);
+
+    setCities(translatedCities);
+    setAreas(translatedAreas);
+  }, [language, cities, areas]);
+
   const clearHistoricalChartData = () => {
     setHistoricalDataChartData((prevData: ChartData) => ({
       ...prevData,
