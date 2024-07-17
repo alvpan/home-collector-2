@@ -180,12 +180,26 @@ export default function Home() {
       dataLabels: { enabled: true, formatter: (val: number) => `€${val}` },
       xaxis: {
         categories: [],
-        labels: { rotate: -45, style: { colors: 'black', fontSize: '12px' } }
+        labels: {
+          rotate: -45,
+          style: { colors: 'black', fontSize: '12px' },
+          formatter: (() => {
+            let previousLabel: string | null = null;
+            return (value: string) => {
+              if (value === previousLabel) {
+                return '';
+              } else {
+                previousLabel = value;
+                return value;
+              }
+            };
+          })()
+        }
       },
       yaxis: {
         forceNiceScale: true,
         labels: { style: { colors: 'black', fontSize: '12px' } },
-        title: { text: 'Price (€)', style: { fontSize: '16px', color: 'black', fontFamily: 'Consolas' } },
+        title: { text: 'Price (€)', style: { fontSize: '16px', color: '#ff4d00', fontFamily: 'Consolas' } },
         min: undefined,
         max: undefined
       },
@@ -193,6 +207,7 @@ export default function Home() {
     },
     series: [{ name: '€', data: [] }]
   };
+  
 
   const [historicalDataChartData, setHistoricalDataChartData] = useState<ChartData>(initialHistoricalChartData);
 
