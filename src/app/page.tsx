@@ -173,31 +173,14 @@ export default function Home() {
       tooltip: {
         marker: { show: false },
         theme: 'dark',
-        style: { fontSize: '20px', fontFamily: undefined },
-        x: {
-          format: 'dd MMM yyyy'
-        }
+        style: { fontSize: '20px', fontFamily: undefined }
       },
       markers: { size: 4, colors: ['#ff4d00'], strokeColors: '#ff4d00', radius: 10, strokeWidth: 5 },
       stroke: { curve: 'smooth' },
       dataLabels: { enabled: true, formatter: (val: number) => `€${val}` },
       xaxis: {
         categories: [],
-        labels: {
-          rotate: -45,
-          style: { colors: 'black', fontSize: '12px' },
-          formatter: (() => {
-            let previousLabel: string | null = null;
-            return (value: string, timestamp: number, index: number) => {
-              if (value === previousLabel) {
-                return '';
-              } else {
-                previousLabel = value;
-                return value;
-              }
-            };
-          })()
-        }
+        labels: { rotate: -45, style: { colors: 'black', fontSize: '12px' } }
       },
       yaxis: {
         forceNiceScale: true,
