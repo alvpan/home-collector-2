@@ -431,8 +431,8 @@ export default function Home() {
     border: 'none',
     cursor: 'pointer',
     textDecoration: activeHeaderButton === buttonName ? 'underline' : 'none',
-    textDecorationColor: activeHeaderButton === buttonName ? 'orange' : 'transparent',
-    textDecorationThickness: activeHeaderButton === buttonName ? '2px' : '0px',
+    textDecorationColor: activeHeaderButton === buttonName ? '#ff4d00' : 'transparent',
+    textDecorationThickness: activeHeaderButton === buttonName ? '3px' : '0px',
     fontWeight: activeHeaderButton === buttonName ? 'bold' : 'normal',
   });
 
