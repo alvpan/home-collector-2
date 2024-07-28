@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect, useRef, CSSProperties } from "react";
 import dynamic from 'next/dynamic';
 import { ApexOptions } from 'apexcharts';
@@ -579,7 +581,7 @@ export default function Home() {
       }
     });
   };
-  
+
   return (
     <div className="main-container">
       <header className="header">
