@@ -227,6 +227,42 @@ export default function Home() {
     }
   }, [action, selectedCity, selectedArea]);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        !dropdownRef.current?.contains(event.target as Node) &&
+        !cityButtonRef.current?.contains(event.target as Node)
+      ) {
+        setDropdownVisible(false);
+      }
+      if (
+        !areaDropdownRef.current?.contains(event.target as Node) &&
+        !areaButtonRef.current?.contains(event.target as Node)
+      ) {
+        setAreaDropdownVisible(false);
+      }
+      if (
+        !timeframeDropdownRef.current?.contains(event.target as Node) &&
+        !timeframeButtonRef.current?.contains(event.target as Node)
+      ) {
+        setTimeframeDropdownVisible(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const cityButtonRef = useRef<HTMLButtonElement>(null);
+  const areaDropdownRef = useRef<HTMLDivElement>(null);
+  const areaButtonRef = useRef<HTMLButtonElement>(null);
+  const timeframeDropdownRef = useRef<HTMLDivElement>(null);
+  const timeframeButtonRef = useRef<HTMLButtonElement>(null);
+
   const clearHistoricalChartData = () => {
     setHistoricalDataChartData((prevData: ChartData) => ({
       ...prevData,
@@ -411,7 +447,6 @@ export default function Home() {
       await fetchHistoricalData(selectedTimeframe);
       setChartVisible(true);
 
-      // Scroll to the chart container
       if (chartContainerRef.current) {
         chartContainerRef.current.scrollIntoView({ behavior: "smooth" });
       }
@@ -624,11 +659,15 @@ export default function Home() {
             </button>
           </div>
           <div className="relative flex items-center w-48">
-            <button onClick={handleLocationButtonClick} className={buttonStyle}>
+            <button
+              ref={cityButtonRef}
+              onClick={handleLocationButtonClick}
+              className={buttonStyle}
+            >
               {t(selectedCity === "City" ? "city" : selectedCity)}
             </button>
             {isDropdownVisible && (
-              <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+              <div ref={dropdownRef} className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
                 <input
                   type="text"
                   placeholder={t('searchCity')}
@@ -652,11 +691,15 @@ export default function Home() {
           </div>
           {(selectedCity === "Athens" || selectedCity === "Thessaloniki") && (
             <div className="relative flex items-center w-48">
-              <button onClick={handleAreaButtonClick} className={buttonStyle}>
+              <button
+                ref={areaButtonRef}
+                onClick={handleAreaButtonClick}
+                className={buttonStyle}
+              >
                 {t(selectedArea === "Area" ? "area" : selectedArea)}
               </button>
               {isAreaDropdownVisible && (
-                <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+                <div ref={areaDropdownRef} className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
                   <input
                     type="text"
                     placeholder={t('searchArea')}
@@ -681,11 +724,15 @@ export default function Home() {
           )}
           <div className="flex flex-col space-y-4 mt-0">
             <div className="relative">
-              <button className={`${buttonStyle} mt-0`} onClick={() => setTimeframeDropdownVisible(prev => !prev)}>
+              <button
+                ref={timeframeButtonRef}
+                className={`${buttonStyle} mt-0`}
+                onClick={() => setTimeframeDropdownVisible(prev => !prev)}
+              >
                 {t(selectedTimeframe) || t('timeframe')}
               </button>
               {timeframeDropdownVisible && (
-                <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+                <div ref={timeframeDropdownRef} className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
                   <ul className="py-1 text-black">
                     {renderTimeframeOptions()}
                   </ul>
