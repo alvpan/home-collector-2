@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useEffect, useRef, CSSProperties } from "react";
 import dynamic from 'next/dynamic';
 import { ApexOptions } from 'apexcharts';
@@ -161,6 +159,7 @@ export default function Home() {
   const [activeHeaderButton, setActiveHeaderButton] = useState<string>('Historical Data');
   const [isChartVisible, setChartVisible] = useState(false);
   const [historicalDataChartLoaded, setHistoricalDataChartLoaded] = useState(false);
+  const chartContainerRef = useRef<HTMLDivElement>(null);
 
   const initialHistoricalChartData: ChartData = {
     options: {
@@ -409,6 +408,11 @@ export default function Home() {
       clearHistoricalChartData();
       await fetchHistoricalData(selectedTimeframe);
       setChartVisible(true);
+
+      // Scroll to the chart container
+      if (chartContainerRef.current) {
+        chartContainerRef.current.scrollIntoView({ behavior: "smooth" });
+      }
     } else {
       alert("Please select valid inputs and ensure that they have changed before refreshing the chart.");
     }
@@ -575,330 +579,162 @@ export default function Home() {
       }
     });
   };
-
-  // return (
-  //   <div style={mainContainerStyle}>
-  //     <header style={headerStyle}>
-  //       <h1 style={h1Style} className="text-5xl font-extrabold text-gray-700 relative">
-  //         hompare
-  //         <span style={underlineStyle}></span>
-  //       </h1>
-  //       <div style={headerButtonsContainerStyle}>
-  //         <button
-  //           style={headerButtonStyle('Historical Data')}
-  //           onClick={() => handleHeaderButtonClick('Historical Data')}
-  //         >
-  //           {t('dataGraph')}
-  //         </button>
-  //         {/* <button
-  //           style={headerButtonStyle('Compare Prices')}
-  //           onClick={() => handleHeaderButtonClick('Compare Prices')}
-  //         >
-  //           {t('comparePrices')}
-  //         </button> */}
-  //         <select 
-  //           onChange={(e) => handleLanguageChange(e.target.value as 'en' | 'gr')} 
-  //           value={language} 
-  //           className="bg-transparent hover:bg-gray-100 text-black py-2 px-4 rounded" 
-  //           style={languageDropdownStyle}
-  //         >
-  //           <option value="en">English</option>
-  //           <option value="gr">Ελληνικά</option>
-  //         </select>
-  //       </div>
-  //     </header>
-
-  //     <main className="flex flex-col items-start justify-start p-8 flex-grow">
-  //       <div style={contentStyle}>
-  //         <div style={buttonsContainerStyle}>
-  //           <div className="flex items-center w-48">
-  //             <button 
-  //               onClick={() => handleActionButtonClick("Rent")} 
-  //               className={`${buttonStyle} ${action === "Rent" ? "bg-orange-700" : "bg-gray-700"} hover:bg-orange-600`}
-  //               style={{ marginRight: "8px" }}
-  //             >
-  //               {t('actionRent')}
-  //             </button>
-  //             <button 
-  //               onClick={() => handleActionButtonClick("Buy")} 
-  //               className={`${buttonStyle} ${action === "Buy" ? "bg-orange-700" : "bg-gray-700"} hover:bg-orange-600`}
-  //             >
-  //               {t('actionBuy')}
-  //             </button>
-  //           </div>
-  //           <div className="relative flex items-center w-48">
-  //             <button onClick={handleLocationButtonClick} className={buttonStyle}>
-  //               {t(selectedCity === "City" ? "city" : selectedCity)}
-  //             </button>
-  //             {isDropdownVisible && (
-  //               <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
-  //                 <input 
-  //                   type="text"
-  //                   placeholder={t('searchCity')}
-  //                   value={citySearchTerm}
-  //                   onChange={(e) => setCitySearchTerm(e.target.value)}
-  //                   className="sticky top-0 p-2 border-b w-full text-orange-600 bg-white z-20"
-  //                 />
-  //                 <ul className="py-1 text-black">
-  //                   {filteredCities.map((city) => (
-  //                     <li
-  //                       key={city}
-  //                       className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
-  //                       onClick={() => handleCitySelect(city)}
-  //                     >
-  //                       {city}
-  //                     </li>
-  //                   ))}
-  //                 </ul>
-  //               </div>
-  //             )}
-  //           </div>
-  //           {(selectedCity === "Athens" || selectedCity === "Thessaloniki") && (
-  //             <div className="relative flex items-center w-48">
-  //               <button onClick={handleAreaButtonClick} className={buttonStyle}>
-  //                 {t(selectedArea === "Area" ? "area" : selectedArea)}
-  //               </button>
-  //               {isAreaDropdownVisible && (
-  //                 <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
-  //                   <input 
-  //                     type="text"
-  //                     placeholder={t('searchArea')}
-  //                     value={areaSearchTerm}
-  //                     onChange={(e) => setAreaSearchTerm(e.target.value)}
-  //                     className="sticky top-0 p-2 border-b w-full text-orange-600 bg-white z-20"
-  //                   />
-  //                   <ul className="py-1 text-black">
-  //                     {filteredAreas.map((area) => (
-  //                       <li
-  //                         key={area}
-  //                         className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
-  //                         onClick={() => handleAreaSelect(area)}
-  //                       >
-  //                         {area}
-  //                       </li>
-  //                     ))}
-  //                   </ul>
-  //                 </div>
-  //               )}
-  //             </div>
-  //           )}
-  //           <div className="flex flex-col space-y-4 mt-0">
-  //             <div className="relative">
-  //               <button className={`${buttonStyle} mt-0`} onClick={() => setTimeframeDropdownVisible(prev => !prev)}>
-  //                 {t(selectedTimeframe) || t('timeframe')}
-  //               </button>
-  //               {timeframeDropdownVisible && (
-  //                 <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
-  //                   <ul className="py-1 text-black">
-  //                     {renderTimeframeOptions()}
-  //                   </ul>
-  //                 </div>
-  //               )}
-  //             </div>
-  //             {selectedTimeframe === "custom" && (
-  //               <div className="relative flex flex-col space-y-2 items-start w-48">
-  //                 <div className="w-48 h-12">
-  //                   <DatePicker
-  //                     selected={startDate}
-  //                     onChange={(date: Date | null) => setStartDate(date)}
-  //                     selectsStart
-  //                     startDate={startDate}
-  //                     endDate={endDate}
-  //                     maxDate={new Date()}
-  //                     dateFormat="dd MMMM yyyy"
-  //                     placeholderText={t('from')}
-  //                     className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
-  //                     showPopperArrow={false}
-  //                     shouldCloseOnSelect={false}
-  //                   />
-  //                 </div>
-  //                 <div className="w-48 h-12">
-  //                   <DatePicker
-  //                     selected={endDate}
-  //                     onChange={(date: Date | null) => setEndDate(date)}
-  //                     selectsEnd
-  //                     startDate={startDate}
-  //                     endDate={endDate}
-  //                     minDate={startDate}
-  //                     maxDate={new Date()}
-  //                     dateFormat="dd MMMM yyyy"
-  //                     placeholderText={t('to')}
-  //                     className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
-  //                     showPopperArrow={false}
-  //                     shouldCloseOnSelect={false}
-  //                   />
-  //                 </div>
-  //               </div>
-  //             )}
-  //             <button className="bg-orange-700 hover:bg-orange-600 text-white py-2 px-4 rounded w-48 h-12 mt-2" onClick={handleRefreshClick}>
-  //               {t('refreshChart')}
-  //             </button>
-  //           </div>
-  //         </div>
-  //         <div style={chartContainerStyle}>
-  //           {renderContent()}
-  //         </div>
-  //       </div>
-  //     </main>
-  //   </div>
-  // );
-
-// !!!
-return (
-  <div className="main-container">
-    <header className="header">
-      <h1 className="text-5xl font-extrabold text-gray-700 relative">
-        hompare
-      </h1>
-      <div className="header-buttons-container">
-        <button
-          style={headerButtonStyle('Historical Data')}
-          onClick={() => handleHeaderButtonClick('Historical Data')}
-        >
-          {t('dataGraph')}
-        </button>
-        <select
-          onChange={(e) => handleLanguageChange(e.target.value as 'en' | 'gr')}
-          value={language}
-          className="bg-transparent hover:bg-gray-100 text-black py-2 px-4 rounded language-dropdown"
-        >
-          <option value="en">English</option>
-          <option value="gr">Ελληνικά</option>
-        </select>
-      </div>
-    </header>
-
-    <main className="flex flex-col items-start justify-start p-8 flex-grow content">
-      <div className="buttons-container">
-        <div className="flex items-center w-48">
+  
+  return (
+    <div className="main-container">
+      <header className="header">
+        <h1 className="text-5xl font-extrabold text-gray-700 relative">
+          hompare
+        </h1>
+        <div className="header-buttons-container">
           <button
-            onClick={() => handleActionButtonClick("Rent")}
-            className={`${buttonStyle} ${action === "Rent" ? "bg-orange-700" : "bg-gray-700"} hover:bg-orange-600`}
-            style={{ marginRight: "8px" }}
+            style={headerButtonStyle('Historical Data')}
+            onClick={() => handleHeaderButtonClick('Historical Data')}
           >
-            {t('actionRent')}
+            {t('dataGraph')}
           </button>
-          <button
-            onClick={() => handleActionButtonClick("Buy")}
-            className={`${buttonStyle} ${action === "Buy" ? "bg-orange-700" : "bg-gray-700"} hover:bg-orange-600`}
+          <select
+            onChange={(e) => handleLanguageChange(e.target.value as 'en' | 'gr')}
+            value={language}
+            className="bg-transparent hover:bg-gray-100 text-black py-2 px-4 rounded language-dropdown"
           >
-            {t('actionBuy')}
-          </button>
+            <option value="en">English</option>
+            <option value="gr">Ελληνικά</option>
+          </select>
         </div>
-        <div className="relative flex items-center w-48">
-          <button onClick={handleLocationButtonClick} className={buttonStyle}>
-            {t(selectedCity === "City" ? "city" : selectedCity)}
-          </button>
-          {isDropdownVisible && (
-            <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
-              <input
-                type="text"
-                placeholder={t('searchCity')}
-                value={citySearchTerm}
-                onChange={(e) => setCitySearchTerm(e.target.value)}
-                className="sticky top-0 p-2 border-b w-full text-orange-600 bg-white z-20"
-              />
-              <ul className="py-1 text-black">
-                {filteredCities.map((city) => (
-                  <li
-                    key={city}
-                    className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
-                    onClick={() => handleCitySelect(city)}
-                  >
-                    {city}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-        {(selectedCity === "Athens" || selectedCity === "Thessaloniki") && (
-          <div className="relative flex items-center w-48">
-            <button onClick={handleAreaButtonClick} className={buttonStyle}>
-              {t(selectedArea === "Area" ? "area" : selectedArea)}
+      </header>
+
+      <main className="flex flex-col items-start justify-start p-8 flex-grow content">
+        <div className="buttons-container">
+          <div className="flex items-center w-48">
+            <button
+              onClick={() => handleActionButtonClick("Rent")}
+              className={`${buttonStyle} ${action === "Rent" ? "bg-orange-700" : "bg-gray-700"} hover:bg-orange-600`}
+              style={{ marginRight: "8px" }}
+            >
+              {t('actionRent')}
             </button>
-            {isAreaDropdownVisible && (
+            <button
+              onClick={() => handleActionButtonClick("Buy")}
+              className={`${buttonStyle} ${action === "Buy" ? "bg-orange-700" : "bg-gray-700"} hover:bg-orange-600`}
+            >
+              {t('actionBuy')}
+            </button>
+          </div>
+          <div className="relative flex items-center w-48">
+            <button onClick={handleLocationButtonClick} className={buttonStyle}>
+              {t(selectedCity === "City" ? "city" : selectedCity)}
+            </button>
+            {isDropdownVisible && (
               <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
                 <input
                   type="text"
-                  placeholder={t('searchArea')}
-                  value={areaSearchTerm}
-                  onChange={(e) => setAreaSearchTerm(e.target.value)}
+                  placeholder={t('searchCity')}
+                  value={citySearchTerm}
+                  onChange={(e) => setCitySearchTerm(e.target.value)}
                   className="sticky top-0 p-2 border-b w-full text-orange-600 bg-white z-20"
                 />
                 <ul className="py-1 text-black">
-                  {filteredAreas.map((area) => (
+                  {filteredCities.map((city) => (
                     <li
-                      key={area}
+                      key={city}
                       className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
-                      onClick={() => handleAreaSelect(area)}
+                      onClick={() => handleCitySelect(city)}
                     >
-                      {area}
+                      {city}
                     </li>
                   ))}
                 </ul>
               </div>
             )}
           </div>
-        )}
-        <div className="flex flex-col space-y-4 mt-0">
-          <div className="relative">
-            <button className={`${buttonStyle} mt-0`} onClick={() => setTimeframeDropdownVisible(prev => !prev)}>
-              {t(selectedTimeframe) || t('timeframe')}
-            </button>
-            {timeframeDropdownVisible && (
-              <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
-                <ul className="py-1 text-black">
-                  {renderTimeframeOptions()}
-                </ul>
-              </div>
-            )}
-          </div>
-          {selectedTimeframe === "custom" && (
-            <div className="relative flex flex-col space-y-2 items-start w-48">
-              <div className="w-48 h-12">
-                <DatePicker
-                  selected={startDate}
-                  onChange={(date: Date | null) => setStartDate(date)}
-                  selectsStart
-                  startDate={startDate}
-                  endDate={endDate}
-                  maxDate={new Date()}
-                  dateFormat="dd MMMM yyyy"
-                  placeholderText={t('from')}
-                  className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
-                  showPopperArrow={false}
-                  shouldCloseOnSelect={false}
-                />
-              </div>
-              <div className="w-48 h-12">
-                <DatePicker
-                  selected={endDate}
-                  onChange={(date: Date | null) => setEndDate(date)}
-                  selectsEnd
-                  startDate={startDate}
-                  endDate={endDate}
-                  minDate={startDate}
-                  maxDate={new Date()}
-                  dateFormat="dd MMMM yyyy"
-                  placeholderText={t('to')}
-                  className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
-                  showPopperArrow={false}
-                  shouldCloseOnSelect={false}
-                />
-              </div>
+          {(selectedCity === "Athens" || selectedCity === "Thessaloniki") && (
+            <div className="relative flex items-center w-48">
+              <button onClick={handleAreaButtonClick} className={buttonStyle}>
+                {t(selectedArea === "Area" ? "area" : selectedArea)}
+              </button>
+              {isAreaDropdownVisible && (
+                <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+                  <input
+                    type="text"
+                    placeholder={t('searchArea')}
+                    value={areaSearchTerm}
+                    onChange={(e) => setAreaSearchTerm(e.target.value)}
+                    className="sticky top-0 p-2 border-b w-full text-orange-600 bg-white z-20"
+                  />
+                  <ul className="py-1 text-black">
+                    {filteredAreas.map((area) => (
+                      <li
+                        key={area}
+                        className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                        onClick={() => handleAreaSelect(area)}
+                      >
+                        {area}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           )}
-          <button className="bg-orange-700 hover:bg-orange-600 text-white py-2 px-4 rounded w-48 h-12 mt-2" onClick={handleRefreshClick}>
-            {t('refreshChart')}
-          </button>
+          <div className="flex flex-col space-y-4 mt-0">
+            <div className="relative">
+              <button className={`${buttonStyle} mt-0`} onClick={() => setTimeframeDropdownVisible(prev => !prev)}>
+                {t(selectedTimeframe) || t('timeframe')}
+              </button>
+              {timeframeDropdownVisible && (
+                <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+                  <ul className="py-1 text-black">
+                    {renderTimeframeOptions()}
+                  </ul>
+                </div>
+              )}
+            </div>
+            {selectedTimeframe === "custom" && (
+              <div className="relative flex flex-col space-y-2 items-start w-48">
+                <div className="w-48 h-12">
+                  <DatePicker
+                    selected={startDate}
+                    onChange={(date: Date | null) => setStartDate(date)}
+                    selectsStart
+                    startDate={startDate}
+                    endDate={endDate}
+                    maxDate={new Date()}
+                    dateFormat="dd MMMM yyyy"
+                    placeholderText={t('from')}
+                    className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
+                    showPopperArrow={false}
+                    shouldCloseOnSelect={false}
+                  />
+                </div>
+                <div className="w-48 h-12">
+                  <DatePicker
+                    selected={endDate}
+                    onChange={(date: Date | null) => setEndDate(date)}
+                    selectsEnd
+                    startDate={startDate}
+                    endDate={endDate}
+                    minDate={startDate}
+                    maxDate={new Date()}
+                    dateFormat="dd MMMM yyyy"
+                    placeholderText={t('to')}
+                    className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
+                    showPopperArrow={false}
+                    shouldCloseOnSelect={false}
+                  />
+                </div>
+              </div>
+            )}
+            <button className="bg-orange-700 hover:bg-orange-600 text-white py-2 px-4 rounded w-48 h-12 mt-2" onClick={handleRefreshClick}>
+              {t('refreshChart')}
+            </button>
+          </div>
         </div>
-      </div>
-      <div className="chart-container">
-        {renderContent()}
-      </div>
-    </main>
-  </div>
-);
+        <div ref={chartContainerRef} className="chart-container">
+          {renderContent()}
+        </div>
+      </main>
+    </div>
+  );
 
 }
