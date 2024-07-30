@@ -7,6 +7,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import enTranslations from './locales/en.json';
 import grTranslations from './locales/gr.json';
+import { useMediaQuery } from 'react-responsive';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -71,6 +72,7 @@ export default function Home() {
   const [isChartVisible, setChartVisible] = useState(false);
   const [historicalDataChartLoaded, setHistoricalDataChartLoaded] = useState(false);
   const chartContainerRef = useRef<HTMLDivElement>(null);
+  const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
   const initialHistoricalChartData: ChartData = {
     options: {
@@ -85,7 +87,13 @@ export default function Home() {
         theme: 'dark',
         style: { fontSize: '20px', fontFamily: undefined }
       },
-      markers: { size: 4, colors: ['#ff4d00'], strokeColors: '#ff4d00', radius: 10, strokeWidth: 5 },
+      markers: {
+        size: isMobile ? 0 : 4, // Use the isMobile flag to conditionally set marker size
+        colors: ['#ff4d00'],
+        strokeColors: '#ff4d00',
+        radius: 10,
+        strokeWidth: 5
+      },
       stroke: { curve: 'smooth' },
       dataLabels: { enabled: true, formatter: (val: number) => `€${val}` },
       xaxis: {
@@ -95,15 +103,6 @@ export default function Home() {
       yaxis: {
         forceNiceScale: true,
         labels: { style: { colors: 'black', fontSize: '12px' } },
-        // title: { 
-        //   text: 'Price (€)', 
-        //   style: { 
-        //     fontSize: '16px', 
-        //     color: 'black', 
-        //     fontFamily: 'Consolas',
-        //     cssClass: 'y-axis-title' 
-        //   }
-        // },
         min: undefined,
         max: undefined,
       },
@@ -111,15 +110,10 @@ export default function Home() {
     },
     series: [{ name: '€', data: [] }]
   };
-  
-  
-  
-  
 
   const [historicalDataChartData, setHistoricalDataChartData] = useState<ChartData>(initialHistoricalChartData);
-
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>("");
-  const [previousValues, setPreviousValues] = useState({action: "", city: "", area: "", timeframe: "", startDate: null as Date | null, endDate: null as Date | null});
+  const [previousValues, setPreviousValues] = useState({ action: "", city: "", area: "", timeframe: "", startDate: null as Date | null, endDate: null as Date | null });
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
   const [renderHistoricalDataChart, setRenderHistoricalDataChart] = useState(true);
 
@@ -288,9 +282,6 @@ export default function Home() {
             fontFamily: undefined,
           },
         };
-        
-        
-        
 
         return {
           ...prevData,
@@ -503,7 +494,7 @@ export default function Home() {
     position: 'absolute',
     right: '4rem',
   };
-  
+
   const languageDropdownStyle: CSSProperties = {
     marginLeft: '8rem',
   };
