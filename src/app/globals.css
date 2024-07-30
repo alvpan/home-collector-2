@@ -84,6 +84,7 @@ body {
   margin-left: 8rem;
 }
 
+/* Hide Y-axis title on mobile devices */
 @media (max-width: 768px) {
   .header {
     flex-direction: column;
@@ -113,5 +114,9 @@ body {
 
   .language-dropdown {
     margin-left: 0;
+  }
+
+  .y-axis-title {
+    display: none;
   }
 }

@@ -95,7 +95,15 @@ export default function Home() {
       yaxis: {
         forceNiceScale: true,
         labels: { style: { colors: 'black', fontSize: '12px' } },
-        title: { text: 'Price (€)', style: { fontSize: '16px', color: 'black', fontFamily: 'Consolas' } },
+        title: { 
+          text: 'Price (€)', 
+          style: { 
+            fontSize: '16px', 
+            color: 'black', 
+            fontFamily: 'Consolas',
+            cssClass: 'y-axis-title' 
+          }
+        },
         min: undefined,
         max: undefined,
       },
@@ -103,6 +111,10 @@ export default function Home() {
     },
     series: [{ name: '€', data: [] }]
   };
+  
+  
+  
+  
 
   const [historicalDataChartData, setHistoricalDataChartData] = useState<ChartData>(initialHistoricalChartData);
 
@@ -266,12 +278,11 @@ export default function Home() {
           }
         }
         
-        // Set the tooltip configuration outside the condition to apply it universally
         options.tooltip = {
           y: {
-            formatter: (value: number) => value.toFixed(2), // Keep tooltip values with decimals
+            formatter: (value: number) => value.toFixed(1),
           },
-          theme: 'light', // Set tooltip theme to light
+          theme: 'light',
           style: {
             fontSize: '12px',
             fontFamily: undefined,
