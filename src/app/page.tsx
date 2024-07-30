@@ -95,14 +95,15 @@ export default function Home() {
       yaxis: {
         forceNiceScale: true,
         labels: { style: { colors: 'black', fontSize: '12px' } },
-        title: isMobileDevice() ? undefined : { 
-          text: 'Price (€)', 
-          style: { 
-            fontSize: '16px', 
-            color: 'black', 
-            fontFamily: 'Consolas' 
-          }
-        },
+        // title: { 
+        //   text: 'Price (€)', 
+        //   style: { 
+        //     fontSize: '16px', 
+        //     color: 'black', 
+        //     fontFamily: 'Consolas',
+        //     cssClass: 'y-axis-title' 
+        //   }
+        // },
         min: undefined,
         max: undefined,
       },
@@ -110,6 +111,10 @@ export default function Home() {
     },
     series: [{ name: '€', data: [] }]
   };
+  
+  
+  
+  
 
   const [historicalDataChartData, setHistoricalDataChartData] = useState<ChartData>(initialHistoricalChartData);
 
@@ -284,6 +289,9 @@ export default function Home() {
           },
         };
         
+        
+        
+
         return {
           ...prevData,
           options,
@@ -740,8 +748,4 @@ export default function Home() {
       </main>
     </div>
   );
-}
-
-function isMobileDevice() {
-  return window.innerWidth <= 768;
 }
