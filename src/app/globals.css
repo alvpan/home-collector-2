@@ -32,6 +32,10 @@ body {
   }
 }
 
+.apexcharts-tooltip {
+  color: #000 !important;
+}
+
 /* Custom styles for responsiveness */
 .main-container {
   background-color: #F0EFEB;

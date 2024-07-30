@@ -264,19 +264,21 @@ export default function Home() {
               };
             }
           }
-        
-          options.tooltip = {
-            y: {
-              formatter: (value: number) => value.toFixed(2),
-            }
-          };
-        } else {
-          options.tooltip = {
-            y: {
-              formatter: (value: number) => value.toFixed(2),
-            }
-          };
         }
+        
+        // Set the tooltip configuration outside the condition to apply it universally
+        options.tooltip = {
+          y: {
+            formatter: (value: number) => value.toFixed(2), // Keep tooltip values with decimals
+          },
+          theme: 'light', // Set tooltip theme to light
+          style: {
+            fontSize: '12px',
+            fontFamily: undefined,
+          },
+        };
+        
+        
         
 
         return {
