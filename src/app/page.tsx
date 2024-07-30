@@ -56,97 +56,6 @@ const HistoricalData: React.FC<{ chartData: ChartData, onTimeframeChange: (timef
   );
 };
 
-// const ComparePrices: React.FC<{ t: (key: string) => string }> = ({ t }) => {
-//   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-//     const charCode = event.charCode;
-//     if (charCode < 48 || charCode > 57) {
-//       event.preventDefault();
-//     }
-//   };
-
-//   const formatNumber = (value: string) => {
-//     return value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-//   };
-
-//   const handleSurfaceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-//     const value = event.target.value.replace(/\./g, '');
-//     event.target.value = formatNumber(value);
-//   };
-
-//   const handlePriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-//     const value = event.target.value.replace(/\./g, '');
-//     event.target.value = formatNumber(value);
-//   };
-
-//   const inputStyle = {
-//     WebkitAppearance: "none" as const,
-//     MozAppearance: "textfield" as const,
-//     fontWeight: "600",
-//     paddingRight: "2.5rem",
-//     borderColor: "gray",
-//     backgroundColor: "white",
-//     outline: "none",
-//     borderWidth: "2px",
-//     width: "100%",
-//   };
-
-//   const wrapperStyle: CSSProperties = {
-//     position: "relative",
-//     display: "flex",
-//     alignItems: "center",
-//     width: "192px",
-//   };
-
-//   const symbolStyle: CSSProperties = {
-//     position: "absolute",
-//     right: "0.5rem",
-//     color: "gray",
-//     pointerEvents: "none",
-//   };
-
-//   const customStyles = `
-//     input:focus {
-//       border-color: #F57C00 !important; // Change border color on focus
-//       border-width: 4px !important; // Increase border width on focus
-//     }
-//   `;
-
-//   return (
-//     <>
-//       <style>{customStyles}</style>
-//       <div className="flex flex-col space-y-2 max-w-xs">
-//         <div style={wrapperStyle}>
-//           <input
-//             type="text"
-//             inputMode="numeric"
-//             placeholder={t('enterSurface')}
-//             className="p-2 border text-orange-600 py-2 px-4 rounded w-48 h-12"
-//             onKeyPress={handleKeyPress}
-//             onChange={handleSurfaceChange}
-//             style={inputStyle}
-//           />
-//           <span style={symbolStyle}>m²</span>
-//         </div>
-//         <div style={wrapperStyle}>
-//           <input
-//             type="text"
-//             inputMode="numeric"
-//             placeholder={t('enterPrice')}
-//             className="p-2 border text-orange-600 py-2 px-4 rounded w-48 h-12"
-//             onKeyPress={handleKeyPress}
-//             onChange={handlePriceChange}
-//             style={inputStyle}
-//           />
-//           <span style={symbolStyle}>€</span>
-//         </div>
-//         <button className="bg-orange-700 hover:bg-orange-600 text-white py-2 px-4 rounded w-48 h-12">
-//           {t('evaluate')}
-//         </button>
-//       </div>
-//     </>
-//   );
-// };
-
 export default function Home() {
   const [language, setLanguage] = useState<'en' | 'gr'>('en');
   const [action, setAction] = useState("Rent");
@@ -188,7 +97,7 @@ export default function Home() {
         labels: { style: { colors: 'black', fontSize: '12px' } },
         title: { text: 'Price (€)', style: { fontSize: '16px', color: 'black', fontFamily: 'Consolas' } },
         min: undefined,
-        max: undefined
+        max: undefined,
       },
       colors: ['#ff4d00'],
     },
@@ -319,9 +228,8 @@ export default function Home() {
       const prices = data.map((item: { pricePerSqm: number }) => item.pricePerSqm);
       const { min, max } = addYAxisPadding(prices);
 
-      setHistoricalDataChartData((prevData: ChartData) => ({
-        ...prevData,
-        options: {
+      setHistoricalDataChartData((prevData: ChartData) => {
+        const options: ApexOptions = {
           ...prevData.options,
           xaxis: { 
             ...prevData.options.xaxis, 
@@ -332,12 +240,39 @@ export default function Home() {
             min: min,
             max: max,
           },
-        },
-        series: [{ 
-          name: '€ per m²', 
-          data: prices
-        }]
-      }));
+        };
+
+        if (action === "Buy") {
+          options.yaxis = {
+            ...options.yaxis,
+            tickAmount: Math.ceil((max - min) / 100),
+          };
+
+          if (Array.isArray(options.yaxis)) {
+            options.yaxis = options.yaxis.map(yAxis => ({
+              ...yAxis,
+              labels: {
+                ...yAxis.labels,
+                formatter: (value: number) => value.toFixed(0),
+              },
+            }));
+          } else {
+            options.yaxis.labels = {
+              ...options.yaxis?.labels,
+              formatter: (value: number) => value.toFixed(0),
+            };
+          }
+        }
+
+        return {
+          ...prevData,
+          options,
+          series: [{ 
+            name: '€ per m²', 
+            data: prices
+          }]
+        };
+      });
 
       setRenderHistoricalDataChart(false);
       setTimeout(() => setRenderHistoricalDataChart(true), 0);
@@ -785,5 +720,4 @@ export default function Home() {
       </main>
     </div>
   );
-
 }
