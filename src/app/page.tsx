@@ -247,7 +247,7 @@ export default function Home() {
             ...options.yaxis,
             tickAmount: Math.ceil((max - min) / 100),
           };
-
+        
           if (Array.isArray(options.yaxis)) {
             options.yaxis = options.yaxis.map(yAxis => ({
               ...yAxis,
@@ -257,12 +257,27 @@ export default function Home() {
               },
             }));
           } else {
-            options.yaxis.labels = {
-              ...options.yaxis?.labels,
-              formatter: (value: number) => value.toFixed(0),
-            };
+            if (options.yaxis) {
+              options.yaxis.labels = {
+                ...options.yaxis.labels,
+                formatter: (value: number) => value.toFixed(0),
+              };
+            }
           }
+        
+          options.tooltip = {
+            y: {
+              formatter: (value: number) => value.toFixed(2),
+            }
+          };
+        } else {
+          options.tooltip = {
+            y: {
+              formatter: (value: number) => value.toFixed(2),
+            }
+          };
         }
+        
 
         return {
           ...prevData,
