@@ -88,14 +88,14 @@ export default function Home() {
         style: { fontSize: '20px', fontFamily: undefined }
       },
       markers: {
-        size: isMobile ? 0 : 4, // Use the isMobile flag to conditionally set marker size
+        size: isMobile ? 0 : 4,
         colors: ['#ff4d00'],
         strokeColors: '#ff4d00',
         radius: 10,
         strokeWidth: 5
       },
       stroke: { curve: 'smooth' },
-      dataLabels: { enabled: true, formatter: (val: number) => `€${val}` },
+      dataLabels: { enabled: !isMobile, formatter: (val: number) => `€${val}` },
       xaxis: {
         categories: [],
         labels: { rotate: -45, style: { colors: 'black', fontSize: '12px' } }
