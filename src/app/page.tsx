@@ -86,7 +86,7 @@ export default function Home() {
             const tooltip = chartContext.el.querySelector('.apexcharts-tooltip');
             if (tooltip) {
               tooltip.style.top = '10px';
-              tooltip.style.left = '10px';
+              tooltip.style.left = '40px';
             }
           }
         }
@@ -95,6 +95,12 @@ export default function Home() {
         marker: { show: false },
         theme: 'dark',
         style: { fontSize: '20px', fontFamily: undefined },
+        fixed: {
+          enabled: true,
+          position: 'topLeft',
+          offsetX: 0,
+          offsetY: 0,
+      },
       },
       markers: {
         size: isMobile ? 0 : 4,
@@ -290,6 +296,12 @@ export default function Home() {
             fontSize: '12px',
             fontFamily: undefined,
           },
+          fixed: {
+            enabled: true,
+            position: 'topLeft',
+            offsetX: 0,
+            offsetY: 0,
+          },
         };
 
         options.chart = {
@@ -299,7 +311,7 @@ export default function Home() {
               const tooltip = chartContext.el.querySelector('.apexcharts-tooltip');
               if (tooltip) {
                 tooltip.style.top = '10px';
-                tooltip.style.left = '10px';
+                tooltip.style.left = '40px';
               }
             }
           }
