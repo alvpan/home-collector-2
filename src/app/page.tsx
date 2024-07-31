@@ -85,7 +85,16 @@ export default function Home() {
       tooltip: {
         marker: { show: false },
         theme: 'dark',
-        style: { fontSize: '20px', fontFamily: undefined }
+        style: { fontSize: '20px', fontFamily: undefined },
+        custom: function({ series, seriesIndex, dataPointIndex, w }) {
+          const x = w.globals.labels[dataPointIndex];
+          const y = series[seriesIndex][dataPointIndex];
+          return (
+            `<div class="apexcharts-tooltip" style="position: absolute; top: 0px; left: 0px;">
+              <span>${x}: €${y}</span>
+            </div>`
+          );
+        },
       },
       markers: {
         size: isMobile ? 0 : 4,
@@ -280,6 +289,15 @@ export default function Home() {
           style: {
             fontSize: '12px',
             fontFamily: undefined,
+          },
+          custom: function({ series, seriesIndex, dataPointIndex, w }) {
+            const x = w.globals.labels[dataPointIndex];
+            const y = series[seriesIndex][dataPointIndex];
+            return (
+              `<div class="apexcharts-tooltip" style="position: absolute; top: 0px; left: 0px;">
+                <span>${x}: €${y}</span>
+              </div>`
+            );
           },
         };
 
