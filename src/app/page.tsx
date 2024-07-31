@@ -98,8 +98,8 @@ export default function Home() {
         fixed: {
           enabled: true,
           position: 'topLeft',
-          offsetX: 10,
-          offsetY: 55,
+          offsetX: 55,
+          offsetY: 10,
       },
       },
       markers: {
@@ -299,8 +299,8 @@ export default function Home() {
           fixed: {
             enabled: true,
             position: 'topLeft',
-            offsetX: 10,
-            offsetY: 55,
+            offsetX: 55,
+            offsetY: 10,
           },
         };
 
