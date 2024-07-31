@@ -86,7 +86,7 @@ export default function Home() {
             const tooltip = chartContext.el.querySelector('.apexcharts-tooltip');
             if (tooltip) {
               tooltip.style.top = '10px';
-              tooltip.style.left = '40px';
+              tooltip.style.left = '55px';
             }
           }
         }
@@ -311,7 +311,7 @@ export default function Home() {
               const tooltip = chartContext.el.querySelector('.apexcharts-tooltip');
               if (tooltip) {
                 tooltip.style.top = '10px';
-                tooltip.style.left = '40px';
+                tooltip.style.left = '55px';
               }
             }
           }
