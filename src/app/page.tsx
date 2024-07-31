@@ -80,21 +80,21 @@ export default function Home() {
         type: 'area',
         background: 'transparent',
         toolbar: { show: false },
-        zoom: { enabled: false }
+        zoom: { enabled: false },
+        events: {
+          mouseMove: function(event, chartContext, config) {
+            const tooltip = chartContext.el.querySelector('.apexcharts-tooltip');
+            if (tooltip) {
+              tooltip.style.top = '10px';
+              tooltip.style.left = '10px';
+            }
+          }
+        }
       },
       tooltip: {
         marker: { show: false },
         theme: 'dark',
         style: { fontSize: '20px', fontFamily: undefined },
-        custom: function({ series, seriesIndex, dataPointIndex, w }) {
-          const x = w.globals.labels[dataPointIndex];
-          const y = series[seriesIndex][dataPointIndex];
-          return (
-            `<div class="apexcharts-tooltip" style="position: absolute; top: 10px; left: 10px; background: rgba(0, 0, 0, 0.75); padding: 5px; border-radius: 5px; color: #fff;">
-              <span>${x}: €${y}</span>
-            </div>`
-          );
-        },
       },
       markers: {
         size: isMobile ? 0 : 4,
@@ -247,11 +247,11 @@ export default function Home() {
         const options: ApexOptions = {
           ...prevData.options,
           xaxis: { 
-            ...prevData.options.xaxis, 
+            ...prevData.options?.xaxis, 
             categories: dates
           },
           yaxis: { 
-            ...prevData.options.yaxis, 
+            ...prevData.options?.yaxis, 
             min: min,
             max: max,
           },
@@ -290,15 +290,19 @@ export default function Home() {
             fontSize: '12px',
             fontFamily: undefined,
           },
-          custom: function({ series, seriesIndex, dataPointIndex, w }) {
-            const x = w.globals.labels[dataPointIndex];
-            const y = series[seriesIndex][dataPointIndex];
-            return (
-              `<div class="apexcharts-tooltip" style="position: absolute; top: 10px; left: 10px; background: rgba(0, 0, 0, 0.75); padding: 5px; border-radius: 5px; color: #fff;">
-                <span>${x}: €${y}</span>
-              </div>`
-            );
-          },
+        };
+
+        options.chart = {
+          ...options.chart,
+          events: {
+            mouseMove: function(event, chartContext, config) {
+              const tooltip = chartContext.el.querySelector('.apexcharts-tooltip');
+              if (tooltip) {
+                tooltip.style.top = '10px';
+                tooltip.style.left = '10px';
+              }
+            }
+          }
         };
 
         return {
