@@ -90,7 +90,7 @@ export default function Home() {
           const x = w.globals.labels[dataPointIndex];
           const y = series[seriesIndex][dataPointIndex];
           return (
-            `<div class="apexcharts-tooltip" style="position: absolute; top: 0px; left: 0px;">
+            `<div class="apexcharts-tooltip" style="position: absolute; top: 10px; left: 10px; background: rgba(0, 0, 0, 0.75); padding: 5px; border-radius: 5px; color: #fff;">
               <span>${x}: €${y}</span>
             </div>`
           );
@@ -294,7 +294,7 @@ export default function Home() {
             const x = w.globals.labels[dataPointIndex];
             const y = series[seriesIndex][dataPointIndex];
             return (
-              `<div class="apexcharts-tooltip" style="position: absolute; top: 0px; left: 0px;">
+              `<div class="apexcharts-tooltip" style="position: absolute; top: 10px; left: 10px; background: rgba(0, 0, 0, 0.75); padding: 5px; border-radius: 5px; color: #fff;">
                 <span>${x}: €${y}</span>
               </div>`
             );
