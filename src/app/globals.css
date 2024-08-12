@@ -36,8 +36,13 @@ body {
   background: rgba(255, 255, 255, 0.0) !important;
   border: none !important;
   box-shadow: none !important;
+  color: black !important;
 }
 
+.apexcharts-tooltip-title {
+  background: rgba(255, 255, 255, 0) !important;
+  color: black !important;
+}
 
 /* Custom styles for responsiveness */
 .main-container {
