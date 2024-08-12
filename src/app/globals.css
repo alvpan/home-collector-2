@@ -113,8 +113,9 @@ body {
   }
 
   .chart-container {
-    margin-left: 0;
-    width: 100%;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
   }
 
   .header-buttons-container {
