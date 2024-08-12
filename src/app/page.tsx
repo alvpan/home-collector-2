@@ -317,7 +317,7 @@ export default function Home() {
           y: {
             formatter: function(value, { seriesIndex, w }) {
               const seriesColor = w.config.colors[seriesIndex];
-              return `<span style="color: ${seriesColor}; font-weight: bold; font-size: 24px;">${value.toFixed(1)}</span>€`;
+              return `<span style="color: ${seriesColor}; font-weight: bold; font-size: 24px;">${value.toFixed(1)}€</span>`;
             }
           },
           theme: 'light',
