@@ -136,7 +136,7 @@ export default function Home() {
         strokeWidth: 5
       },
       stroke: { curve: 'smooth' },
-      dataLabels: { enabled: !isMobile, formatter: (val: number) => `€${val}` },
+      dataLabels: { enabled: !isMobile, formatter: (val: number) => `${val}€` },
       xaxis: {
         categories: [],
         labels: { rotate: -45, style: { colors: 'black', fontSize: '12px' } }
@@ -317,7 +317,7 @@ export default function Home() {
           y: {
             formatter: function(value, { seriesIndex, w }) {
               const seriesColor = w.config.colors[seriesIndex];
-              return `<span style="color: ${seriesColor};">€${value.toFixed(1)}</span>`;
+              return `<span style="color: ${seriesColor}; font-weight: bold;">€${value.toFixed(1)}</span>`;
             }
           },
           theme: 'light',
@@ -351,7 +351,7 @@ export default function Home() {
           ...prevData,
           options,
           series: [{ 
-            name: '€ per m²', 
+            name: '1m²', 
             data: prices
           }]
         };
