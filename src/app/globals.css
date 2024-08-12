@@ -33,14 +33,14 @@ body {
 }
 
 .apexcharts-tooltip {
-  background: rgba(240, 239, 235, 1) !important;
+  background: rgba(240, 239, 235, 0.7) !important;
   border: none !important;
   box-shadow: none !important;
   color: black !important;
 }
 
 .apexcharts-tooltip-title {
-  background: rgba(240, 239, 235, 1) !important;
+  background: rgba(240, 239, 235, 0.7) !important;
   color: black !important;
   box-shadow: none !important;
   border: none !important;
