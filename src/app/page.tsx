@@ -317,14 +317,14 @@ export default function Home() {
           y: {
             formatter: function(value, { seriesIndex, w }) {
               const seriesColor = w.config.colors[seriesIndex];
-              return `<span style="color: ${seriesColor}; font-weight: bold;">€${value.toFixed(1)}</span>`;
+              return `<span style="color: ${seriesColor}; font-weight: bold;">${value.toFixed(1)}</span>€`;
             }
           },
           theme: 'light',
           marker: {show: false},
           style: {
             fontSize: '12px',
-            fontFamily: undefined,
+            fontFamily: undefined
           },
           fixed: {
             enabled: true,
@@ -351,7 +351,7 @@ export default function Home() {
           ...prevData,
           options,
           series: [{ 
-            name: '1m²', 
+            name: '1m² costs', 
             data: prices
           }]
         };

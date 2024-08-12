@@ -33,8 +33,11 @@ body {
 }
 
 .apexcharts-tooltip {
-  color: #000 !important;
+  background: rgba(255, 255, 255, 0.0) !important;
+  border: none !important;
+  box-shadow: none !important;
 }
+
 
 /* Custom styles for responsiveness */
 .main-container {
