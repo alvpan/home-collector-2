@@ -311,7 +311,6 @@ export default function Home() {
           y: {
             formatter: (value: number) => value.toFixed(1),
           },
-          marker: {show: false},
           theme: 'light',
           style: {
             fontSize: '12px',
