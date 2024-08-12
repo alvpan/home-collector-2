@@ -112,6 +112,12 @@ export default function Home() {
         }
       },
       tooltip: {
+        y: {
+          formatter: function(value, { seriesIndex, w }) {
+            const seriesColor = w.config.colors[seriesIndex];
+            return `<span style="color: ${seriesColor};">€${value.toFixed(1)}</span>`;
+          }
+        },
         marker: { show: false },
         theme: 'dark',
         style: { fontSize: '20px', fontFamily: undefined },
@@ -312,7 +318,6 @@ export default function Home() {
             formatter: (value: number) => value.toFixed(1),
           },
           theme: 'light',
-          fillSeriesColor: true,
           marker: {show: false},
           style: {
             fontSize: '12px',
