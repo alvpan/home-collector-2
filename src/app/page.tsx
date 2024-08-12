@@ -312,6 +312,8 @@ export default function Home() {
             formatter: (value: number) => value.toFixed(1),
           },
           theme: 'light',
+          fillSeriesColor: true,
+          marker: {show: false},
           style: {
             fontSize: '12px',
             fontFamily: undefined,
