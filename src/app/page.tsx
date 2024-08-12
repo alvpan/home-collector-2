@@ -112,6 +112,18 @@ export default function Home() {
         }
       },
       tooltip: {
+        x: {
+          formatter: function (value) {
+            const date = new Date(value);
+            
+            const formattedDate = date.toLocaleDateString('en-GB', {
+              day: 'numeric',
+              month: 'short',
+            });
+  
+            return formattedDate;
+          }
+        },
         y: {
           formatter: function(value, { seriesIndex, w }) {
             const seriesColor = w.config.colors[seriesIndex];
