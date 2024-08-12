@@ -30,6 +30,7 @@ const translations = {
 const HistoricalData: React.FC<{ chartData: ChartData, onTimeframeChange: (timeframe: string) => void, selectedTimeframe: string, onRefresh: () => void, startDate: Date | null, endDate: Date | null, setStartDate: (date: Date | null) => void, setEndDate: (date: Date | null) => void, isVisible: boolean }> = ({ chartData, onTimeframeChange, selectedTimeframe, onRefresh, startDate, endDate, setStartDate, setEndDate, isVisible }) => {
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
   const chartRef = useRef<any>(null);
+  const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
   useEffect(() => {
     if (chartRef.current && chartData.series[0].data.length > 0) {
@@ -37,15 +38,34 @@ const HistoricalData: React.FC<{ chartData: ChartData, onTimeframeChange: (timef
     }
   }, [chartData]);
 
+  useEffect(() => {
+    const chartContainer = chartRef.current?.container;
+
+    const handleTouchMove = (event: TouchEvent) => {
+      if (chartContainer && event.target instanceof Node && chartContainer.contains(event.target)) {
+        event.preventDefault();
+      }
+    };
+
+    if (isMobile && chartContainer) {
+      chartContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
+    }
+
+    return () => {
+      if (chartContainer) {
+        chartContainer.removeEventListener('touchmove', handleTouchMove);
+      }
+    };
+  }, [isMobile]);
+
   if (!isVisible) {
     return null;
   }
 
   return (
-    <div>
+    <div ref={chartRef}>
       {chartData.series[0].data.length > 0 && (
         <Chart
-          ref={chartRef}
           options={chartData.options}
           series={chartData.series}
           type="area"
@@ -291,6 +311,8 @@ export default function Home() {
           y: {
             formatter: (value: number) => value.toFixed(1),
           },
+          marker: {show: false},
+          fillSeriesColor: true,
           theme: 'light',
           style: {
             fontSize: '12px',
