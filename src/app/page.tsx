@@ -315,7 +315,10 @@ export default function Home() {
         
         options.tooltip = {
           y: {
-            formatter: (value: number) => value.toFixed(1),
+            formatter: function(value, { seriesIndex, w }) {
+              const seriesColor = w.config.colors[seriesIndex];
+              return `<span style="color: ${seriesColor};">€${value.toFixed(1)}</span>`;
+            }
           },
           theme: 'light',
           marker: {show: false},
