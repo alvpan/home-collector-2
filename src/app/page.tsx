@@ -323,7 +323,7 @@ export default function Home() {
           theme: 'light',
           marker: {show: false},
           style: {
-            fontSize: '12px',
+            fontSize: '15px',
             fontFamily: undefined
           },
           fixed: {
