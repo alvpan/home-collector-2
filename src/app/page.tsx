@@ -135,13 +135,16 @@ export default function Home() {
         radius: 10,
         strokeWidth: 5
       },
-      stroke: { curve: 'smooth' },
+      stroke: { curve: 'smooth', width: 3 },
       dataLabels: { enabled: !isMobile, formatter: (val: number) => `${val}€` },
       xaxis: {
         categories: [],
         labels: { rotate: -90, style: { colors: 'black', fontSize: '0px' }, show: false }
       },
       yaxis: {
+        axisTicks: {
+          show: true,
+        },
         forceNiceScale: true,
         labels: { style: { colors: 'black', fontSize: '0px' }, show: false },
         min: undefined,
