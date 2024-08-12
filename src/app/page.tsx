@@ -323,6 +323,14 @@ export default function Home() {
               return `<span style="color: ${seriesColor}; font-weight: bold; font-size: 24px;">${value.toFixed(1)}€</span>`;
             }
           },
+          x: {
+            formatter: function (value) {
+              const date = new Date(value);
+              const day = date.getDate();
+              const month = date.toLocaleString('en-US', { month: 'short' });
+              return `${day} ${month}`;
+            }
+          },
           theme: 'light',
           marker: {show: false},
           style: {
