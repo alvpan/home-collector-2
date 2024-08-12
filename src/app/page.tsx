@@ -326,12 +326,13 @@ export default function Home() {
           x: {
             formatter: function (value) {
               const date = new Date(value);
-              if (isNaN(date.getTime())) {
-                return 'Invalid Date';
-              }
-              const day = date.getDate();
-              const month = date.toLocaleString('en-US', { month: 'short' });
-              return `${day} ${month}`;
+    
+              const formattedDate = date.toLocaleDateString('en-GB', {
+                day: 'numeric',
+                month: 'short',
+              });
+    
+              return formattedDate;
             }
           },
           theme: 'light',
