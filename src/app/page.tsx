@@ -33,7 +33,7 @@ const HistoricalData: React.FC<{ chartData: ChartData, onTimeframeChange: (timef
   const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
   useEffect(() => {
-    if (chartRef.current && chartData.series[0].data.length > 0) {
+    if (chartRef.current && chartRef.current.chart && chartData.series[0].data.length > 0) {
       chartRef.current.chart.updateSeries(chartData.series);
     }
   }, [chartData]);
@@ -120,7 +120,7 @@ export default function Home() {
           position: 'topLeft',
           offsetX: 55,
           offsetY: 10,
-      },
+        },
       },
       markers: {
         size: isMobile ? 0 : 4,
