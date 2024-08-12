@@ -139,11 +139,11 @@ export default function Home() {
       dataLabels: { enabled: !isMobile, formatter: (val: number) => `${val}€` },
       xaxis: {
         categories: [],
-        labels: { rotate: -90, style: { colors: 'black', fontSize: '10px' }, show: false }
+        labels: { rotate: -90, style: { colors: 'black', fontSize: '0px' }, show: false }
       },
       yaxis: {
         forceNiceScale: true,
-        labels: { style: { colors: 'black', fontSize: '12px' } },
+        labels: { style: { colors: 'black', fontSize: '0px' }, show: false },
         min: undefined,
         max: undefined,
       },
