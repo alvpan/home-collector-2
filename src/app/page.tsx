@@ -312,7 +312,6 @@ export default function Home() {
             formatter: (value: number) => value.toFixed(1),
           },
           marker: {show: false},
-          fillSeriesColor: true,
           theme: 'light',
           style: {
             fontSize: '12px',
