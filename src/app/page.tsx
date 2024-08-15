@@ -463,12 +463,21 @@ export default function Home() {
       setChartVisible(true);
   
       if (chartContainerRef.current) {
-        chartContainerRef.current.scrollIntoView({ behavior: "smooth" });
+        if (isMobile) {
+          const chartHeight = chartContainerRef.current.offsetHeight;
+          window.scrollTo({
+            top: chartContainerRef.current.offsetTop + chartHeight / 2 - window.innerHeight / 2,
+            behavior: "smooth",
+          });
+        } else {
+          chartContainerRef.current.scrollIntoView({ behavior: "smooth" });
+        }
       }
     } else {
       alert("Please select valid inputs and ensure that they have changed before refreshing the chart.");
     }
   };
+
   
   const filteredCities = cities.filter(city =>
     city.toLowerCase().includes(citySearchTerm.toLowerCase())
