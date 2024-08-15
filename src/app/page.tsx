@@ -8,7 +8,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import enTranslations from './locales/en.json';
 import grTranslations from './locales/gr.json';
 import { useMediaQuery } from 'react-responsive';
-import { format } from 'date-fns'; // Importing date-fns for date formatting
+import { format } from 'date-fns';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -116,11 +116,11 @@ export default function Home() {
         x: {
           formatter: function(value: any, { seriesIndex, dataPointIndex, w }: { seriesIndex: number, dataPointIndex: number, w: any }) {
             const price = w.globals.series[seriesIndex][dataPointIndex];
-            return `€${price.toFixed(1)}`;
+            return `1m² costs: €${price.toFixed(1)}`;
           }
         },
         y: {
-          formatter: function(value: number, { seriesIndex, dataPointIndex, w }: { seriesIndex: number, dataPointIndex: number, w: any }) {
+          formatter: function(value: number, { dataPointIndex, w }: { dataPointIndex: number, w: any }) {
             const date = w.globals.categoryLabels[dataPointIndex];
             return date;
           }
@@ -257,141 +257,115 @@ export default function Home() {
     const area = (city === "Athens" || city === "Thessaloniki") ? selectedArea : city;
 
     try {
-      setHistoricalDataChartData(initialHistoricalChartData);
+        setHistoricalDataChartData(initialHistoricalChartData);
 
-      let fetchStartDate = '';
-      let fetchEndDate = new Date().toISOString();
+        let fetchStartDate = '';
+        let fetchEndDate = new Date().toISOString();
 
-      if (timeframe === "last week") {
-        fetchStartDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-      } else if (timeframe === "last month") {
-        fetchStartDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-      } else if (timeframe === "last 6 months") {
-        fetchStartDate = new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000).toISOString();
-      } else if (timeframe === "last year") {
-        fetchStartDate = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString();
-      } else if (timeframe === "ever") {
-        fetchStartDate = new Date(0).toISOString();
-      } else if (timeframe === "custom" && startDate && endDate) {
-        fetchStartDate = startDate.toISOString();
-        fetchEndDate = endDate.toISOString();
-      }
-
-      const response = await fetch(`/api/getHistoricalPpm?action=${action}&city=${city}&area=${area}&startDate=${fetchStartDate}&endDate=${fetchEndDate}`);
-      const data = await response.json();
-      console.log(data);
-
-      // Convert the date to "D Month" format
-      const dates = data.map((item: { date: string }) => format(new Date(item.date), 'd MMM'));
-      const prices = data.map((item: { pricePerSqm: number }) => item.pricePerSqm);
-      const { min, max } = addYAxisPadding(prices);
-
-      setHistoricalDataChartData((prevData: ChartData) => {
-        const options: ApexOptions = {
-          ...prevData.options,
-          xaxis: { 
-            ...prevData.options?.xaxis, 
-            categories: dates
-          },
-          yaxis: { 
-            ...prevData.options?.yaxis, 
-            min: min,
-            max: max,
-          },
-        };
-
-        if (action === "Buy") {
-          options.yaxis = {
-            ...options.yaxis,
-            tickAmount: Math.ceil((max - min) / 100),
-          };
-        
-          if (Array.isArray(options.yaxis)) {
-            options.yaxis = options.yaxis.map(yAxis => ({
-              ...yAxis,
-              labels: {
-                ...yAxis.labels,
-                formatter: (value: number) => value.toFixed(0),
-              },
-            }));
-          } else {
-            if (options.yaxis) {
-              options.yaxis.labels = {
-                ...options.yaxis.labels,
-                formatter: (value: number) => value.toFixed(0),
-              };
-            }
-          }
+        if (timeframe === "last week") {
+            fetchStartDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+        } else if (timeframe === "last month") {
+            fetchStartDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+        } else if (timeframe === "last 6 months") {
+            fetchStartDate = new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000).toISOString();
+        } else if (timeframe === "last year") {
+            fetchStartDate = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString();
+        } else if (timeframe === "ever") {
+            fetchStartDate = new Date(0).toISOString();
+        } else if (timeframe === "custom" && startDate && endDate) {
+            fetchStartDate = startDate.toISOString();
+            fetchEndDate = endDate.toISOString();
         }
-        
-        options.tooltip = {
-          x: {
-            formatter: function(value, { seriesIndex, dataPointIndex, w }) {
-              const price = w.globals.series[seriesIndex][dataPointIndex];
-              return `€${price.toFixed(1)}`;
+
+        const response = await fetch(`/api/getHistoricalPpm?action=${action}&city=${city}&area=${area}&startDate=${fetchStartDate}&endDate=${fetchEndDate}`);
+        const data = await response.json();
+
+        const dates = data.map((item: { date: string }) => format(new Date(item.date), 'd MMM'));
+        const prices = data.map((item: { pricePerSqm: number }) => item.pricePerSqm);
+        const { min, max } = addYAxisPadding(prices);
+
+        const options: ApexOptions = {
+            ...initialHistoricalChartData.options,
+            xaxis: {
+                ...initialHistoricalChartData.options?.xaxis,
+                categories: dates,
+            },
+            yaxis: {
+                ...initialHistoricalChartData.options?.yaxis,
+                min: min,
+                max: max,
+            },
+            tooltip: {
+                x: {
+                    formatter: function(value, { seriesIndex, dataPointIndex, w }) {
+                        const price = w.globals.series[seriesIndex][dataPointIndex];
+                        return `1m² costs: €${price.toFixed(1)}`;
+                    }
+                },
+                y: {
+                    formatter: function(value, { dataPointIndex, w }) {
+                        const date = w.globals.categoryLabels[dataPointIndex];
+                        return date;
+                    }
+                },
+                theme: 'light',
+                marker: { show: false },
+                style: {
+                    fontSize: '15px',
+                    fontFamily: undefined
+                },
+                fixed: {
+                    enabled: true,
+                    position: 'topLeft',
+                    offsetX: 55,
+                    offsetY: 10,
+                },
+            },
+            chart: {
+                type: 'area',
+                background: 'transparent',
+                toolbar: { show: false },
+                zoom: { enabled: false },
+                events: {
+                    mouseMove: function(event, chartContext, config) {
+                        const tooltip = chartContext.el.querySelector('.apexcharts-tooltip');
+                        if (tooltip) {
+                            tooltip.style.top = '10px';
+                            tooltip.style.left = '55px';
+                        }
+                    }
+                }
             }
-          },
-          y: {
-            formatter: function(value, { seriesIndex, dataPointIndex, w }) {
-              const date = w.globals.categoryLabels[dataPointIndex];
-              return date;
-            }
-          },
-          theme: 'light',
-          marker: {show: false},
-          style: {
-            fontSize: '15px',
-            fontFamily: undefined
-          },
-          fixed: {
-            enabled: true,
-            position: 'topLeft',
-            offsetX: 55,
-            offsetY: 10,
-          },
         };
 
-        options.chart = {
-          ...options.chart,
-          events: {
-            mouseMove: function(event, chartContext, config) {
-              const tooltip = chartContext.el.querySelector('.apexcharts-tooltip');
-              if (tooltip) {
-                tooltip.style.top = '10px';
-                tooltip.style.left = '55px';
-              }
-            }
-          }
-        };
+        setHistoricalDataChartData({
+            ...initialHistoricalChartData,
+            options: options,
+            series: [{ 
+                name: '1m² costs', 
+                data: prices
+            }]
+        });
 
-        return {
-          ...prevData,
-          options,
-          series: [{ 
-            name: '1m² costs', 
-            data: prices
-          }]
-        };
-      });
+        setRenderHistoricalDataChart(false);
+        setTimeout(() => setRenderHistoricalDataChart(true), 0);
 
-      setRenderHistoricalDataChart(false);
-      setTimeout(() => setRenderHistoricalDataChart(true), 0);
+        setChartVisible(true);
+        setHistoricalDataChartLoaded(true);
 
-      setChartVisible(true);
-      setHistoricalDataChartLoaded(true);
-
-      setPreviousValues({
-        action,
-        city: selectedCity,
-        area: selectedArea,
-        timeframe: selectedTimeframe,
-        startDate,
-        endDate
-      });
+        setPreviousValues({
+            action,
+            city: selectedCity,
+            area: selectedArea,
+            timeframe: selectedTimeframe,
+            startDate,
+            endDate
+        });
     } catch (error) {
-      console.error("Error fetching historical data:", error);
+        console.error("Error fetching historical data:", error);
     }
-  };
+};
+
 
   const handleActionButtonClick = (selectedAction: string) => {
     setAction(selectedAction);
