@@ -114,9 +114,15 @@ export default function Home() {
       },
       tooltip: {
         x: {
-          formatter: function(value, { seriesIndex, w }) {
-            const seriesColor = w.config.colors[seriesIndex];
-            return `<span style="color: ${seriesColor};">€${value.toFixed(1)}</span>`;
+          formatter: function(value: any, { seriesIndex, dataPointIndex, w }: { seriesIndex: number, dataPointIndex: number, w: any }) {
+            const price = w.globals.series[seriesIndex][dataPointIndex];
+            return `€${price.toFixed(1)}`;
+          }
+        },
+        y: {
+          formatter: function(value: number, { seriesIndex, dataPointIndex, w }: { seriesIndex: number, dataPointIndex: number, w: any }) {
+            const date = w.globals.categoryLabels[dataPointIndex];
+            return date;
           }
         },
         marker: { show: false },
@@ -320,9 +326,15 @@ export default function Home() {
         
         options.tooltip = {
           x: {
-            formatter: function(value, { seriesIndex, w }) {
-              const seriesColor = w.config.colors[seriesIndex];
-              return `<span style="color: ${seriesColor}; font-weight: bold; font-size: 24px;">${value.toFixed(1)}€</span>`;
+            formatter: function(value, { seriesIndex, dataPointIndex, w }) {
+              const price = w.globals.series[seriesIndex][dataPointIndex];
+              return `€${price.toFixed(1)}`;
+            }
+          },
+          y: {
+            formatter: function(value, { seriesIndex, dataPointIndex, w }) {
+              const date = w.globals.categoryLabels[dataPointIndex];
+              return date;
             }
           },
           theme: 'light',
