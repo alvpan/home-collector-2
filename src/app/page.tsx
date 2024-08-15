@@ -374,10 +374,12 @@ export default function Home() {
   useEffect(() => {
     if (isChartRendered && chartContainerRef.current) {
       setTimeout(() => {
-        if (isMobile && chartContainerRef.current) {
-          const chartHeight = chartContainerRef.current.offsetHeight;
+        const placeholderElement = chartContainerRef.current?.querySelector('.glare-placeholder') as HTMLElement;
+        if (isMobile && placeholderElement) {
+          const placeholderHeight = placeholderElement.offsetHeight;
+          const placeholderOffsetTop = placeholderElement.getBoundingClientRect().top + window.scrollY;
           window.scrollTo({
-            top: chartContainerRef.current.offsetTop + chartHeight / 2 - window.innerHeight / 2,
+            top: placeholderOffsetTop + placeholderHeight / 2 - window.innerHeight / 2,
             behavior: "smooth",
           });
         } else if (chartContainerRef.current) {
@@ -387,6 +389,8 @@ export default function Home() {
       setIsChartRendered(false);
     }
   }, [isChartRendered, isMobile]);
+  
+  
   
 
   const handleActionButtonClick = (selectedAction: string) => {
