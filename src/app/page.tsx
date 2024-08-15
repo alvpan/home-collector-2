@@ -383,7 +383,7 @@ export default function Home() {
         } else if (chartContainerRef.current) {
           chartContainerRef.current.scrollIntoView({ behavior: "smooth" });
         }
-      }, 100); // sleep (ms)
+      }, 300); // sleep (ms)
       setIsChartRendered(false);
     }
   }, [isChartRendered, isMobile]);
