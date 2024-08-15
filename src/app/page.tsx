@@ -95,6 +95,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
+  const [isChartRendered, setIsChartRendered] = useState(false);
 
   const initialHistoricalChartData: ChartData = {
     options: {
@@ -355,6 +356,7 @@ export default function Home() {
 
         setChartVisible(true);
         setHistoricalDataChartLoaded(true);
+        setIsChartRendered(true);
 
         setPreviousValues({
             action,
@@ -368,6 +370,24 @@ export default function Home() {
         console.error("Error fetching historical data:", error);
     }
   };
+
+  useEffect(() => {
+    if (isChartRendered && chartContainerRef.current) {
+      setTimeout(() => {
+        if (isMobile && chartContainerRef.current) {
+          const chartHeight = chartContainerRef.current.offsetHeight;
+          window.scrollTo({
+            top: chartContainerRef.current.offsetTop + chartHeight / 2 - window.innerHeight / 2,
+            behavior: "smooth",
+          });
+        } else if (chartContainerRef.current) {
+          chartContainerRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100); // sleep (ms)
+      setIsChartRendered(false);
+    }
+  }, [isChartRendered, isMobile]);
+  
 
   const handleActionButtonClick = (selectedAction: string) => {
     setAction(selectedAction);
@@ -461,20 +481,7 @@ export default function Home() {
       setIsLoading(false);
   
       setChartVisible(true);
-  
-      setTimeout(() => {
-        if (chartContainerRef.current) {
-          if (isMobile) {
-            const chartHeight = chartContainerRef.current.offsetHeight;
-            window.scrollTo({
-              top: chartContainerRef.current.offsetTop + chartHeight / 2 - window.innerHeight / 2,
-              behavior: "smooth",
-            });
-          } else {
-            chartContainerRef.current.scrollIntoView({ behavior: "smooth" });
-          }
-        }
-      }, 200); //sleep for 200ms
+      setIsChartRendered(true);
     } else {
       alert("Please select valid inputs and ensure that they have changed before refreshing the chart.");
     }
