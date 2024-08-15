@@ -474,7 +474,7 @@ export default function Home() {
             chartContainerRef.current.scrollIntoView({ behavior: "smooth" });
           }
         }
-      }, 100); //sleep for 100ms
+      }, 200); //sleep for 200ms
     } else {
       alert("Please select valid inputs and ensure that they have changed before refreshing the chart.");
     }
