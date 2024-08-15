@@ -462,21 +462,24 @@ export default function Home() {
   
       setChartVisible(true);
   
-      if (chartContainerRef.current) {
-        if (isMobile) {
-          const chartHeight = chartContainerRef.current.offsetHeight;
-          window.scrollTo({
-            top: chartContainerRef.current.offsetTop + chartHeight / 2 - window.innerHeight / 2,
-            behavior: "smooth",
-          });
-        } else {
-          chartContainerRef.current.scrollIntoView({ behavior: "smooth" });
+      setTimeout(() => {
+        if (chartContainerRef.current) {
+          if (isMobile) {
+            const chartHeight = chartContainerRef.current.offsetHeight;
+            window.scrollTo({
+              top: chartContainerRef.current.offsetTop + chartHeight / 2 - window.innerHeight / 2,
+              behavior: "smooth",
+            });
+          } else {
+            chartContainerRef.current.scrollIntoView({ behavior: "smooth" });
+          }
         }
-      }
+      }, 100); //sleep for 100ms
     } else {
       alert("Please select valid inputs and ensure that they have changed before refreshing the chart.");
     }
   };
+  
 
   
   const filteredCities = cities.filter(city =>
