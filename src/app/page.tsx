@@ -113,7 +113,7 @@ export default function Home() {
         }
       },
       tooltip: {
-        y: {
+        x: {
           formatter: function(value, { seriesIndex, w }) {
             const seriesColor = w.config.colors[seriesIndex];
             return `<span style="color: ${seriesColor};">€${value.toFixed(1)}</span>`;
@@ -319,7 +319,7 @@ export default function Home() {
         }
         
         options.tooltip = {
-          y: {
+          x: {
             formatter: function(value, { seriesIndex, w }) {
               const seriesColor = w.config.colors[seriesIndex];
               return `<span style="color: ${seriesColor}; font-weight: bold; font-size: 24px;">${value.toFixed(1)}€</span>`;
