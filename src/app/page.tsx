@@ -300,10 +300,10 @@ export default function Home() {
                   formatter: function(value, { seriesIndex, dataPointIndex, w }) {
                       const price = w.globals.series[seriesIndex][dataPointIndex];
                       const seriesColor = w.config.colors ? w.config.colors[seriesIndex] : '#000';
-                      return `1m² costs: <span style="color: ${seriesColor}; font-weight: bold; font-size: 18px;">€${price.toFixed(1)}</span>`;
+                      return `1m² costs: <span style="color: ${seriesColor}; font-weight: bold; font-size: 28px;">€${price.toFixed(1)}</span>`;
                   }
               },
-              
+
                 y: {
                     formatter: function(value, { dataPointIndex, w }) {
                         const date = w.globals.categoryLabels[dataPointIndex];
