@@ -141,7 +141,7 @@ export default function Home() {
         radius: 10,
         strokeWidth: 5
       },
-      stroke: { curve: 'smooth', width: 3 },
+      stroke: { curve: 'smooth', width: 2 },
       dataLabels: { enabled: !isMobile, formatter: (val: number) => `${val}€` },
       xaxis: {
         tooltip: {
