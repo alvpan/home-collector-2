@@ -107,10 +107,11 @@ html {
   background: #f0f0f0;
   background: linear-gradient(90deg, #f0f0f0 25%, #ff4d00 50%, #f0f0f0 75%);
   background-size: 200% 100%;
-  animation: glare 1.5s infinite;
+  animation: glare 2s infinite;
   border-radius: 4px;
   height: 100%;
   width: 100%;
+  overflow: hidden;
 }
 
 @keyframes glare {
@@ -122,6 +123,16 @@ html {
   }
 }
 
+.loading-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem;
+  color: rgba(255, 255, 255, 0.2);
+  font-weight: bold;
+  z-index: 1;
+}
 
 
 @media (max-width: 768px) {

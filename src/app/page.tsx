@@ -588,7 +588,9 @@ export default function Home() {
     if (isLoading) {
       return (
         <div className="flex justify-center items-center h-96">
-          <div className="glare-placeholder w-full h-full"></div>
+          <div className="glare-placeholder w-full h-full relative">
+            <div className="loading-text">h o m p a r e</div>
+          </div>
         </div>
       );
     }
