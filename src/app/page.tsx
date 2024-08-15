@@ -142,6 +142,9 @@ export default function Home() {
       stroke: { curve: 'smooth', width: 3 },
       dataLabels: { enabled: !isMobile, formatter: (val: number) => `${val}€` },
       xaxis: {
+        tooltip: {
+          enabled: false
+        },
         categories: [],
         labels: { rotate: -90, style: { colors: 'black', fontSize: '0px' }, show: false }
       },
