@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, CSSProperties } from "react";
+import React, { useState, useEffect, useRef, CSSProperties, useCallback } from "react";
 import dynamic from 'next/dynamic';
 import { ApexOptions } from 'apexcharts';
 import DatePicker from 'react-datepicker';
@@ -11,7 +11,6 @@ import { useMediaQuery } from 'react-responsive';
 import { format } from 'date-fns';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
-const [isLoading, setIsLoading] = useState(false);
 
 interface CityData {
   surface: number;
@@ -93,6 +92,7 @@ export default function Home() {
   const [activeHeaderButton, setActiveHeaderButton] = useState<string>('Historical Data');
   const [isChartVisible, setChartVisible] = useState(false);
   const [historicalDataChartLoaded, setHistoricalDataChartLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
@@ -230,17 +230,17 @@ export default function Home() {
   const timeframeDropdownRef = useRef<HTMLDivElement>(null);
   const timeframeButtonRef = useRef<HTMLButtonElement>(null);
 
-  const clearHistoricalChartData = () => {
+  const clearHistoricalChartData = useCallback(() => {
     setHistoricalDataChartData((prevData: ChartData) => ({
       ...prevData,
       series: [{ name: '€', data: [] }],
       options: { ...prevData.options, xaxis: { ...prevData.options.xaxis, categories: [] } }
     }));
-  };
+  }, []);
 
-  const clearCharts = () => {
+  const clearCharts = useCallback(() => {
     clearHistoricalChartData();
-  };
+  }, [clearHistoricalChartData]);
 
   const addYAxisPadding = (data: number[]) => {
     const minValue = Math.min(...data);
@@ -367,8 +367,7 @@ export default function Home() {
     } catch (error) {
         console.error("Error fetching historical data:", error);
     }
-};
-
+  };
 
   const handleActionButtonClick = (selectedAction: string) => {
     setAction(selectedAction);
@@ -471,7 +470,6 @@ export default function Home() {
     }
   };
   
-
   const filteredCities = cities.filter(city =>
     city.toLowerCase().includes(citySearchTerm.toLowerCase())
   );
@@ -618,7 +616,6 @@ export default function Home() {
     }
   };
   
-
   const t = (key: string) => translations[language][key as keyof typeof translations['en']] || key;
 
   const handleLanguageChange = (lang: 'en' | 'gr') => {
