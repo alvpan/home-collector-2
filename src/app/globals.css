@@ -114,26 +114,6 @@ html {
   overflow: hidden;
 }
 
-.glare-placeholder::before,
-.glare-placeholder::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 40%;
-  pointer-events: none;
-}
-
-.glare-placeholder::before {
-  top: 0;
-  background: linear-gradient(to bottom, rgba(240, 240, 240, 1), rgba(240, 240, 240, 0));
-}
-
-.glare-placeholder::after {
-  bottom: 0;
-  background: linear-gradient(to top, rgba(240, 240, 240, 1), rgba(240, 240, 240, 0));
-}
-
 @keyframes glare {
   0% {
     background-position: 200% 0;
@@ -170,6 +150,7 @@ html {
   .buttons-container {
     width: 100%;
     align-items: center;
+    margin-bottom: 10px;
   }
 
   .chart-container {
