@@ -11,6 +11,7 @@ import { useMediaQuery } from 'react-responsive';
 import { format } from 'date-fns';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
+const [isLoading, setIsLoading] = useState(false);
 
 interface CityData {
   surface: number;
@@ -300,7 +301,7 @@ export default function Home() {
                   formatter: function(value, { seriesIndex, dataPointIndex, w }) {
                       const price = w.globals.series[seriesIndex][dataPointIndex];
                       const seriesColor = w.config.colors ? w.config.colors[seriesIndex] : '#000';
-                      return `    1m² costs: <span style="color: ${seriesColor}; font-weight: bold; font-size: 28px;">${price.toFixed(1)}€</span>`;
+                      return `1m² costs: <span style="color: ${seriesColor}; font-weight: bold; font-size: 28px;">${price.toFixed(1)}€</span>`;
                   }
               },
 
@@ -344,7 +345,7 @@ export default function Home() {
             ...initialHistoricalChartData,
             options: options,
             series: [{ 
-                name: '', 
+                name: '',
                 data: prices
             }]
         });
@@ -433,12 +434,13 @@ export default function Home() {
       area: selectedArea,
       timeframe: selectedTimeframe,
       startDate,
-      endDate
+      endDate,
     };
-
+  
     if (
-      selectedTimeframe && selectedCity !== "City" &&
-      (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "Area") &&
+      selectedTimeframe &&
+      selectedCity !== "City" &&
+      (selectedCity !== "Athens" && selectedCity !== "Thessaloniki") || selectedArea !== "Area" &&
       (
         currentValues.action !== previousValues.action ||
         currentValues.city !== previousValues.city ||
@@ -452,12 +454,15 @@ export default function Home() {
         alert("Please select both start and end dates for custom timeframe.");
         return;
       }
-
+  
+      setIsLoading(true);
       setChartVisible(false);
       clearHistoricalChartData();
       await fetchHistoricalData(selectedTimeframe);
+      setIsLoading(false);
+  
       setChartVisible(true);
-
+  
       if (chartContainerRef.current) {
         chartContainerRef.current.scrollIntoView({ behavior: "smooth" });
       }
@@ -465,6 +470,7 @@ export default function Home() {
       alert("Please select valid inputs and ensure that they have changed before refreshing the chart.");
     }
   };
+  
 
   const filteredCities = cities.filter(city =>
     city.toLowerCase().includes(citySearchTerm.toLowerCase())
@@ -581,6 +587,16 @@ export default function Home() {
   };
 
   const renderContent = () => {
+    if (isLoading) {
+      return (
+        <div className="flex justify-center items-center h-96">
+          <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full text-orange-700" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      );
+    }
+  
     switch (activeHeaderButton) {
       case 'Historical Data':
         return (
@@ -601,6 +617,7 @@ export default function Home() {
         return null;
     }
   };
+  
 
   const t = (key: string) => translations[language][key as keyof typeof translations['en']] || key;
 

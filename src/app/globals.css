@@ -102,6 +102,28 @@ html {
   margin-left: 8rem;
 }
 
+.spinner-border {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #ff4d00;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
 @media (max-width: 768px) {
   .header {
     flex-direction: column;
