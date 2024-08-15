@@ -114,10 +114,7 @@ export default function Home() {
       },
       tooltip: {
         x: {
-          formatter: function(value: any, { seriesIndex, dataPointIndex, w }: { seriesIndex: number, dataPointIndex: number, w: any }) {
-            const price = w.globals.series[seriesIndex][dataPointIndex];
-            return `1m² costs: ${price.toFixed(1)}€`;
-          }
+          formatter: () => '',
         },
         y: {
           formatter: function(value: number, { dataPointIndex, w }: { dataPointIndex: number, w: any }) {
