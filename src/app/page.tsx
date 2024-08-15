@@ -116,7 +116,7 @@ export default function Home() {
         x: {
           formatter: function(value: any, { seriesIndex, dataPointIndex, w }: { seriesIndex: number, dataPointIndex: number, w: any }) {
             const price = w.globals.series[seriesIndex][dataPointIndex];
-            return `1m² costs: €${price.toFixed(1)}`;
+            return `1m² costs: ${price.toFixed(1)}€`;
           }
         },
         y: {
@@ -297,11 +297,13 @@ export default function Home() {
             },
             tooltip: {
                 x: {
-                    formatter: function(value, { seriesIndex, dataPointIndex, w }) {
-                        const price = w.globals.series[seriesIndex][dataPointIndex];
-                        return `1m² costs: €${price.toFixed(1)}`;
-                    }
-                },
+                  formatter: function(value, { seriesIndex, dataPointIndex, w }) {
+                      const price = w.globals.series[seriesIndex][dataPointIndex];
+                      const seriesColor = w.config.colors ? w.config.colors[seriesIndex] : '#000';
+                      return `1m² costs: <span style="color: ${seriesColor}; font-weight: bold; font-size: 18px;">€${price.toFixed(1)}</span>`;
+                  }
+              },
+              
                 y: {
                     formatter: function(value, { dataPointIndex, w }) {
                         const date = w.globals.categoryLabels[dataPointIndex];
@@ -342,7 +344,7 @@ export default function Home() {
             ...initialHistoricalChartData,
             options: options,
             series: [{ 
-                name: '1m² costs', 
+                name: '', 
                 data: prices
             }]
         });
