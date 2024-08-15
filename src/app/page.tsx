@@ -588,9 +588,7 @@ export default function Home() {
     if (isLoading) {
       return (
         <div className="flex justify-center items-center h-96">
-          <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full text-orange-700" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
+          <div className="glare-placeholder w-full h-full"></div>
         </div>
       );
     }
