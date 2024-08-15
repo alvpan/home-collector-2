@@ -8,6 +8,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import enTranslations from './locales/en.json';
 import grTranslations from './locales/gr.json';
 import { useMediaQuery } from 'react-responsive';
+import { format } from 'date-fns'; // Importing date-fns for date formatting
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -286,7 +287,8 @@ export default function Home() {
       const data = await response.json();
       console.log(data);
 
-      const dates = data.map((item: { date: string }) => item.date);
+      // Convert the date to "D Month" format
+      const dates = data.map((item: { date: string }) => format(new Date(item.date), 'd MMM'));
       const prices = data.map((item: { pricePerSqm: number }) => item.pricePerSqm);
       const { min, max } = addYAxisPadding(prices);
 
@@ -631,8 +633,6 @@ export default function Home() {
             isVisible={shouldShowHistoricalData()}
           />
         );
-      // case 'Compare Prices':
-      //   return <ComparePrices t={t} />;
       default:
         return null;
     }
