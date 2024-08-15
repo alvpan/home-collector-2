@@ -113,18 +113,6 @@ export default function Home() {
         }
       },
       tooltip: {
-        x: {
-          formatter: function (value) {
-            const date = new Date(value);
-            
-            const formattedDate = date.toLocaleDateString('en-GB', {
-              day: 'numeric',
-              month: 'short',
-            });
-  
-            return formattedDate;
-          }
-        },
         y: {
           formatter: function(value, { seriesIndex, w }) {
             const seriesColor = w.config.colors[seriesIndex];
@@ -335,18 +323,6 @@ export default function Home() {
             formatter: function(value, { seriesIndex, w }) {
               const seriesColor = w.config.colors[seriesIndex];
               return `<span style="color: ${seriesColor}; font-weight: bold; font-size: 24px;">${value.toFixed(1)}€</span>`;
-            }
-          },
-          x: {
-            formatter: function (value) {
-              const date = new Date(value);
-    
-              const formattedDate = date.toLocaleDateString('en-GB', {
-                day: 'numeric',
-                month: 'short',
-              });
-    
-              return formattedDate;
             }
           },
           theme: 'light',
