@@ -109,8 +109,8 @@ html {
   background-size: 200% 100%;
   animation: glare 1.5s infinite;
   border-radius: 4px;
-  height: 400px;
-  width: 95%;
+  height: 100%;
+  width: 100%;
 }
 
 @keyframes glare {
