@@ -372,27 +372,18 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (isChartRendered && chartContainerRef.current) {
+    if (isChartRendered) {
       setTimeout(() => {
-        const placeholderElement = chartContainerRef.current?.querySelector('.glare-placeholder') as HTMLElement;
-        if (isMobile && placeholderElement) {
-          const placeholderHeight = placeholderElement.offsetHeight;
-          const placeholderOffsetTop = placeholderElement.getBoundingClientRect().top + window.scrollY;
-          window.scrollTo({
-            top: placeholderOffsetTop + placeholderHeight / 2 - window.innerHeight / 2,
-            behavior: "smooth",
-          });
-        } else if (chartContainerRef.current) {
-          chartContainerRef.current.scrollIntoView({ behavior: "smooth" });
-        }
+        const middleOfPage = window.scrollY + window.innerHeight / 2;
+        window.scrollTo({
+          top: middleOfPage,
+          behavior: "smooth",
+        });
+        setIsChartRendered(false);
       }, 300); // sleep (ms)
-      setIsChartRendered(false);
     }
-  }, [isChartRendered, isMobile]);
+  }, [isChartRendered]);
   
-  
-  
-
   const handleActionButtonClick = (selectedAction: string) => {
     setAction(selectedAction);
     clearCharts();
