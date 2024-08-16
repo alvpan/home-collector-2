@@ -380,7 +380,7 @@ export default function Home() {
           behavior: "smooth",
         });
         setIsChartRendered(false);
-      }, 100); // sleep (ms)
+      }, 200); // sleep (ms)
     }
   }, [isChartRendered]);
   
