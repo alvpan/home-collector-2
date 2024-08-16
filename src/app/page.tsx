@@ -94,6 +94,7 @@ export default function Home() {
   const [historicalDataChartLoaded, setHistoricalDataChartLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const chartContainerRef = useRef<HTMLDivElement>(null);
+  const loadingPlaceholderRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
   const [isChartRendered, setIsChartRendered] = useState(false);
 
@@ -371,25 +372,17 @@ export default function Home() {
     }
   };
 
-  useEffect(() => {
-    const scrollTimeout = setTimeout(() => {
-      const loadingPlaceholder = document.querySelector('.loading-text');
-      if (loadingPlaceholder) {
-        const rect = loadingPlaceholder.getBoundingClientRect();
-        const scrollY = window.scrollY + rect.top + rect.height - window.innerHeight;
-        window.scrollTo({
-          top: scrollY,
-          behavior: "smooth",
-        });
-      }
-    }, 100);
-  
-    return () => clearTimeout(scrollTimeout);
-  }, []);
-  
-  
-  
-  
+  const scrollToPlaceholder = () => {
+    if (loadingPlaceholderRef.current && isMobile) {
+      const rect = loadingPlaceholderRef.current.getBoundingClientRect();
+      const scrollY = window.scrollY + rect.top + rect.height / 2 - window.innerHeight / 2;
+      window.scrollTo({
+        top: scrollY,
+        behavior: "smooth",
+      });
+    }
+  };
+
   const handleActionButtonClick = (selectedAction: string) => {
     setAction(selectedAction);
     clearCharts();
@@ -448,6 +441,8 @@ export default function Home() {
   };
 
   const handleRefreshClick = async () => {
+    scrollToPlaceholder();
+
     const currentValues = {
       action,
       city: selectedCity,
@@ -487,9 +482,7 @@ export default function Home() {
       alert("Please select valid inputs and ensure that they have changed before refreshing the chart.");
     }
   };
-  
 
-  
   const filteredCities = cities.filter(city =>
     city.toLowerCase().includes(citySearchTerm.toLowerCase())
   );
@@ -608,7 +601,7 @@ export default function Home() {
     if (isLoading) {
       return (
         <div className="flex justify-center items-center h-96">
-          <div className="glare-placeholder w-full h-full relative">
+          <div ref={loadingPlaceholderRef} className="glare-placeholder w-full h-full relative">
             <div className="loading-text">h o m p a r e</div>
           </div>
         </div>
