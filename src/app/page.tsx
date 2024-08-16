@@ -373,15 +373,16 @@ export default function Home() {
 
   useEffect(() => {
     const scrollTimeout = setTimeout(() => {
-      const middleOfPage = window.scrollY + window.innerHeight / 2;
+      const middleOfPage = document.body.scrollHeight / 2 - window.innerHeight / 2;
       window.scrollTo({
         top: middleOfPage,
         behavior: "smooth",
       });
-    }, 100); // sleep (ms)
+    }, 100);
   
     return () => clearTimeout(scrollTimeout);
   }, []);
+  
   
   
   const handleActionButtonClick = (selectedAction: string) => {
