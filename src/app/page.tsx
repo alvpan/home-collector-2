@@ -372,17 +372,17 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (isChartRendered) {
-      setTimeout(() => {
-        const middleOfPage = window.scrollY + window.innerHeight / 2;
-        window.scrollTo({
-          top: middleOfPage,
-          behavior: "smooth",
-        });
-        setIsChartRendered(false);
-      }, 200); // sleep (ms)
-    }
-  }, [isChartRendered]);
+    const scrollTimeout = setTimeout(() => {
+      const middleOfPage = window.scrollY + window.innerHeight / 2;
+      window.scrollTo({
+        top: middleOfPage,
+        behavior: "smooth",
+      });
+    }, 100); // sleep (ms)
+  
+    return () => clearTimeout(scrollTimeout);
+  }, []);
+  
   
   const handleActionButtonClick = (selectedAction: string) => {
     setAction(selectedAction);
