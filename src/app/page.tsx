@@ -372,17 +372,6 @@ export default function Home() {
     }
   };
 
-  const scrollToPlaceholder = () => {
-    if (loadingPlaceholderRef.current && isMobile) {
-      const rect = loadingPlaceholderRef.current.getBoundingClientRect();
-      const scrollY = window.scrollY + rect.top + rect.height / 2 - window.innerHeight / 2;
-      window.scrollTo({
-        top: scrollY,
-        behavior: "smooth",
-      });
-    }
-  };
-
   const handleActionButtonClick = (selectedAction: string) => {
     setAction(selectedAction);
     clearCharts();
@@ -441,7 +430,11 @@ export default function Home() {
   };
 
   const handleRefreshClick = async () => {
-    scrollToPlaceholder();
+    
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: "smooth",
+    });
 
     const currentValues = {
       action,
