@@ -373,15 +373,20 @@ export default function Home() {
 
   useEffect(() => {
     const scrollTimeout = setTimeout(() => {
-      const middleOfPage = document.body.scrollHeight / 2 - window.innerHeight / 2;
-      window.scrollTo({
-        top: middleOfPage,
-        behavior: "smooth",
-      });
+      const loadingPlaceholder = document.querySelector('.loading-text');
+      if (loadingPlaceholder) {
+        const rect = loadingPlaceholder.getBoundingClientRect();
+        const scrollY = window.scrollY + rect.top + rect.height - window.innerHeight;
+        window.scrollTo({
+          top: scrollY,
+          behavior: "smooth",
+        });
+      }
     }, 100);
   
     return () => clearTimeout(scrollTimeout);
   }, []);
+  
   
   
   
