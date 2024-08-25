@@ -98,7 +98,6 @@ export default function Home() {
   const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
   const [isChartRendered, setIsChartRendered] = useState(false);
 
-  // Flag to indicate when data is being fetched
   const isFetchingDataRef = useRef(false);
 
   const initialHistoricalChartData: ChartData = {
@@ -433,10 +432,8 @@ export default function Home() {
   };
 
   const handleRefreshClick = async () => {
-    // Set the flag to true indicating data fetch has started
     isFetchingDataRef.current = true;
 
-    // Fetch the data first
     const currentValues = {
       action,
       city: selectedCity,
@@ -476,15 +473,13 @@ export default function Home() {
       alert("Please select valid inputs and ensure that they have changed before refreshing the chart.");
     }
 
-    // Scroll to the bottom after data fetch is completed
     setTimeout(() => {
       window.scrollTo({
         top: document.body.scrollHeight,
         behavior: "smooth",
       });
-      // Reset the flag after scrolling
       isFetchingDataRef.current = false;
-    }, 100); // Adjust the timeout as needed
+    }, 100);
   };
 
   const filteredCities = cities.filter(city =>
@@ -655,6 +650,7 @@ export default function Home() {
           return prev;
       }
     });
+    setSelectedArea(prev => translations[lang][prev as keyof typeof translations['en']] || prev);
   };
 
   return (
