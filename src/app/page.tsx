@@ -632,25 +632,9 @@ export default function Home() {
 
   const handleLanguageChange = (lang: 'en' | 'gr') => {
     setLanguage(lang);
-    setSelectedTimeframe(prev => {
-      switch (prev) {
-        case "last week":
-          return translations[lang].lastWeek;
-        case "last month":
-          return translations[lang].lastMonth;
-        case "last 6 months":
-          return translations[lang].last6Months;
-        case "last year":
-          return translations[lang].lastYear;
-        case "ever":
-          return translations[lang].ever;
-        case "custom":
-          return translations[lang].custom;
-        default:
-          return prev;
-      }
-    });
-    setSelectedArea(prev => translations[lang][prev as keyof typeof translations['en']] || prev);
+
+    setSelectedArea(prev => t(prev));
+    setSelectedTimeframe(prev => t(prev));
   };
 
   return (
