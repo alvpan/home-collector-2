@@ -23,6 +23,7 @@ interface ChartData {
   series: { name: string; data: number[] }[];
 }
 
+
 const translations = {
   en: enTranslations,
   gr: grTranslations,
