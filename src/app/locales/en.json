@@ -76,7 +76,21 @@
   "AthensNorth": "North",
   "AthensSouth": "South",
   "AthensWest": "West",
-  "AtticaRest": "Rest of Athens",
+  "AtticaRest": "Rest of Attica",
   "PeiraiasSuburbs": "Peiraias Suburbs",
-  "Peiraias": "Peiraias"
+  "Peiraias": "Peiraias",
+
+  "40Ekklisies": "Saranta Ekklisies",
+  "AgiaSofia": "Agia Sofia",
+  "AgiosGeorgios": "Agios Georgios",
+  "AgiosPavlos": "Agios Pavlos",
+  "Ampelokipoi": "Ampelokipoi",
+  "Analipsi": "Analipsi",
+  "AnoPoli": "Ano Poli",
+  "Antigonidon": "Antigonidon",
+  "DistrictRest": "Rest of District",
+  "Municipality": "Municipality",
+  "RegionalMunicipality": "Regional Municipality",
+  "AgiosAthanasios": "Agios Athanasios",
+  "Axios": "Axios"
 }
