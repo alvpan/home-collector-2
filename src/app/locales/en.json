@@ -62,5 +62,21 @@
   "Volos": "Volos",
   "Xanthi": "Xanthi",
   "Thessaloniki": "Thessaloniki",
-  "Athens": "Athens"
+  "Athens": "Athens",
+
+  "AgiaParaskevi": "Agia Paraskevi",
+  "AgiaVarvara": "Agia Varvara",
+  "AgioiAnargiroi": "Agioi Anargiroi",
+  "AgiosDimitrios": "Agios Dimitrios",
+  "AgiosEleftherios": "Agios Eleftherios",
+  "AgiosIoannisRentis": "Agios Ioannis Rentis",
+  "ArgosaronikosIslands": "Argosaronikos Islands",
+  "AthensCentre": "Centre",
+  "AthensEast": "East",
+  "AthensNorth": "North",
+  "AthensSouth": "South",
+  "AthensWest": "West",
+  "AtticaRest": "Rest of Athens",
+  "PeiraiasSuburbs": "Peiraias Suburbs",
+  "Peiraias": "Peiraias"
 }
