@@ -171,7 +171,7 @@ export default function Home() {
   useEffect(() => {
     const fetchCities = async () => {
       try {
-        const response = await fetch('/api/getCities');
+        const response = await fetch(`/api/getCities?language=${language}`);
         const data = await response.json();
         setCities(data.cities);
       } catch (error) {
@@ -180,7 +180,22 @@ export default function Home() {
     };
 
     fetchCities();
-  }, []);
+  }, [language]);
+
+  useEffect(() => {
+    if (selectedCity !== "City") {
+      const fetchAreas = async () => {
+        try {
+          const response = await fetch(`/api/getAreas?city=${selectedCity}&language=${language}`);
+          const data = await response.json();
+          setAreas(data.areas);
+        } catch (error) {
+          console.error("Error fetching areas:", error);
+        }
+      };
+      fetchAreas();
+    }
+  }, [language, selectedCity]);
 
   useEffect(() => {
     if (action !== "Rent" && selectedCity !== "City" && (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "Area")) {
@@ -391,7 +406,7 @@ export default function Home() {
 
   const handleAreaButtonClick = async () => {
     try {
-      const response = await fetch(`/api/getAreas?city=${selectedCity}`);
+      const response = await fetch(`/api/getAreas?city=${selectedCity}&language=${language}`);
       const data = await response.json();
       setAreas(data.areas);
       setAreaDropdownVisible(true);
@@ -438,7 +453,7 @@ export default function Home() {
     if (
       selectedTimeframe &&
       selectedCity !== "City" &&
-      (selectedCity !== "Athens" && selectedCity !== "Thessaloniki") || selectedArea !== "Area" &&
+      ((selectedCity !== "Athens" && selectedCity !== "Thessaloniki") || selectedArea !== "Area") &&
       (
         currentValues.action !== previousValues.action ||
         currentValues.city !== previousValues.city ||
@@ -497,7 +512,7 @@ export default function Home() {
   });
 
   const shouldShowHistoricalData = () => {
-    return selectedCity !== "City" && (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "Area");
+    return selectedCity !== "City" && ((selectedCity !== "Athens" && selectedCity !== "Thessaloniki") || selectedArea !== "Area");
   };
 
   const headerStyle: CSSProperties = {
@@ -673,7 +688,7 @@ export default function Home() {
               onClick={handleLocationButtonClick}
               className={buttonStyle}
             >
-              {t(selectedCity === "City" ? "city" : selectedCity)}
+              {selectedCity === "City" ? t("city") : selectedCity}
             </button>
             {isDropdownVisible && (
               <div ref={dropdownRef} className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
@@ -705,7 +720,7 @@ export default function Home() {
                 onClick={handleAreaButtonClick}
                 className={buttonStyle}
               >
-                {t(selectedArea === "Area" ? "area" : selectedArea)}
+                {selectedArea === "Area" ? t("area") : selectedArea}
               </button>
               {isAreaDropdownVisible && (
                 <div ref={areaDropdownRef} className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
