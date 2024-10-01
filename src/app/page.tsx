@@ -171,7 +171,7 @@ export default function Home() {
   useEffect(() => {
     const fetchCities = async () => {
       try {
-        const response = await fetch(`/api/getCities?language=${language}`);
+        const response = await fetch('/api/getCities');
         const data = await response.json();
         setCities(data.cities);
       } catch (error) {
@@ -180,13 +180,13 @@ export default function Home() {
     };
 
     fetchCities();
-  }, [language]);
+  }, []);
 
   useEffect(() => {
     if (selectedCity !== "City") {
       const fetchAreas = async () => {
         try {
-          const response = await fetch(`/api/getAreas?city=${selectedCity}&language=${language}`);
+          const response = await fetch(`/api/getAreas?city=${selectedCity}`);
           const data = await response.json();
           setAreas(data.areas);
         } catch (error) {
@@ -195,7 +195,7 @@ export default function Home() {
       };
       fetchAreas();
     }
-  }, [language, selectedCity]);
+  }, [selectedCity]);
 
   useEffect(() => {
     if (action !== "Rent" && selectedCity !== "City" && (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "Area")) {
@@ -404,15 +404,8 @@ export default function Home() {
     setHistoricalDataChartLoaded(false);
   };
 
-  const handleAreaButtonClick = async () => {
-    try {
-      const response = await fetch(`/api/getAreas?city=${selectedCity}&language=${language}`);
-      const data = await response.json();
-      setAreas(data.areas);
-      setAreaDropdownVisible(true);
-    } catch (error) {
-      console.error("Error fetching areas:", error);
-    }
+  const handleAreaButtonClick = () => {
+    setAreaDropdownVisible(!isAreaDropdownVisible);
   };
 
   const handleAreaSelect = (area: string) => {
@@ -489,12 +482,14 @@ export default function Home() {
     }, 100);
   };
 
+  const t = (key: string) => translations[language][key as keyof typeof translations['en']] || key;
+
   const filteredCities = cities.filter(city =>
-    city.toLowerCase().includes(citySearchTerm.toLowerCase())
+    t(city).toLowerCase().includes(citySearchTerm.toLowerCase())
   );
 
   const filteredAreas = areas.filter(area =>
-    area.toLowerCase().includes(areaSearchTerm.toLowerCase())
+    t(area).toLowerCase().includes(areaSearchTerm.toLowerCase())
   );
 
   const buttonStyle = "bg-gray-700 hover:bg-black text-white py-2 px-4 rounded w-48 h-12";
@@ -513,70 +508,6 @@ export default function Home() {
 
   const shouldShowHistoricalData = () => {
     return selectedCity !== "City" && ((selectedCity !== "Athens" && selectedCity !== "Thessaloniki") || selectedArea !== "Area");
-  };
-
-  const headerStyle: CSSProperties = {
-    backgroundColor: '#FFFFFF',
-    padding: '1.8rem 4rem',
-    height: 'auto',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    position: 'relative'
-  };
-
-  const mainContainerStyle: CSSProperties = {
-    backgroundColor: '#F0EFEB',
-    minHeight: '100vh'
-  };
-
-  const h1Style: CSSProperties = {
-    fontFamily: 'Arial, sans-serif',
-    marginRight: 'auto',
-    position: 'relative',
-    display: 'inline-block',
-  };
-
-  const underlineStyle: CSSProperties = {
-    position: 'absolute',
-    content: '""',
-    width: '100%',
-    height: '2px',
-    backgroundColor: 'transparent',
-    bottom: '2px',
-    left: '0',
-  };
-
-  const contentStyle: CSSProperties = {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    width: '100%',
-  };
-
-  const buttonsContainerStyle: CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1rem',
-    marginTop: '2rem',
-  };
-
-  const chartContainerStyle: CSSProperties = {
-    flex: 1,
-    marginLeft: '2rem',
-  };
-
-  const headerButtonsContainerStyle: CSSProperties = {
-    display: 'flex',
-    gap: '1rem',
-    alignItems: 'center',
-    position: 'absolute',
-    right: '4rem',
-  };
-
-  const languageDropdownStyle: CSSProperties = {
-    marginLeft: '8rem',
   };
 
   const renderTimeframeOptions = () => {
@@ -635,8 +566,6 @@ export default function Home() {
     }
   };
 
-  const t = (key: string) => translations[language][key as keyof typeof translations['en']] || key;
-
   const handleLanguageChange = (lang: 'en' | 'gr') => {
     setLanguage(lang);
   };
@@ -688,7 +617,7 @@ export default function Home() {
               onClick={handleLocationButtonClick}
               className={buttonStyle}
             >
-              {selectedCity === "City" ? t("city") : selectedCity}
+              {selectedCity === "City" ? t("city") : t(selectedCity)}
             </button>
             {isDropdownVisible && (
               <div ref={dropdownRef} className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
@@ -706,7 +635,7 @@ export default function Home() {
                       className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
                       onClick={() => handleCitySelect(city)}
                     >
-                      {city}
+                      {t(city)}
                     </li>
                   ))}
                 </ul>
@@ -720,7 +649,7 @@ export default function Home() {
                 onClick={handleAreaButtonClick}
                 className={buttonStyle}
               >
-                {selectedArea === "Area" ? t("area") : selectedArea}
+                {selectedArea === "Area" ? t("area") : t(selectedArea)}
               </button>
               {isAreaDropdownVisible && (
                 <div ref={areaDropdownRef} className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
@@ -738,7 +667,7 @@ export default function Home() {
                         className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
                         onClick={() => handleAreaSelect(area)}
                       >
-                        {area}
+                        {t(area)}
                       </li>
                     ))}
                   </ul>
