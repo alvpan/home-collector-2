@@ -12,17 +12,10 @@ import { format } from 'date-fns';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
-interface CityData {
-  surface: number;
-  price: number;
-  entry_date: string;
-}
-
 interface ChartData {
   options: ApexOptions;
   series: { name: string; data: number[] }[];
 }
-
 
 const translations = {
   en: enTranslations,
@@ -98,7 +91,6 @@ export default function Home() {
   const loadingPlaceholderRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
   const [isChartRendered, setIsChartRendered] = useState(false);
-
   const isFetchingDataRef = useRef(false);
 
   const initialHistoricalChartData: ChartData = {
@@ -173,7 +165,6 @@ export default function Home() {
   const [previousValues, setPreviousValues] = useState({ action: "", city: "", area: "", timeframe: "", startDate: null as Date | null, endDate: null as Date | null });
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
   const [renderHistoricalDataChart, setRenderHistoricalDataChart] = useState(true);
-
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
@@ -268,13 +259,13 @@ export default function Home() {
         let fetchStartDate = '';
         let fetchEndDate = new Date().toISOString();
 
-        if (timeframe === "last week") {
+        if (timeframe === "lastWeek") {
             fetchStartDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-        } else if (timeframe === "last month") {
+        } else if (timeframe === "lastMonth") {
             fetchStartDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-        } else if (timeframe === "last 6 months") {
+        } else if (timeframe === "last6Months") {
             fetchStartDate = new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000).toISOString();
-        } else if (timeframe === "last year") {
+        } else if (timeframe === "lastYear") {
             fetchStartDate = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString();
         } else if (timeframe === "ever") {
             fetchStartDate = new Date(0).toISOString();
@@ -443,7 +434,7 @@ export default function Home() {
       startDate,
       endDate,
     };
-  
+
     if (
       selectedTimeframe &&
       selectedCity !== "City" &&
@@ -461,13 +452,13 @@ export default function Home() {
         alert("Please select both start and end dates for custom timeframe.");
         return;
       }
-  
+
       setIsLoading(true);
       setChartVisible(false);
       clearHistoricalChartData();
       await fetchHistoricalData(selectedTimeframe);
       setIsLoading(false);
-  
+
       setChartVisible(true);
       setIsChartRendered(true);
     } else {
@@ -575,10 +566,10 @@ export default function Home() {
 
   const renderTimeframeOptions = () => {
     const timeframeOptions = [
-      { key: "last week", label: t("lastWeek") },
-      { key: "last month", label: t("lastMonth") },
-      { key: "last 6 months", label: t("last6Months") },
-      { key: "last year", label: t("lastYear") },
+      { key: "lastWeek", label: t("lastWeek") },
+      { key: "lastMonth", label: t("lastMonth") },
+      { key: "last6Months", label: t("last6Months") },
+      { key: "lastYear", label: t("lastYear") },
       { key: "ever", label: t("ever") },
       { key: "custom", label: t("custom") }
     ];
@@ -607,7 +598,7 @@ export default function Home() {
         </div>
       );
     }
-  
+
     switch (activeHeaderButton) {
       case 'Historical Data':
         return (
@@ -628,14 +619,11 @@ export default function Home() {
         return null;
     }
   };
-  
+
   const t = (key: string) => translations[language][key as keyof typeof translations['en']] || key;
 
   const handleLanguageChange = (lang: 'en' | 'gr') => {
     setLanguage(lang);
-
-    setSelectedArea(prev => t(prev));
-    setSelectedTimeframe(prev => t(prev));
   };
 
   return (
