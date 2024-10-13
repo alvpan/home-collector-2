@@ -494,8 +494,33 @@ export default function Home() {
     t(area).toLowerCase().includes(areaSearchTerm.toLowerCase())
   );
 
-  const buttonStyle = "bg-transparent border-2 border-gray-600 text- gray-600 hover:border-orange-600 text-gray-600 hover:text-orange-600 py-2 px-4 rounded w-48 h-12 transition-colors duration-450";
-  const actionButtonStyle = "py-2 px-4 rounded w-48 h-12 transition-colors duration-450";
+  const actionButtonStyle = "py-2 px-4 rounded w-48 h-12";
+  const dropdownButtonStyle = "py-2 px-4 rounded w-48 h-12";
+
+  const rentButtonClass = action === "Rent"
+    ? isBuyHovered
+      ? "bg-orange-700 border-2 border-orange-700"
+      : "bg-orange-600 border-2 border-orange-600"
+    : "bg-transparent text-gray-600 border-2 border-gray-600 hover:bg-transparent hover:text-orange-600 hover:border-orange-600";
+
+  const buyButtonClass = action === "Buy"
+    ? isRentHovered
+      ? "bg-orange-700 border-2 border-orange-700"
+      : "bg-orange-600 border-2 border-orange-600"
+    : "bg-transparent text-gray-600 border-2 border-gray-600 hover:bg-transparent hover:text-orange-600 hover:border-orange-600";
+
+  const cityButtonClass = selectedCity !== "City"
+    ? "bg-orange-600 border-2 border-orange-600 text-white"
+    : "bg-transparent text-gray-600 border-2 border-gray-600 hover:bg-transparent hover:text-orange-600 hover:border-orange-600";
+
+  const areaButtonClass = selectedArea !== "Area"
+    ? "bg-orange-600 border-2 border-orange-600 text-white"
+    : "bg-transparent text-gray-600 border-2 border-gray-600 hover:bg-transparent hover:text-orange-600 hover:border-orange-600";
+
+  const timeframeButtonClass = selectedTimeframe !== ""
+    ? "bg-orange-600 border-2 border-orange-600 text-white"
+    : "bg-transparent text-gray-600 border-2 border-gray-600 hover:bg-transparent hover:text-orange-600 hover:border-orange-600";
+
   const headerButtonStyle = (buttonName: string) => ({
     background: 'transparent',
     color: 'black',
@@ -573,18 +598,6 @@ export default function Home() {
     setLanguage(lang);
   };
 
-  const rentButtonClass = action === "Rent"
-    ? isBuyHovered
-      ? "bg-orange-700 border-2 border-orange-700"
-      : "bg-orange-600 border-2 border-orange-600"
-    : "bg-transparent text-gray-600 border-2 border-gray-600 hover:bg-transparent hover:text-orange-600 hover:border-orange-600";
-
-  const buyButtonClass = action === "Buy"
-    ? isRentHovered
-      ? "bg-orange-700 border-2 border-orange-700"
-      : "bg-orange-600 border-2 border-orange-600"
-    : "bg-transparent text-gray-600 border-2 border-gray-600 hover:bg-transparent hover:text-orange-600 hover:border-orange-600";
-
   return (
     <div className="main-container">
       <header className="header">
@@ -630,12 +643,11 @@ export default function Home() {
               {t('actionBuy')}
             </button>
           </div>
-          {/* The rest of your buttons and components remain unchanged */}
           <div className="relative flex items-center w-48">
             <button
               ref={cityButtonRef}
               onClick={handleLocationButtonClick}
-              className={buttonStyle}
+              className={`${dropdownButtonStyle} ${cityButtonClass}`}
             >
               {selectedCity === "City" ? t("city") : t(selectedCity)}
             </button>
@@ -667,7 +679,7 @@ export default function Home() {
               <button
                 ref={areaButtonRef}
                 onClick={handleAreaButtonClick}
-                className={buttonStyle}
+                className={`${dropdownButtonStyle} ${areaButtonClass}`}
               >
                 {selectedArea === "Area" ? t("area") : t(selectedArea)}
               </button>
@@ -699,7 +711,7 @@ export default function Home() {
             <div className="relative">
               <button
                 ref={timeframeButtonRef}
-                className={`${buttonStyle} mt-0`}
+                className={`${dropdownButtonStyle} ${timeframeButtonClass} mt-0`}
                 onClick={() => setTimeframeDropdownVisible(prev => !prev)}
               >
                 {t(selectedTimeframe) || t('timeframe')}
