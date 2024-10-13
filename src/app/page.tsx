@@ -93,7 +93,6 @@ export default function Home() {
   const [isChartRendered, setIsChartRendered] = useState(false);
   const isFetchingDataRef = useRef(false);
 
-  // Hover state variables for action buttons
   const [isRentHovered, setIsRentHovered] = useState(false);
   const [isBuyHovered, setIsBuyHovered] = useState(false);
 
@@ -495,8 +494,8 @@ export default function Home() {
     t(area).toLowerCase().includes(areaSearchTerm.toLowerCase())
   );
 
-  const buttonStyle = "bg-gray-700 hover:bg-orange-600 py-2 px-4 rounded w-48 h-12";
-  const actionButtonStyle = "py-2 px-4 rounded w-48 h-12"; // Separate style for action buttons
+  const buttonStyle = "bg-transparent border-2 border-gray-600 text- gray-600 hover:border-orange-600 text-gray-600 hover:text-orange-600 py-2 px-4 rounded w-48 h-12 transition-colors duration-450";
+  const actionButtonStyle = "py-2 px-4 rounded w-48 h-12 transition-colors duration-450";
   const headerButtonStyle = (buttonName: string) => ({
     background: 'transparent',
     color: 'black',
