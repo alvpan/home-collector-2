@@ -93,6 +93,10 @@ export default function Home() {
   const [isChartRendered, setIsChartRendered] = useState(false);
   const isFetchingDataRef = useRef(false);
 
+  // Hover state variables for action buttons
+  const [isRentHovered, setIsRentHovered] = useState(false);
+  const [isBuyHovered, setIsBuyHovered] = useState(false);
+
   const initialHistoricalChartData: ChartData = {
     options: {
       chart: {
@@ -269,115 +273,114 @@ export default function Home() {
     const area = (city === "Athens" || city === "Thessaloniki") ? selectedArea : city;
 
     try {
-        setHistoricalDataChartData(initialHistoricalChartData);
+      setHistoricalDataChartData(initialHistoricalChartData);
 
-        let fetchStartDate = '';
-        let fetchEndDate = new Date().toISOString();
+      let fetchStartDate = '';
+      let fetchEndDate = new Date().toISOString();
 
-        if (timeframe === "lastWeek") {
-            fetchStartDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-        } else if (timeframe === "lastMonth") {
-            fetchStartDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-        } else if (timeframe === "last6Months") {
-            fetchStartDate = new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000).toISOString();
-        } else if (timeframe === "lastYear") {
-            fetchStartDate = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString();
-        } else if (timeframe === "ever") {
-            fetchStartDate = new Date(0).toISOString();
-        } else if (timeframe === "custom" && startDate && endDate) {
-            fetchStartDate = startDate.toISOString();
-            fetchEndDate = endDate.toISOString();
-        }
+      if (timeframe === "lastWeek") {
+        fetchStartDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+      } else if (timeframe === "lastMonth") {
+        fetchStartDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+      } else if (timeframe === "last6Months") {
+        fetchStartDate = new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000).toISOString();
+      } else if (timeframe === "lastYear") {
+        fetchStartDate = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString();
+      } else if (timeframe === "ever") {
+        fetchStartDate = new Date(0).toISOString();
+      } else if (timeframe === "custom" && startDate && endDate) {
+        fetchStartDate = startDate.toISOString();
+        fetchEndDate = endDate.toISOString();
+      }
 
-        const response = await fetch(`/api/getHistoricalPpm?action=${action}&city=${city}&area=${area}&startDate=${fetchStartDate}&endDate=${fetchEndDate}`);
-        const data = await response.json();
+      const response = await fetch(`/api/getHistoricalPpm?action=${action}&city=${city}&area=${area}&startDate=${fetchStartDate}&endDate=${fetchEndDate}`);
+      const data = await response.json();
 
-        const dates = data.map((item: { date: string }) => format(new Date(item.date), 'd MMM'));
-        const prices = data.map((item: { pricePerSqm: number }) => item.pricePerSqm);
-        const { min, max } = addYAxisPadding(prices);
+      const dates = data.map((item: { date: string }) => format(new Date(item.date), 'd MMM'));
+      const prices = data.map((item: { pricePerSqm: number }) => item.pricePerSqm);
+      const { min, max } = addYAxisPadding(prices);
 
-        const options: ApexOptions = {
-            ...initialHistoricalChartData.options,
-            xaxis: {
-                ...initialHistoricalChartData.options?.xaxis,
-                categories: dates,
-            },
-            yaxis: {
-                ...initialHistoricalChartData.options?.yaxis,
-                min: min,
-                max: max,
-            },
-            tooltip: {
-                x: {
-                  formatter: function(value, { seriesIndex, dataPointIndex, w }) {
-                      const price = w.globals.series[seriesIndex][dataPointIndex];
-                      const seriesColor = w.config.colors ? w.config.colors[seriesIndex] : '#000';
-                      return `1m² costs: <span style="color: ${seriesColor}; font-weight: bold; font-size: 28px;">${price.toFixed(1)}€</span>`;
-                  }
-              },
-
-                y: {
-                    formatter: function(value, { dataPointIndex, w }) {
-                        const date = w.globals.categoryLabels[dataPointIndex];
-                        return date;
-                    }
-                },
-                theme: 'light',
-                marker: { show: false },
-                style: {
-                    fontSize: '15px',
-                    fontFamily: undefined
-                },
-                fixed: {
-                    enabled: true,
-                    position: 'topLeft',
-                    offsetX: 55,
-                    offsetY: 10,
-                },
-            },
-            chart: {
-                type: 'area',
-                background: 'transparent',
-                toolbar: { show: false },
-                zoom: { enabled: false },
-                events: {
-                    mouseMove: function(event, chartContext, config) {
-                        const tooltip = chartContext.el.querySelector('.apexcharts-tooltip');
-                        if (tooltip) {
-                            tooltip.style.top = '10px';
-                            tooltip.style.left = '55px';
-                        }
-                    }
-                }
+      const options: ApexOptions = {
+        ...initialHistoricalChartData.options,
+        xaxis: {
+          ...initialHistoricalChartData.options?.xaxis,
+          categories: dates,
+        },
+        yaxis: {
+          ...initialHistoricalChartData.options?.yaxis,
+          min: min,
+          max: max,
+        },
+        tooltip: {
+          x: {
+            formatter: function(value, { seriesIndex, dataPointIndex, w }) {
+              const price = w.globals.series[seriesIndex][dataPointIndex];
+              const seriesColor = w.config.colors ? w.config.colors[seriesIndex] : '#000';
+              return `1m² costs: <span style="color: ${seriesColor}; font-weight: bold; font-size: 28px;">${price.toFixed(1)}€</span>`;
             }
-        };
+          },
+          y: {
+            formatter: function(value, { dataPointIndex, w }) {
+              const date = w.globals.categoryLabels[dataPointIndex];
+              return date;
+            }
+          },
+          theme: 'light',
+          marker: { show: false },
+          style: {
+            fontSize: '15px',
+            fontFamily: undefined
+          },
+          fixed: {
+            enabled: true,
+            position: 'topLeft',
+            offsetX: 55,
+            offsetY: 10,
+          },
+        },
+        chart: {
+          type: 'area',
+          background: 'transparent',
+          toolbar: { show: false },
+          zoom: { enabled: false },
+          events: {
+            mouseMove: function(event, chartContext, config) {
+              const tooltip = chartContext.el.querySelector('.apexcharts-tooltip');
+              if (tooltip) {
+                tooltip.style.top = '10px';
+                tooltip.style.left = '55px';
+              }
+            }
+          }
+        }
+      };
 
-        setHistoricalDataChartData({
-            ...initialHistoricalChartData,
-            options: options,
-            series: [{ 
-                name: '',
-                data: prices
-            }]
-        });
+      setHistoricalDataChartData({
+        ...initialHistoricalChartData,
+        options: options,
+        series: [{
+          name: '',
+          data: prices
+        }]
+      });
 
-        setRenderHistoricalDataChart(false);
-        setTimeout(() => setRenderHistoricalDataChart(true), 0);
+      setRenderHistoricalDataChart(false);
+      setTimeout(() => setRenderHistoricalDataChart(true), 0);
 
-        setChartVisible(true);
-        setHistoricalDataChartLoaded(true);
-        setIsChartRendered(true);
+      setChartVisible(true);
+      setHistoricalDataChartLoaded(true);
+      setIsChartRendered(true);
 
-        setPreviousValues({
-            action,
-            city: selectedCity,
-            area: selectedArea,
-            timeframe: selectedTimeframe,
-            startDate,
-            endDate
-        });
+      setPreviousValues({
+        action,
+        city: selectedCity,
+        area: selectedArea,
+        timeframe: selectedTimeframe,
+        startDate,
+        endDate
+      });
     } catch (error) {
-        console.error("Error fetching historical data:", error);
+      console.error("Error fetching historical data:", error);
     }
   };
 
@@ -492,7 +495,8 @@ export default function Home() {
     t(area).toLowerCase().includes(areaSearchTerm.toLowerCase())
   );
 
-  const buttonStyle = "bg-gray-700 hover:bg-black text-white py-2 px-4 rounded w-48 h-12";
+  const buttonStyle = "bg-gray-700 hover:bg-orange-600 py-2 px-4 rounded w-48 h-12";
+  const actionButtonStyle = "py-2 px-4 rounded w-48 h-12"; // Separate style for action buttons
   const headerButtonStyle = (buttonName: string) => ({
     background: 'transparent',
     color: 'black',
@@ -570,6 +574,18 @@ export default function Home() {
     setLanguage(lang);
   };
 
+  const rentButtonClass = action === "Rent"
+    ? isBuyHovered
+      ? "bg-orange-700 border-2 border-orange-700"
+      : "bg-orange-600 border-2 border-orange-600"
+    : "bg-transparent text-gray-600 border-2 border-gray-600 hover:bg-transparent hover:text-orange-600 hover:border-orange-600";
+
+  const buyButtonClass = action === "Buy"
+    ? isRentHovered
+      ? "bg-orange-700 border-2 border-orange-700"
+      : "bg-orange-600 border-2 border-orange-600"
+    : "bg-transparent text-gray-600 border-2 border-gray-600 hover:bg-transparent hover:text-orange-600 hover:border-orange-600";
+
   return (
     <div className="main-container">
       <header className="header">
@@ -599,18 +615,23 @@ export default function Home() {
           <div className="flex items-center w-48">
             <button
               onClick={() => handleActionButtonClick("Rent")}
-              className={`${buttonStyle} ${action === "Rent" ? "bg-orange-700" : "bg-gray-700"} hover:bg-orange-600`}
+              onMouseEnter={() => setIsRentHovered(true)}
+              onMouseLeave={() => setIsRentHovered(false)}
+              className={`${actionButtonStyle} ${rentButtonClass}`}
               style={{ marginRight: "8px" }}
             >
               {t('actionRent')}
             </button>
             <button
               onClick={() => handleActionButtonClick("Buy")}
-              className={`${buttonStyle} ${action === "Buy" ? "bg-orange-700" : "bg-gray-700"} hover:bg-orange-600`}
+              onMouseEnter={() => setIsBuyHovered(true)}
+              onMouseLeave={() => setIsBuyHovered(false)}
+              className={`${actionButtonStyle} ${buyButtonClass}`}
             >
               {t('actionBuy')}
             </button>
           </div>
+          {/* The rest of your buttons and components remain unchanged */}
           <div className="relative flex items-center w-48">
             <button
               ref={cityButtonRef}
