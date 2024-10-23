@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, CSSProperties, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import dynamic from 'next/dynamic';
 import { ApexOptions } from 'apexcharts';
 import DatePicker from 'react-datepicker';
@@ -95,6 +95,9 @@ export default function Home() {
 
   const [isRentHovered, setIsRentHovered] = useState(false);
   const [isBuyHovered, setIsBuyHovered] = useState(false);
+  const [isCityHovered, setIsCityHovered] = useState(false);
+  const [isAreaHovered, setIsAreaHovered] = useState(false);
+  const [isTimeframeHovered, setIsTimeframeHovered] = useState(false);
 
   const initialHistoricalChartData: ChartData = {
     options: {
@@ -510,15 +513,21 @@ export default function Home() {
     : "bg-transparent text-gray-600 border border-gray-600 hover:bg-transparent hover:text-orange-600 hover:border-orange-600";
 
   const cityButtonClass = selectedCity !== "City"
-    ? "bg-orange-600 text-white border border-orange-600 text-orange-600"
+    ? isCityHovered
+      ? "bg-transparent text-orange-600 border border-orange-600"
+      : "bg-orange-600 text-white border border-orange-600"
     : "bg-transparent text-gray-600 border border-gray-600 hover:bg-transparent hover:text-orange-600 hover:border-orange-600";
 
   const areaButtonClass = selectedArea !== "Area"
-    ? "bg-orange-600 text-white border border-orange-600 text-orange-600"
+    ? isAreaHovered
+      ? "bg-transparent text-orange-600 border border-orange-600"
+      : "bg-orange-600 text-white border border-orange-600"
     : "bg-transparent text-gray-600 border border-gray-600 hover:bg-transparent hover:text-orange-600 hover:border-orange-600";
 
   const timeframeButtonClass = selectedTimeframe !== ""
-    ? "bg-orange-600 text-white border border-orange-600 text-orange-600"
+    ? isTimeframeHovered
+      ? "bg-transparent text-orange-600 border border-orange-600"
+      : "bg-orange-600 text-white border border-orange-600"
     : "bg-transparent text-gray-600 border border-gray-600 hover:bg-transparent hover:text-orange-600 hover:border-orange-600";
 
   const headerButtonStyle = (buttonName: string) => ({
@@ -647,6 +656,8 @@ export default function Home() {
             <button
               ref={cityButtonRef}
               onClick={handleLocationButtonClick}
+              onMouseEnter={() => setIsCityHovered(true)}
+              onMouseLeave={() => setIsCityHovered(false)}
               className={`${dropdownButtonStyle} ${cityButtonClass}`}
             >
               {selectedCity === "City" ? t("city") : t(selectedCity)}
@@ -679,6 +690,8 @@ export default function Home() {
               <button
                 ref={areaButtonRef}
                 onClick={handleAreaButtonClick}
+                onMouseEnter={() => setIsAreaHovered(true)}
+                onMouseLeave={() => setIsAreaHovered(false)}
                 className={`${dropdownButtonStyle} ${areaButtonClass}`}
               >
                 {selectedArea === "Area" ? t("area") : t(selectedArea)}
@@ -713,6 +726,8 @@ export default function Home() {
                 ref={timeframeButtonRef}
                 className={`${dropdownButtonStyle} ${timeframeButtonClass} mt-0`}
                 onClick={() => setTimeframeDropdownVisible(prev => !prev)}
+                onMouseEnter={() => setIsTimeframeHovered(true)}
+                onMouseLeave={() => setIsTimeframeHovered(false)}
               >
                 {t(selectedTimeframe) || t('timeframe')}
               </button>
