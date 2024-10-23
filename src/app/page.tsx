@@ -510,15 +510,15 @@ export default function Home() {
     : "bg-transparent text-gray-600 border border-gray-600 hover:bg-transparent hover:text-orange-600 hover:border-orange-600";
 
   const cityButtonClass = selectedCity !== "City"
-    ? "bg-transparent border border-orange-600 text-orange-600"
+    ? "bg-orange-600 text-white border border-orange-600 text-orange-600"
     : "bg-transparent text-gray-600 border border-gray-600 hover:bg-transparent hover:text-orange-600 hover:border-orange-600";
 
   const areaButtonClass = selectedArea !== "Area"
-    ? "bg-transparent border border-orange-600 text-orange-600"
+    ? "bg-orange-600 text-white border border-orange-600 text-orange-600"
     : "bg-transparent text-gray-600 border border-gray-600 hover:bg-transparent hover:text-orange-600 hover:border-orange-600";
 
   const timeframeButtonClass = selectedTimeframe !== ""
-    ? "bg-transparent border border-orange-600 text-orange-600"
+    ? "bg-orange-600 text-white border border-orange-600 text-orange-600"
     : "bg-transparent text-gray-600 border border-gray-600 hover:bg-transparent hover:text-orange-600 hover:border-orange-600";
 
   const headerButtonStyle = (buttonName: string) => ({
