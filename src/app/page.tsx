@@ -515,20 +515,20 @@ export default function Home() {
   const cityButtonClass = selectedCity !== "City"
     ? isCityHovered
       ? "bg-transparent text-orange-600 border border-orange-600"
-      : "bg-orange-600 text-white border border-orange-600"
-    : "bg-transparent text-gray-600 border border-gray-600 hover:bg-transparent hover:text-orange-600 hover:border-orange-600";
+      : "bg-gray-200 text-gray-800 border border-gray-300"
+    : "bg-transparent text-gray-600 border border-gray-600 hover:bg-gray-200 hover:text-gray-600 hover:border-gray-200";
 
   const areaButtonClass = selectedArea !== "Area"
     ? isAreaHovered
       ? "bg-transparent text-orange-600 border border-orange-600"
-      : "bg-orange-600 text-white border border-orange-600"
-    : "bg-transparent text-gray-600 border border-gray-600 hover:bg-transparent hover:text-orange-600 hover:border-orange-600";
+      : "bg-gray-200 text-gray-800 border border-gray-300"
+    : "bg-transparent text-gray-600 border border-gray-600 hover:bg-gray-200 hover:text-gray-600 hover:border-gray-200";
 
   const timeframeButtonClass = selectedTimeframe !== ""
     ? isTimeframeHovered
       ? "bg-transparent text-orange-600 border border-orange-600"
-      : "bg-orange-600 text-white border border-orange-600"
-    : "bg-transparent text-gray-600 border border-gray-600 hover:bg-transparent hover:text-orange-600 hover:border-orange-600";
+      : "bg-gray-200 text-gray-800 border border-gray-300"
+    : "bg-transparent text-gray-600 border border-gray-600 hover:bg-gray-200 hover:text-gray-600 hover:border-gray-200";
 
   const headerButtonStyle = (buttonName: string) => ({
     background: 'transparent',
