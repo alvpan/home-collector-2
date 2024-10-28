@@ -654,138 +654,132 @@ export default function Home() {
               {t('actionBuy')}
             </button>
           </div>
-          {action !== "" && (
-            <div className="relative flex items-center w-48">
-              <button
-                ref={cityButtonRef}
-                onClick={handleLocationButtonClick}
-                onMouseEnter={() => setIsCityHovered(true)}
-                onMouseLeave={() => setIsCityHovered(false)}
-                className={`${dropdownButtonStyle} ${cityButtonClass}`}
-              >
-                {selectedCity === "" ? t("city") : t(selectedCity)}
-              </button>
-              {isDropdownVisible && (
-                <div ref={dropdownRef} className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
-                  <input
-                    type="text"
-                    placeholder={t('searchCity')}
-                    value={citySearchTerm}
-                    onChange={(e) => setCitySearchTerm(e.target.value)}
-                    className="sticky top-0 p-2 border-b w-full text-orange-600 bg-white z-20"
-                  />
-                  <ul className="py-1 text-black">
-                    {filteredCities.map((city) => (
-                      <li
-                        key={city}
-                        className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
-                        onClick={() => handleCitySelect(city)}
-                      >
-                        {t(city)}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          )}
-          {action !== "" && selectedCity !== "" && (selectedCity === "Athens" || selectedCity === "Thessaloniki") && (
-            <div className="relative flex items-center w-48">
-              <button
-                ref={areaButtonRef}
-                onClick={handleAreaButtonClick}
-                onMouseEnter={() => setIsAreaHovered(true)}
-                onMouseLeave={() => setIsAreaHovered(false)}
-                className={`${dropdownButtonStyle} ${areaButtonClass}`}
-              >
-                {selectedArea === "" ? t("area") : t(selectedArea)}
-              </button>
-              {isAreaDropdownVisible && (
-                <div ref={areaDropdownRef} className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
-                  <input
-                    type="text"
-                    placeholder={t('searchArea')}
-                    value={areaSearchTerm}
-                    onChange={(e) => setAreaSearchTerm(e.target.value)}
-                    className="sticky top-0 p-2 border-b w-full text-orange-600 bg-white z-20"
-                  />
-                  <ul className="py-1 text-black">
-                    {filteredAreas.map((area) => (
-                      <li
-                        key={area}
-                        className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
-                        onClick={() => handleAreaSelect(area)}
-                      >
-                        {t(area)}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          )}
-          {action !== "" && selectedCity !== "" && ((selectedCity !== "Athens" && selectedCity !== "Thessaloniki") || selectedArea !== "") && (
-            <div className="flex flex-col space-y-4 mt-0">
-              <div className="relative">
-                <button
-                  ref={timeframeButtonRef}
-                  className={`${dropdownButtonStyle} ${timeframeButtonClass} mt-0`}
-                  onClick={() => setTimeframeDropdownVisible(prev => !prev)}
-                  onMouseEnter={() => setIsTimeframeHovered(true)}
-                  onMouseLeave={() => setIsTimeframeHovered(false)}
-                >
-                  {t(selectedTimeframe) || t('timeframe')}
-                </button>
-                {timeframeDropdownVisible && (
-                  <div ref={timeframeDropdownRef} className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
-                    <ul className="py-1 text-black">
-                      {renderTimeframeOptions()}
-                    </ul>
-                  </div>
-                )}
+          <div className={`relative flex items-center w-48 transition-opacity duration-200 ${action !== "" ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+            <button
+              ref={cityButtonRef}
+              onClick={handleLocationButtonClick}
+              onMouseEnter={() => setIsCityHovered(true)}
+              onMouseLeave={() => setIsCityHovered(false)}
+              className={`${dropdownButtonStyle} ${cityButtonClass}`}
+            >
+              {selectedCity === "" ? t("city") : t(selectedCity)}
+            </button>
+            {isDropdownVisible && (
+              <div ref={dropdownRef} className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+                <input
+                  type="text"
+                  placeholder={t('searchCity')}
+                  value={citySearchTerm}
+                  onChange={(e) => setCitySearchTerm(e.target.value)}
+                  className="sticky top-0 p-2 border-b w-full text-orange-600 bg-white z-20"
+                />
+                <ul className="py-1 text-black">
+                  {filteredCities.map((city) => (
+                    <li
+                      key={city}
+                      className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                      onClick={() => handleCitySelect(city)}
+                    >
+                      {t(city)}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              {selectedTimeframe === "custom" && (
-                <div className="relative flex flex-col space-y-2 items-start w-48">
-                  <div className="w-48 h-12">
-                    <DatePicker
-                      selected={startDate}
-                      onChange={(date: Date | null) => setStartDate(date)}
-                      selectsStart
-                      startDate={startDate}
-                      endDate={endDate}
-                      maxDate={new Date()}
-                      dateFormat="dd MMMM yyyy"
-                      placeholderText={t('from')}
-                      className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
-                      showPopperArrow={false}
-                      shouldCloseOnSelect={false}
-                    />
-                  </div>
-                  <div className="w-48 h-12">
-                    <DatePicker
-                      selected={endDate}
-                      onChange={(date: Date | null) => setEndDate(date)}
-                      selectsEnd
-                      startDate={startDate}
-                      endDate={endDate}
-                      minDate={startDate}
-                      maxDate={new Date()}
-                      dateFormat="dd MMMM yyyy"
-                      placeholderText={t('to')}
-                      className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
-                      showPopperArrow={false}
-                      shouldCloseOnSelect={false}
-                    />
-                  </div>
+            )}
+          </div>
+          <div className={`relative flex items-center w-48 transition-opacity duration-200 ${action !== "" && selectedCity !== "" && (selectedCity === "Athens" || selectedCity === "Thessaloniki") ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+            <button
+              ref={areaButtonRef}
+              onClick={handleAreaButtonClick}
+              onMouseEnter={() => setIsAreaHovered(true)}
+              onMouseLeave={() => setIsAreaHovered(false)}
+              className={`${dropdownButtonStyle} ${areaButtonClass}`}
+            >
+              {selectedArea === "" ? t("area") : t(selectedArea)}
+            </button>
+            {isAreaDropdownVisible && (
+              <div ref={areaDropdownRef} className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+                <input
+                  type="text"
+                  placeholder={t('searchArea')}
+                  value={areaSearchTerm}
+                  onChange={(e) => setAreaSearchTerm(e.target.value)}
+                  className="sticky top-0 p-2 border-b w-full text-orange-600 bg-white z-20"
+                />
+                <ul className="py-1 text-black">
+                  {filteredAreas.map((area) => (
+                    <li
+                      key={area}
+                      className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                      onClick={() => handleAreaSelect(area)}
+                    >
+                      {t(area)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+          <div className={`flex flex-col space-y-4 mt-0 transition-opacity duration-200 ${(action !== "" && selectedCity !== "" && ((selectedCity !== "Athens" && selectedCity !== "Thessaloniki") || selectedArea !== "")) ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+            <div className="relative">
+              <button
+                ref={timeframeButtonRef}
+                className={`${dropdownButtonStyle} ${timeframeButtonClass} mt-0`}
+                onClick={() => setTimeframeDropdownVisible(prev => !prev)}
+                onMouseEnter={() => setIsTimeframeHovered(true)}
+                onMouseLeave={() => setIsTimeframeHovered(false)}
+              >
+                {t(selectedTimeframe) || t('timeframe')}
+              </button>
+              {timeframeDropdownVisible && (
+                <div ref={timeframeDropdownRef} className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+                  <ul className="py-1 text-black">
+                    {renderTimeframeOptions()}
+                  </ul>
                 </div>
               )}
             </div>
-          )}
-          {isRefreshButtonVisible && (
+            {selectedTimeframe === "custom" && (
+              <div className="relative flex flex-col space-y-2 items-start w-48">
+                <div className="w-48 h-12">
+                  <DatePicker
+                    selected={startDate}
+                    onChange={(date: Date | null) => setStartDate(date)}
+                    selectsStart
+                    startDate={startDate}
+                    endDate={endDate}
+                    maxDate={new Date()}
+                    dateFormat="dd MMMM yyyy"
+                    placeholderText={t('from')}
+                    className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
+                    showPopperArrow={false}
+                    shouldCloseOnSelect={false}
+                  />
+                </div>
+                <div className="w-48 h-12">
+                  <DatePicker
+                    selected={endDate}
+                    onChange={(date: Date | null) => setEndDate(date)}
+                    selectsEnd
+                    startDate={startDate}
+                    endDate={endDate}
+                    minDate={startDate}
+                    maxDate={new Date()}
+                    dateFormat="dd MMMM yyyy"
+                    placeholderText={t('to')}
+                    className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
+                    showPopperArrow={false}
+                    shouldCloseOnSelect={false}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+          <div className={`transition-opacity duration-200 ${isRefreshButtonVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
             <button className="bg-orange-700 hover:bg-orange-600 text-white py-2 px-4 rounded w-48 h-12 mt-2" onClick={handleRefreshClick}>
               {t('refreshChart')}
             </button>
-          )}
+          </div>
         </div>
         <div ref={chartContainerRef} className="chart-container">
           {renderContent()}
