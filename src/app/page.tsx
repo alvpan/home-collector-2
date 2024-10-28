@@ -607,6 +607,8 @@ export default function Home() {
     setLanguage(lang);
   };
 
+  const isRefreshButtonVisible = selectedCity !== "City" && selectedTimeframe !== "" && ((selectedCity !== "Athens" && selectedCity !== "Thessaloniki") || selectedArea !== "Area");
+
   return (
     <div className="main-container">
       <header className="header">
@@ -774,9 +776,11 @@ export default function Home() {
                 </div>
               </div>
             )}
-            <button className="bg-orange-700 hover:bg-orange-600 text-white py-2 px-4 rounded w-48 h-12 mt-2" onClick={handleRefreshClick}>
-              {t('refreshChart')}
-            </button>
+            {isRefreshButtonVisible && (
+              <button className="bg-orange-700 hover:bg-orange-600 text-white py-2 px-4 rounded w-48 h-12 mt-2" onClick={handleRefreshClick}>
+                {t('refreshChart')}
+              </button>
+            )}
           </div>
         </div>
         <div ref={chartContainerRef} className="chart-container">
