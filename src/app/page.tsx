@@ -74,15 +74,15 @@ const HistoricalData: React.FC<{ chartData: ChartData, onTimeframeChange: (timef
 
 export default function Home() {
   const [language, setLanguage] = useState<'en' | 'gr'>('en');
-  const [action, setAction] = useState("Rent");
-  const [selectedCity, setSelectedCity] = useState("City");
+  const [action, setAction] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
   const [citySearchTerm, setCitySearchTerm] = useState("");
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [isAreaDropdownVisible, setAreaDropdownVisible] = useState(false);
   const [areaSearchTerm, setAreaSearchTerm] = useState("");
   const [cities, setCities] = useState<string[]>([]);
   const [areas, setAreas] = useState<string[]>([]);
-  const [selectedArea, setSelectedArea] = useState("Area");
+  const [selectedArea, setSelectedArea] = useState("");
   const [activeHeaderButton, setActiveHeaderButton] = useState<string>('Historical Data');
   const [isChartVisible, setChartVisible] = useState(false);
   const [historicalDataChartLoaded, setHistoricalDataChartLoaded] = useState(false);
@@ -189,7 +189,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (selectedCity !== "City") {
+    if (selectedCity !== "") {
       const fetchAreas = async () => {
         try {
           const response = await fetch(`/api/getAreas?city=${selectedCity}`);
@@ -204,7 +204,7 @@ export default function Home() {
   }, [selectedCity]);
 
   useEffect(() => {
-    if (action !== "Rent" && selectedCity !== "City" && (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "Area")) {
+    if (action !== "" && selectedCity !== "" && (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "")) {
       setChartVisible(false);
       setHistoricalDataChartLoaded(false);
       clearCharts();
@@ -402,7 +402,7 @@ export default function Home() {
     setCitySearchTerm("");
     setDropdownVisible(false);
     setAreas([]);
-    setSelectedArea("Area");
+    setSelectedArea("");
     setAreaDropdownVisible(false);
     clearCharts();
     setChartVisible(false);
@@ -450,8 +450,8 @@ export default function Home() {
 
     if (
       selectedTimeframe &&
-      selectedCity !== "City" &&
-      ((selectedCity !== "Athens" && selectedCity !== "Thessaloniki") || selectedArea !== "Area") &&
+      selectedCity !== "" &&
+      ((selectedCity !== "Athens" && selectedCity !== "Thessaloniki") || selectedArea !== "") &&
       (
         currentValues.action !== previousValues.action ||
         currentValues.city !== previousValues.city ||
@@ -512,13 +512,13 @@ export default function Home() {
       : "bg-orange-600 text-white border border-orange-600"
     : "bg-transparent text-gray-400 border border-gray-300 hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300";
 
-  const cityButtonClass = selectedCity !== "City"
+  const cityButtonClass = selectedCity !== ""
     ? isCityHovered
       ? "bg-gray-200 text-gray-800 border border-gray-400"
       : "bg-gray-200 text-gray-600 border border-gray-300"
     : "bg-transparent text-gray-400 border border-gray-300 hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300";
 
-  const areaButtonClass = selectedArea !== "Area"
+  const areaButtonClass = selectedArea !== ""
     ? isAreaHovered
       ? "bg-gray-200 text-gray-800 border border-gray-400"
       : "bg-gray-200 text-gray-600 border border-gray-300"
@@ -544,7 +544,7 @@ export default function Home() {
   });
 
   const shouldShowHistoricalData = () => {
-    return selectedCity !== "City" && ((selectedCity !== "Athens" && selectedCity !== "Thessaloniki") || selectedArea !== "Area");
+    return selectedCity !== "" && ((selectedCity !== "Athens" && selectedCity !== "Thessaloniki") || selectedArea !== "");
   };
 
   const renderTimeframeOptions = () => {
@@ -607,7 +607,7 @@ export default function Home() {
     setLanguage(lang);
   };
 
-  const isRefreshButtonVisible = selectedCity !== "City" && selectedTimeframe !== "" && ((selectedCity !== "Athens" && selectedCity !== "Thessaloniki") || selectedArea !== "Area");
+  const isRefreshButtonVisible = action !== "" && selectedCity !== "" && selectedTimeframe !== "" && ((selectedCity !== "Athens" && selectedCity !== "Thessaloniki") || selectedArea !== "");
 
   return (
     <div className="main-container">
@@ -654,40 +654,42 @@ export default function Home() {
               {t('actionBuy')}
             </button>
           </div>
-          <div className="relative flex items-center w-48">
-            <button
-              ref={cityButtonRef}
-              onClick={handleLocationButtonClick}
-              onMouseEnter={() => setIsCityHovered(true)}
-              onMouseLeave={() => setIsCityHovered(false)}
-              className={`${dropdownButtonStyle} ${cityButtonClass}`}
-            >
-              {selectedCity === "City" ? t("city") : t(selectedCity)}
-            </button>
-            {isDropdownVisible && (
-              <div ref={dropdownRef} className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
-                <input
-                  type="text"
-                  placeholder={t('searchCity')}
-                  value={citySearchTerm}
-                  onChange={(e) => setCitySearchTerm(e.target.value)}
-                  className="sticky top-0 p-2 border-b w-full text-orange-600 bg-white z-20"
-                />
-                <ul className="py-1 text-black">
-                  {filteredCities.map((city) => (
-                    <li
-                      key={city}
-                      className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
-                      onClick={() => handleCitySelect(city)}
-                    >
-                      {t(city)}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-          {(selectedCity === "Athens" || selectedCity === "Thessaloniki") && (
+          {action !== "" && (
+            <div className="relative flex items-center w-48">
+              <button
+                ref={cityButtonRef}
+                onClick={handleLocationButtonClick}
+                onMouseEnter={() => setIsCityHovered(true)}
+                onMouseLeave={() => setIsCityHovered(false)}
+                className={`${dropdownButtonStyle} ${cityButtonClass}`}
+              >
+                {selectedCity === "" ? t("city") : t(selectedCity)}
+              </button>
+              {isDropdownVisible && (
+                <div ref={dropdownRef} className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+                  <input
+                    type="text"
+                    placeholder={t('searchCity')}
+                    value={citySearchTerm}
+                    onChange={(e) => setCitySearchTerm(e.target.value)}
+                    className="sticky top-0 p-2 border-b w-full text-orange-600 bg-white z-20"
+                  />
+                  <ul className="py-1 text-black">
+                    {filteredCities.map((city) => (
+                      <li
+                        key={city}
+                        className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                        onClick={() => handleCitySelect(city)}
+                      >
+                        {t(city)}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+          {action !== "" && selectedCity !== "" && (selectedCity === "Athens" || selectedCity === "Thessaloniki") && (
             <div className="relative flex items-center w-48">
               <button
                 ref={areaButtonRef}
@@ -696,7 +698,7 @@ export default function Home() {
                 onMouseLeave={() => setIsAreaHovered(false)}
                 className={`${dropdownButtonStyle} ${areaButtonClass}`}
               >
-                {selectedArea === "Area" ? t("area") : t(selectedArea)}
+                {selectedArea === "" ? t("area") : t(selectedArea)}
               </button>
               {isAreaDropdownVisible && (
                 <div ref={areaDropdownRef} className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
@@ -722,66 +724,68 @@ export default function Home() {
               )}
             </div>
           )}
-          <div className="flex flex-col space-y-4 mt-0">
-            <div className="relative">
-              <button
-                ref={timeframeButtonRef}
-                className={`${dropdownButtonStyle} ${timeframeButtonClass} mt-0`}
-                onClick={() => setTimeframeDropdownVisible(prev => !prev)}
-                onMouseEnter={() => setIsTimeframeHovered(true)}
-                onMouseLeave={() => setIsTimeframeHovered(false)}
-              >
-                {t(selectedTimeframe) || t('timeframe')}
-              </button>
-              {timeframeDropdownVisible && (
-                <div ref={timeframeDropdownRef} className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
-                  <ul className="py-1 text-black">
-                    {renderTimeframeOptions()}
-                  </ul>
+          {action !== "" && selectedCity !== "" && ((selectedCity !== "Athens" && selectedCity !== "Thessaloniki") || selectedArea !== "") && (
+            <div className="flex flex-col space-y-4 mt-0">
+              <div className="relative">
+                <button
+                  ref={timeframeButtonRef}
+                  className={`${dropdownButtonStyle} ${timeframeButtonClass} mt-0`}
+                  onClick={() => setTimeframeDropdownVisible(prev => !prev)}
+                  onMouseEnter={() => setIsTimeframeHovered(true)}
+                  onMouseLeave={() => setIsTimeframeHovered(false)}
+                >
+                  {t(selectedTimeframe) || t('timeframe')}
+                </button>
+                {timeframeDropdownVisible && (
+                  <div ref={timeframeDropdownRef} className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+                    <ul className="py-1 text-black">
+                      {renderTimeframeOptions()}
+                    </ul>
+                  </div>
+                )}
+              </div>
+              {selectedTimeframe === "custom" && (
+                <div className="relative flex flex-col space-y-2 items-start w-48">
+                  <div className="w-48 h-12">
+                    <DatePicker
+                      selected={startDate}
+                      onChange={(date: Date | null) => setStartDate(date)}
+                      selectsStart
+                      startDate={startDate}
+                      endDate={endDate}
+                      maxDate={new Date()}
+                      dateFormat="dd MMMM yyyy"
+                      placeholderText={t('from')}
+                      className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
+                      showPopperArrow={false}
+                      shouldCloseOnSelect={false}
+                    />
+                  </div>
+                  <div className="w-48 h-12">
+                    <DatePicker
+                      selected={endDate}
+                      onChange={(date: Date | null) => setEndDate(date)}
+                      selectsEnd
+                      startDate={startDate}
+                      endDate={endDate}
+                      minDate={startDate}
+                      maxDate={new Date()}
+                      dateFormat="dd MMMM yyyy"
+                      placeholderText={t('to')}
+                      className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
+                      showPopperArrow={false}
+                      shouldCloseOnSelect={false}
+                    />
+                  </div>
                 </div>
               )}
             </div>
-            {selectedTimeframe === "custom" && (
-              <div className="relative flex flex-col space-y-2 items-start w-48">
-                <div className="w-48 h-12">
-                  <DatePicker
-                    selected={startDate}
-                    onChange={(date: Date | null) => setStartDate(date)}
-                    selectsStart
-                    startDate={startDate}
-                    endDate={endDate}
-                    maxDate={new Date()}
-                    dateFormat="dd MMMM yyyy"
-                    placeholderText={t('from')}
-                    className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
-                    showPopperArrow={false}
-                    shouldCloseOnSelect={false}
-                  />
-                </div>
-                <div className="w-48 h-12">
-                  <DatePicker
-                    selected={endDate}
-                    onChange={(date: Date | null) => setEndDate(date)}
-                    selectsEnd
-                    startDate={startDate}
-                    endDate={endDate}
-                    minDate={startDate}
-                    maxDate={new Date()}
-                    dateFormat="dd MMMM yyyy"
-                    placeholderText={t('to')}
-                    className="bg-white border border-gray-300 rounded py-2 px-4 text-black w-full h-full"
-                    showPopperArrow={false}
-                    shouldCloseOnSelect={false}
-                  />
-                </div>
-              </div>
-            )}
-            {isRefreshButtonVisible && (
-              <button className="bg-orange-700 hover:bg-orange-600 text-white py-2 px-4 rounded w-48 h-12 mt-2" onClick={handleRefreshClick}>
-                {t('refreshChart')}
-              </button>
-            )}
-          </div>
+          )}
+          {isRefreshButtonVisible && (
+            <button className="bg-orange-700 hover:bg-orange-600 text-white py-2 px-4 rounded w-48 h-12 mt-2" onClick={handleRefreshClick}>
+              {t('refreshChart')}
+            </button>
+          )}
         </div>
         <div ref={chartContainerRef} className="chart-container">
           {renderContent()}
