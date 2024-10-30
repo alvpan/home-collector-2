@@ -10,6 +10,7 @@ import grTranslations from './locales/gr.json';
 import { useMediaQuery } from 'react-responsive';
 import { format } from 'date-fns';
 
+
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 interface ChartData {
@@ -497,38 +498,38 @@ export default function Home() {
     t(area).toLowerCase().includes(areaSearchTerm.toLowerCase())
   );
 
-  const actionButtonStyle = "py-2 px-4 rounded w-48 h-12";
-  const dropdownButtonStyle = "py-2 px-4 rounded w-48 h-12";
+  const actionButtonStyle = "py-2 px-4 rounded w-48 h-12 font-bold text-[15px]";
+  const dropdownButtonStyle = "py-2 px-4 rounded w-48 h-12 font-bold text-[15px]";
 
   const rentButtonClass = action === "Rent"
-    ? isBuyHovered
-      ? "bg-orange-600 text-white border border-orange-600"
-      : "bg-orange-600 text-white border border-orange-600"
-    : "bg-transparent text-gray-400 border border-gray-300 hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300";
+  ? isBuyHovered
+    ? "bg-orange-600 text-white border border-orange-600 font-bold"
+    : "bg-orange-600 text-white border border-orange-600 font-bold"
+  : "bg-transparent text-gray-400 border border-gray-300 font-bold hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300";
 
   const buyButtonClass = action === "Buy"
     ? isRentHovered
-      ? "bg-orange-600 text-white border border-orange-600"
-      : "bg-orange-600 text-white border border-orange-600"
-    : "bg-transparent text-gray-400 border border-gray-300 hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300";
+      ? "bg-orange-600 text-white border border-orange-600 font-bold"
+      : "bg-orange-600 text-white border border-orange-600 font-bold"
+    : "bg-transparent text-gray-400 border border-gray-300 font-bold hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300";
 
   const cityButtonClass = selectedCity !== ""
     ? isCityHovered
-      ? "bg-gray-200 text-gray-800 border border-gray-400"
-      : "bg-gray-200 text-gray-600 border border-gray-300"
-    : "bg-transparent text-gray-400 border border-gray-300 hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300";
+      ? "bg-gray-200 text-gray-800 border border-gray-400 font-bold"
+      : "bg-gray-200 text-gray-600 border border-gray-300 font-bold"
+    : "bg-transparent text-gray-400 border border-gray-300 font-bold hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300";
 
   const areaButtonClass = selectedArea !== ""
     ? isAreaHovered
-      ? "bg-gray-200 text-gray-800 border border-gray-400"
-      : "bg-gray-200 text-gray-600 border border-gray-300"
-    : "bg-transparent text-gray-400 border border-gray-300 hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300";
+      ? "bg-gray-200 text-gray-800 border border-gray-400 font-bold"
+      : "bg-gray-200 text-gray-600 border border-gray-300 font-bold"
+    : "bg-transparent text-gray-400 border border-gray-300 font-bold hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300";
 
   const timeframeButtonClass = selectedTimeframe !== ""
     ? isTimeframeHovered
-      ? "bg-gray-200 text-gray-800 border border-gray-400"
-      : "bg-gray-200 text-gray-600 border border-gray-300"
-    : "bg-transparent text-gray-400 border border-gray-300 hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300";
+      ? "bg-gray-200 text-gray-800 border border-gray-400 font-bold"
+      : "bg-gray-200 text-gray-600 border border-gray-300 font-bold"
+    : "bg-transparent text-gray-400 border border-gray-300 font-bold hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300";
 
   const headerButtonStyle = (buttonName: string) => ({
     background: 'transparent',
