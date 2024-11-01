@@ -517,19 +517,19 @@ export default function Home() {
     ? isCityHovered
       ? "bg-gray-200 text-gray-800 border border-gray-400 font-bold"
       : "bg-gray-200 text-gray-600 border border-gray-300 font-bold"
-    : "bg-transparent text-gray-400 border border-gray-300 font-bold hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300";
+    : "bg-gray-200 text-gray-500 border border-gray-500 font-bold hover:bg-orange-600 hover:text-white hover:border-orange-600";
 
   const areaButtonClass = selectedArea !== ""
     ? isAreaHovered
       ? "bg-gray-200 text-gray-800 border border-gray-400 font-bold"
       : "bg-gray-200 text-gray-600 border border-gray-300 font-bold"
-    : "bg-transparent text-gray-400 border border-gray-300 font-bold hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300";
+    : "bg-gray-200 text-gray-500 border border-gray-500 font-bold hover:bg-orange-600 hover:text-white hover:border-orange-600";
 
   const timeframeButtonClass = selectedTimeframe !== ""
     ? isTimeframeHovered
       ? "bg-gray-200 text-gray-800 border border-gray-400 font-bold"
       : "bg-gray-200 text-gray-600 border border-gray-300 font-bold"
-    : "bg-transparent text-gray-400 border border-gray-300 font-bold hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300";
+    : "bg-gray-200 text-gray-500 border border-gray-500 font-bold hover:bg-orange-600 hover:text-white hover:border-orange-600";
 
   const headerButtonStyle = (buttonName: string) => ({
     background: 'transparent',
