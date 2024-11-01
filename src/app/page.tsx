@@ -73,7 +73,7 @@ const HistoricalData: React.FC<{ chartData: ChartData, onTimeframeChange: (timef
 };
 
 export default function Home() {
-  const [language, setLanguage] = useState<'en' | 'gr'>('en');
+  const [language, setLanguage] = useState<'en' | 'gr'>('gr');
   const [action, setAction] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
   const [citySearchTerm, setCitySearchTerm] = useState("");
@@ -422,16 +422,6 @@ export default function Home() {
     setHistoricalDataChartLoaded(false);
   };
 
-  const handleHeaderButtonClick = async (buttonName: string) => {
-    setActiveHeaderButton(buttonName);
-    setChartVisible(false);
-
-    if (buttonName === 'Historical Data') {
-      setSelectedTimeframe("");
-      setHistoricalDataChartLoaded(false);
-    }
-  };
-
   const handleTimeframeChange = (timeframe: string) => {
     setSelectedTimeframe(timeframe);
   };
@@ -501,10 +491,10 @@ export default function Home() {
   const dropdownButtonStyle = "py-2 px-4 rounded w-48 h-12 font-bold text-[15px]";
 
   const rentButtonClass = action === "Rent"
-  ? isBuyHovered
-    ? "bg-orange-600 text-white border border-orange-600 font-bold"
-    : "bg-orange-600 text-white border border-orange-600 font-bold"
-  : "bg-transparent text-gray-400 border border-gray-300 font-bold hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300";
+    ? isBuyHovered
+      ? "bg-orange-600 text-white border border-orange-600 font-bold"
+      : "bg-orange-600 text-white border border-orange-600 font-bold"
+    : "bg-transparent text-gray-400 border border-gray-300 font-bold hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300";
 
   const buyButtonClass = action === "Buy"
     ? isRentHovered
@@ -529,19 +519,6 @@ export default function Home() {
       ? "bg-orange-600 text-white border border-orange-600 font-bold"
       : "bg-gray-200 text-gray-800 border border-gray-400 font-bold"
     : "bg-gray-600 text-gray-white border border-gray-600 font-bold hover:bg-orange-600 hover:text-white hover:border-orange-600";
-
-  const headerButtonStyle = (buttonName: string) => ({
-    background: 'transparent',
-    color: 'black',
-    padding: '0.5rem 1.6rem',
-    fontSize: '1.125rem',
-    border: 'none',
-    cursor: 'pointer',
-    textDecoration: activeHeaderButton === buttonName ? 'underline' : 'none',
-    textDecorationColor: activeHeaderButton === buttonName ? '#ff4d00' : 'transparent',
-    textDecorationThickness: activeHeaderButton === buttonName ? '3px' : '0px',
-    fontWeight: activeHeaderButton === buttonName ? 'bold' : 'normal',
-  });
 
   const shouldShowHistoricalData = () => {
     return selectedCity !== "" && ((selectedCity !== "Athens" && selectedCity !== "Thessaloniki") || selectedArea !== "");
@@ -582,25 +559,20 @@ export default function Home() {
       );
     }
 
-    switch (activeHeaderButton) {
-      case 'Historical Data':
-        return (
-          renderHistoricalDataChart &&
-          <HistoricalData
-            chartData={historicalDataChartData}
-            onTimeframeChange={handleTimeframeChange}
-            selectedTimeframe={selectedTimeframe}
-            onRefresh={handleRefreshClick}
-            startDate={startDate}
-            endDate={endDate}
-            setStartDate={setStartDate}
-            setEndDate={setEndDate}
-            isVisible={shouldShowHistoricalData()}
-          />
-        );
-      default:
-        return null;
-    }
+    return (
+      renderHistoricalDataChart &&
+      <HistoricalData
+        chartData={historicalDataChartData}
+        onTimeframeChange={handleTimeframeChange}
+        selectedTimeframe={selectedTimeframe}
+        onRefresh={handleRefreshClick}
+        startDate={startDate}
+        endDate={endDate}
+        setStartDate={setStartDate}
+        setEndDate={setEndDate}
+        isVisible={shouldShowHistoricalData()}
+      />
+    );
   };
 
   const handleLanguageChange = (lang: 'en' | 'gr') => {
@@ -616,12 +588,6 @@ export default function Home() {
           hompare
         </h1>
         <div className="header-buttons-container">
-          <button
-            style={headerButtonStyle('Historical Data')}
-            onClick={() => handleHeaderButtonClick('Historical Data')}
-          >
-            {t('dataGraph')}
-          </button>
           <select
             onChange={(e) => handleLanguageChange(e.target.value as 'en' | 'gr')}
             value={language}
