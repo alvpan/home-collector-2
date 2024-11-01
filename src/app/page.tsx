@@ -747,7 +747,7 @@ export default function Home() {
               )}
               {isRefreshButtonVisible && (
                 <button
-                  className="bg-green-700 hover:bg-green-600 text-white py-2 px-4 rounded-full w-48 h-12"
+                  className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full w-48 h-12"
                   onClick={handleRefreshClick}
                 >
                   {t('refreshChart')}
