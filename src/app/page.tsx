@@ -10,7 +10,6 @@ import grTranslations from './locales/gr.json';
 import { useMediaQuery } from 'react-responsive';
 import { format } from 'date-fns';
 
-
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 interface ChartData {
@@ -780,12 +779,15 @@ export default function Home() {
                   </div>
                 </div>
               )}
+              {isRefreshButtonVisible && (
+                <button
+                  className="bg-green-700 hover:bg-green-600 text-white py-2 px-4 rounded w-48 h-12"
+                  onClick={handleRefreshClick}
+                >
+                  {t('refreshChart')}
+                </button>
+              )}
             </div>
-          )}
-          {isRefreshButtonVisible && (
-            <button   className="bg-green-700 hover:bg-green-600 text-white py-2 px-4 rounded w-48 h-12 mt-2" onClick={handleRefreshClick}>
-              {t('refreshChart')}
-            </button>
           )}
         </div>
         <div ref={chartContainerRef} className="chart-container">
