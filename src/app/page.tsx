@@ -144,7 +144,8 @@ export default function Home() {
         strokeWidth: 5
       },
       stroke: { curve: 'smooth', width: 2 },
-      dataLabels: { enabled: isMobile, formatter: (val: number) => `${val}€` },
+      // dataLabels: { enabled: !isMobile, formatter: (val: number) => `${val}€` },
+      dataLabels: { enabled: false },
       xaxis: {
         tooltip: {
           enabled: false
