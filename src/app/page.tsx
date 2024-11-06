@@ -137,7 +137,7 @@ export default function Home() {
         },
       },
       markers: {
-        size: isMobile ? 0 : 4,
+        size: isMobile ? 0 : 0,
         colors: ['#ff4d00'],
         strokeColors: '#ff4d00',
         radius: 10,
