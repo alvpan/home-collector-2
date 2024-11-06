@@ -526,7 +526,7 @@ export default function Home() {
 
   const renderTimeframeOptions = () => {
     const timeframeOptions = [
-      { key: "lastWeek", label: t("lastWeek") },
+      // { key: "lastWeek", label: t("lastWeek") },
       { key: "lastMonth", label: t("lastMonth") },
       { key: "last6Months", label: t("last6Months") },
       { key: "lastYear", label: t("lastYear") },
