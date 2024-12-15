@@ -110,7 +110,7 @@ export default function Home() {
 
   const [hasRefreshed, setHasRefreshed] = useState(false);
 
-  const words = ["real estate prices", "over time", "always current"];
+  const words = ["Real Estate Prices", "Over Time", "Always Current"];
   const displayWords = [...words, words[0]];
 
   const [carouselIndex, setCarouselIndex] = useState(0);
@@ -158,9 +158,7 @@ export default function Home() {
         }
       },
       tooltip: {
-        x: {
-          formatter: () => '',
-        },
+        x: { formatter: () => '' },
         y: {
           formatter: function(value: number, { dataPointIndex, w }: { dataPointIndex: number, w: any }) {
             const date = w.globals.categoryLabels[dataPointIndex];
@@ -364,10 +362,7 @@ export default function Home() {
           },
           theme: 'light',
           marker: { show: false },
-          style: {
-            fontSize: '15px',
-            fontFamily: undefined
-          },
+          style: { fontSize: '15px', fontFamily: undefined },
           fixed: {
             enabled: true,
             position: 'topLeft',
@@ -591,7 +586,7 @@ export default function Home() {
       };
 
       return (
-        <div className="w-full flex justify-center items-center h-96">
+        <div className="flex justify-center items-center h-96">
           <div className="carousel-container relative overflow-hidden">
             <div className="words-slider flex" style={style}>
               {displayWords.map((word, i) => (
@@ -802,7 +797,7 @@ export default function Home() {
             </div>
           )}
         </div>
-        <div ref={chartContainerRef} className="chart-container w-full flex justify-center items-center">
+        <div ref={chartContainerRef} className="chart-container">
           {renderContent()}
         </div>
       </main>
