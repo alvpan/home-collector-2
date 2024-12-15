@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -135,6 +134,22 @@ html {
   z-index: 1;
 }
 
+.carousel-container {
+  width: 300px;
+  height: 96px; 
+  overflow: hidden;
+}
+
+.words-slider {
+  display: flex;
+}
+
+.word-slide {
+  flex: 0 0 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 @media (max-width: 768px) {
   .header {
@@ -171,13 +186,14 @@ html {
   }
 
   .loading-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     font-size: 1rem;
-    color: rgba(255, 255, 255, 0.2);
-    font-weight: bold;
-    z-index: 1;
+  }
+
+  .carousel-container {
+    width: 200px;
+  }
+
+  .word-slide {
+    flex: 0 0 200px;
   }
 }

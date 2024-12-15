@@ -22,8 +22,17 @@ const translations = {
   gr: grTranslations,
 };
 
-const HistoricalData: React.FC<{ chartData: ChartData, onTimeframeChange: (timeframe: string) => void, selectedTimeframe: string, onRefresh: () => void, startDate: Date | null, endDate: Date | null, setStartDate: (date: Date | null) => void, setEndDate: (date: Date | null) => void, isVisible: boolean }> = ({ chartData, onTimeframeChange, selectedTimeframe, onRefresh, startDate, endDate, setStartDate, setEndDate, isVisible }) => {
-  const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
+const HistoricalData: React.FC<{
+  chartData: ChartData,
+  onTimeframeChange: (timeframe: string) => void,
+  selectedTimeframe: string,
+  onRefresh: () => void,
+  startDate: Date | null,
+  endDate: Date | null,
+  setStartDate: (date: Date | null) => void,
+  setEndDate: (date: Date | null) => void,
+  isVisible: boolean
+}> = ({ chartData, onTimeframeChange, selectedTimeframe, onRefresh, startDate, endDate, setStartDate, setEndDate, isVisible }) => {
   const chartRef = useRef<any>(null);
   const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
@@ -99,6 +108,38 @@ export default function Home() {
   const [isAreaHovered, setIsAreaHovered] = useState(false);
   const [isTimeframeHovered, setIsTimeframeHovered] = useState(false);
 
+  const [hasRefreshed, setHasRefreshed] = useState(false);
+
+  const words = ["real estate prices", "over time", "always current"];
+  const displayWords = [...words, words[0]];
+
+  const [carouselIndex, setCarouselIndex] = useState(0);
+  const [noTransition, setNoTransition] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCarouselIndex((prevIndex) => {
+        const nextIndex = prevIndex + 1;
+        if (nextIndex >= displayWords.length) {
+          setNoTransition(true);
+          return 0;
+        }
+        return nextIndex;
+      });
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [displayWords.length]);
+
+  useEffect(() => {
+    if (noTransition) {
+      const timeout = setTimeout(() => {
+        setNoTransition(false);
+      }, 50);
+      return () => clearTimeout(timeout);
+    }
+  }, [noTransition]);
+
   const initialHistoricalChartData: ChartData = {
     options: {
       chart: {
@@ -144,19 +185,14 @@ export default function Home() {
         strokeWidth: 5
       },
       stroke: { curve: 'smooth', width: 2 },
-      // dataLabels: { enabled: !isMobile, formatter: (val: number) => `${val}€` },
       dataLabels: { enabled: false },
       xaxis: {
-        tooltip: {
-          enabled: false
-        },
+        tooltip: { enabled: false },
         categories: [],
         labels: { rotate: -90, style: { colors: 'black', fontSize: '0px' }, show: false }
       },
       yaxis: {
-        axisTicks: {
-          show: true,
-        },
+        axisTicks: { show: true },
         forceNiceScale: true,
         labels: { style: { colors: 'black', fontSize: '0px' }, show: false },
         min: undefined,
@@ -281,9 +317,7 @@ export default function Home() {
       let fetchStartDate = '';
       let fetchEndDate = new Date().toISOString();
 
-      if (timeframe === "lastWeek") {
-        fetchStartDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-      } else if (timeframe === "lastMonth") {
+      if (timeframe === "lastMonth") {
         fetchStartDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
       } else if (timeframe === "last6Months") {
         fetchStartDate = new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000).toISOString();
@@ -465,6 +499,7 @@ export default function Home() {
 
       setChartVisible(true);
       setIsChartRendered(true);
+      setHasRefreshed(true);
     } else {
       alert("Please select valid inputs and ensure that they have changed before refreshing the chart.");
     }
@@ -492,34 +527,24 @@ export default function Home() {
   const dropdownButtonStyle = "py-2 px-4 rounded w-48 h-12 font-bold text-[15px]";
 
   const rentButtonClass = action === "Rent"
-    ? isBuyHovered
-      ? "bg-orange-600 text-white border border-orange-600 font-bold"
-      : "bg-orange-600 text-white border border-orange-600 font-bold"
+    ? "bg-orange-600 text-white border border-orange-600 font-bold"
     : "bg-transparent text-gray-400 border border-gray-300 font-bold hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300";
 
   const buyButtonClass = action === "Buy"
-    ? isRentHovered
-      ? "bg-orange-600 text-white border border-orange-600 font-bold"
-      : "bg-orange-600 text-white border border-orange-600 font-bold"
+    ? "bg-orange-600 text-white border border-orange-600 font-bold"
     : "bg-transparent text-gray-400 border border-gray-300 font-bold hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300";
 
   const cityButtonClass = selectedCity !== ""
-    ? isCityHovered
-      ? "bg-orange-600 text-white border border-orange-600 font-bold"
-      : "bg-gray-200 text-gray-800 border border-gray-400 font-bold"
-    : "bg-gray-600 text-white border border-gray-600 font-bold hover:bg-orange-600 hover:text-white hover:border-orange-600";
+    ? "bg-gray-200 text-gray-800 border border-gray-400 font-bold"
+    : "bg-gray-200 text-gray-800 border border-gray-400 font-bold hover:bg-orange-600 hover:text-white hover:border-orange-600";
 
   const areaButtonClass = selectedArea !== ""
-    ? isAreaHovered
-      ? "bg-orange-600 text-white border border-orange-600 font-bold"
-      : "bg-gray-200 text-gray-800 border border-gray-400 font-bold"
-    : "bg-gray-600 text-white border border-gray-600 font-bold hover:bg-orange-600 hover:text-white hover:border-orange-600";
+    ? "bg-gray-200 text-gray-800 border border-gray-400 font-bold"
+    : "bg-gray-200 text-gray-800 border border-gray-400 font-bold hover:bg-orange-600 hover:text-white hover:border-orange-600";
 
   const timeframeButtonClass = selectedTimeframe !== ""
-    ? isTimeframeHovered
-      ? "bg-orange-600 text-white border border-orange-600 font-bold"
-      : "bg-gray-200 text-gray-800 border border-gray-400 font-bold"
-    : "bg-gray-600 text-white border border-gray-600 font-bold hover:bg-orange-600 hover:text-white hover:border-orange-600";
+    ? "bg-gray-200 text-gray-800 border border-gray-400 font-bold"
+    : "bg-gray-200 text-gray-800 border border-gray-400 font-bold hover:bg-orange-600 hover:text-white hover:border-orange-600";
 
   const shouldShowHistoricalData = () => {
     return selectedCity !== "" && ((selectedCity !== "Athens" && selectedCity !== "Thessaloniki") || selectedArea !== "");
@@ -527,7 +552,6 @@ export default function Home() {
 
   const renderTimeframeOptions = () => {
     const timeframeOptions = [
-      // { key: "lastWeek", label: t("lastWeek") },
       { key: "lastMonth", label: t("lastMonth") },
       { key: "last6Months", label: t("last6Months") },
       { key: "lastYear", label: t("lastYear") },
@@ -555,6 +579,27 @@ export default function Home() {
         <div className="flex justify-center items-center h-96">
           <div ref={loadingPlaceholderRef} className="glare-placeholder w-full h-full relative">
             <div className="loading-text">h o m p a r e</div>
+          </div>
+        </div>
+      );
+    }
+
+    if (!hasRefreshed) {
+      const style = {
+        transform: `translateX(-${carouselIndex * 100}%)`,
+        transition: noTransition ? 'none' : 'transform 0.5s ease-in-out'
+      };
+
+      return (
+        <div className="w-full flex justify-center items-center h-96">
+          <div className="carousel-container relative overflow-hidden">
+            <div className="words-slider flex" style={style}>
+              {displayWords.map((word, i) => (
+                <div key={i} className="word-slide w-[300px] flex items-center justify-center">
+                  <span className="text-3xl font-bold text-gray-600">{word}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       );
@@ -757,7 +802,7 @@ export default function Home() {
             </div>
           )}
         </div>
-        <div ref={chartContainerRef} className="chart-container">
+        <div ref={chartContainerRef} className="chart-container w-full flex justify-center items-center">
           {renderContent()}
         </div>
       </main>
