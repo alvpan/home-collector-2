@@ -9,6 +9,14 @@ import enTranslations from './locales/en.json';
 import grTranslations from './locales/gr.json';
 import { useMediaQuery } from 'react-responsive';
 import { format } from 'date-fns';
+import { Euro, TrendingUp, CheckCheck } from 'lucide-react';
+
+const wordsWithIcons = [
+  { text: "Real Estate Prices", icon: <Euro className="mr-2 text-gray-600" size={28} strokeWidth={3}/> },
+  { text: "Over Time", icon: <TrendingUp className="mr-2 text-gray-600" size={28} strokeWidth={3}/> },
+  { text: "Always Current", icon: <CheckCheck className="mr-2 text-gray-600" size={28} strokeWidth={3}/> },
+];
+const displayWordsWithIcons = [...wordsWithIcons, wordsWithIcons[0]];
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -588,14 +596,15 @@ export default function Home() {
       return (
         <div className="flex justify-center items-center h-96">
           <div className="carousel-container relative overflow-hidden">
-            <div className="words-slider flex" style={style}>
-              {displayWords.map((word, i) => (
-                <div key={i} className="word-slide w-[300px] flex items-center justify-center">
-                  <span className="text-3xl font-bold text-gray-600">{word}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+  <div className="words-slider flex" style={style}>
+    {displayWordsWithIcons.map((item, i) => (
+      <div key={i} className="word-slide w-[300px] flex items-center justify-center">
+        {item.icon}
+        <span className="text-3xl font-bold text-gray-600">{item.text}</span>
+      </div>
+    ))}
+  </div>
+</div>
         </div>
       );
     }
