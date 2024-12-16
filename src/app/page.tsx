@@ -11,13 +11,6 @@ import { useMediaQuery } from 'react-responsive';
 import { format } from 'date-fns';
 import { Euro, TrendingUp, CheckCheck } from 'lucide-react';
 
-const wordsWithIcons = [
-  { text: "Real Estate Prices", icon: <Euro className="mr-2 text-gray-600" size={28} strokeWidth={3}/> },
-  { text: "Over Time", icon: <TrendingUp className="mr-2 text-gray-600" size={28} strokeWidth={3}/> },
-  { text: "Always Current", icon: <CheckCheck className="mr-2 text-gray-600" size={28} strokeWidth={3}/> },
-];
-const displayWordsWithIcons = [...wordsWithIcons, wordsWithIcons[0]];
-
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 interface ChartData {
@@ -31,16 +24,16 @@ const translations = {
 };
 
 const HistoricalData: React.FC<{
-  chartData: ChartData,
-  onTimeframeChange: (timeframe: string) => void,
-  selectedTimeframe: string,
-  onRefresh: () => void,
-  startDate: Date | null,
-  endDate: Date | null,
-  setStartDate: (date: Date | null) => void,
-  setEndDate: (date: Date | null) => void,
-  isVisible: boolean
-}> = ({ chartData, isVisible }) => {
+  chartData: ChartData;
+  onTimeframeChange: (timeframe: string) => void;
+  selectedTimeframe: string;
+  onRefresh: () => void;
+  startDate: Date | null;
+  endDate: Date | null;
+  setStartDate: (date: Date | null) => void;
+  setEndDate: (date: Date | null) => void;
+  isVisible: boolean;
+}> = ({ chartData, onTimeframeChange, selectedTimeframe, onRefresh, startDate, endDate, setStartDate, setEndDate, isVisible }) => {
   const chartRef = useRef<any>(null);
   const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
@@ -88,6 +81,11 @@ const HistoricalData: React.FC<{
 
 export default function Home() {
   const [language, setLanguage] = useState<'en' | 'gr'>('gr');
+
+  const t = (key: string) => {
+    return translations[language][key as keyof typeof translations['en']] || key;
+  };
+
   const [action, setAction] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
   const [citySearchTerm, setCitySearchTerm] = useState("");
@@ -132,7 +130,6 @@ export default function Home() {
         return nextIndex;
       });
     }, 2000);
-
     return () => clearInterval(interval);
   }, [displayWords.length]);
 
@@ -144,6 +141,43 @@ export default function Home() {
       return () => clearTimeout(timeout);
     }
   }, [noTransition]);
+
+  const [selectedTimeframe, setSelectedTimeframe] = useState<string>("");
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+
+  const handleTimeframeChange = (timeframe: string) => {
+    setSelectedTimeframe(timeframe);
+  };
+
+  // Define missing handlers here:
+  const handleActionButtonClick = (selectedAction: string) => {
+    setAction(selectedAction);
+    clearCharts();
+    setChartVisible(false);
+    setHistoricalDataChartLoaded(false);
+  };
+
+  const handleCitySelect = (city: string) => {
+    setSelectedCity(city);
+    setCitySearchTerm("");
+    setDropdownVisible(false);
+    setAreas([]);
+    setSelectedArea("");
+    setAreaDropdownVisible(false);
+    clearCharts();
+    setChartVisible(false);
+    setHistoricalDataChartLoaded(false);
+  };
+
+  const handleAreaSelect = (area: string) => {
+    setSelectedArea(area);
+    setAreaSearchTerm("");
+    setAreaDropdownVisible(false);
+    clearCharts();
+    setChartVisible(false);
+    setHistoricalDataChartLoaded(false);
+  };
 
   const initialHistoricalChartData: ChartData = {
     options: {
@@ -165,7 +199,7 @@ export default function Home() {
       tooltip: {
         x: { formatter: () => '' },
         y: {
-          formatter: (value: number, { dataPointIndex, w }: { dataPointIndex: number; w: any }) => {
+          formatter: (value: number, { dataPointIndex, w }: { dataPointIndex: number, w: any }) => {
             const date = w.globals.categoryLabels[dataPointIndex];
             return date;
           }
@@ -205,12 +239,9 @@ export default function Home() {
   };
 
   const [historicalDataChartData, setHistoricalDataChartData] = useState<ChartData>(initialHistoricalChartData);
-  const [selectedTimeframe, setSelectedTimeframe] = useState<string>("");
   const [previousValues, setPreviousValues] = useState({ action: "", city: "", area: "", timeframe: "", startDate: null as Date | null, endDate: null as Date | null });
   const [timeframeDropdownVisible, setTimeframeDropdownVisible] = useState(false);
   const [renderHistoricalDataChart, setRenderHistoricalDataChart] = useState(true);
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
 
   useEffect(() => {
     const fetchCities = async () => {
@@ -269,7 +300,6 @@ export default function Home() {
         setTimeframeDropdownVisible(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -280,7 +310,7 @@ export default function Home() {
   const cityButtonRef = useRef<HTMLButtonElement>(null);
   const areaDropdownRef = useRef<HTMLDivElement>(null);
   const areaButtonRef = useRef<HTMLButtonElement>(null);
-  const timeframeDropdownRef = useRef<HTMLButtonElement>(null);
+  const timeframeDropdownRef = useRef<HTMLDivElement>(null);
   const timeframeButtonRef = useRef<HTMLButtonElement>(null);
 
   const clearHistoricalChartData = useCallback(() => {
@@ -413,46 +443,6 @@ export default function Home() {
     }
   };
 
-  const handleActionButtonClick = (selectedAction: string) => {
-    setAction(selectedAction);
-    clearCharts();
-    setChartVisible(false);
-    setHistoricalDataChartLoaded(false);
-  };
-
-  const handleLocationButtonClick = () => {
-    setDropdownVisible(!isDropdownVisible);
-  };
-
-  const handleCitySelect = (city: string) => {
-    setSelectedCity(city);
-    setCitySearchTerm("");
-    setDropdownVisible(false);
-    setAreas([]);
-    setSelectedArea("");
-    setAreaDropdownVisible(false);
-    clearCharts();
-    setChartVisible(false);
-    setHistoricalDataChartLoaded(false);
-  };
-
-  const handleAreaButtonClick = () => {
-    setAreaDropdownVisible(!isAreaDropdownVisible);
-  };
-
-  const handleAreaSelect = (area: string) => {
-    setSelectedArea(area);
-    setAreaSearchTerm("");
-    setAreaDropdownVisible(false);
-    clearCharts();
-    setChartVisible(false);
-    setHistoricalDataChartLoaded(false);
-  };
-
-  const handleTimeframeChange = (timeframe: string) => {
-    setSelectedTimeframe(timeframe);
-  };
-
   const handleRefreshClick = async () => {
     isFetchingDataRef.current = true;
 
@@ -505,8 +495,6 @@ export default function Home() {
     }, 100);
   };
 
-  const t = (key: string) => translations[language][key as keyof typeof translations['en']] || key;
-
   const filteredCities = cities.filter(city =>
     t(city).toLowerCase().includes(citySearchTerm.toLowerCase())
   );
@@ -515,7 +503,6 @@ export default function Home() {
     t(area).toLowerCase().includes(areaSearchTerm.toLowerCase())
   );
 
-  // Action buttons (w-24)
   const actionButtonBase = "flex items-center justify-center whitespace-nowrap text-center w-24 h-12 font-bold text-[15px] border rounded";
   
   const rentButtonClass = action === "Rent"
@@ -524,9 +511,8 @@ export default function Home() {
 
   const buyButtonClass = action === "Buy"
     ? `${actionButtonBase} bg-orange-600 text-white border-orange-600`
-    : `${actionButtonBase} bg-transparent text-gray-400 border-gray-300 hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300`;
+    : `${actionButtonBase} bg-transparent text-gray-400 border border-gray-300 hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300`;
 
-  // Buttons below action: w-[12.5rem] = 2 * w-24 (12rem) + 0.5rem spacing
   const lowerButtonWidth = "w-[12.5rem]";
   
   const dropdownButtonStyle = `flex items-center justify-center whitespace-nowrap text-center ${lowerButtonWidth} h-12 font-bold text-[15px] border rounded`;
@@ -587,6 +573,13 @@ export default function Home() {
         transition: noTransition ? 'none' : 'transform 0.5s ease-in-out'
       };
 
+      const displayWordsWithIcons = [
+        { text: "Real Estate Prices", icon: <Euro className="mr-2 text-gray-600" size={28} strokeWidth={3}/> },
+        { text: "Over Time", icon: <TrendingUp className="mr-2 text-gray-600" size={28} strokeWidth={3}/> },
+        { text: "Always Current", icon: <CheckCheck className="mr-2 text-gray-600" size={28} strokeWidth={3}/> },
+        { text: "Real Estate Prices", icon: <Euro className="mr-2 text-gray-600" size={28} strokeWidth={3}/> }
+      ];
+
       return (
         <div className="flex justify-center items-center h-96">
           <div className="carousel-container relative overflow-hidden">
@@ -604,11 +597,19 @@ export default function Home() {
     }
 
     return (
-      renderHistoricalDataChart &&
-      <HistoricalData
-        chartData={historicalDataChartData}
-        isVisible={shouldShowHistoricalData()}
-      />
+      renderHistoricalDataChart && (
+        <HistoricalData
+          chartData={historicalDataChartData}
+          onTimeframeChange={handleTimeframeChange}
+          selectedTimeframe={selectedTimeframe}
+          onRefresh={handleRefreshClick}
+          startDate={startDate}
+          endDate={endDate}
+          setStartDate={setStartDate}
+          setEndDate={setEndDate}
+          isVisible={shouldShowHistoricalData()}
+        />
+      )
     );
   };
 
@@ -658,12 +659,11 @@ export default function Home() {
             </button>
           </div>
 
-          {/* City button appears if action chosen */}
           {action !== "" && (
             <div className="relative flex items-center space-x-2">
               <button
                 ref={cityButtonRef}
-                onClick={handleLocationButtonClick}
+                onClick={() => setDropdownVisible(!isDropdownVisible)}
                 onMouseEnter={() => setIsCityHovered(true)}
                 onMouseLeave={() => setIsCityHovered(false)}
                 className={`${dropdownButtonStyle} ${cityButtonClass}`}
@@ -695,12 +695,11 @@ export default function Home() {
             </div>
           )}
 
-          {/* Area button if city is Athens or Thessaloniki */}
           {action !== "" && selectedCity !== "" && (selectedCity === "Athens" || selectedCity === "Thessaloniki") && (
             <div className="relative flex items-center space-x-2">
               <button
                 ref={areaButtonRef}
-                onClick={handleAreaButtonClick}
+                onClick={() => setAreaDropdownVisible(!isAreaDropdownVisible)}
                 onMouseEnter={() => setIsAreaHovered(true)}
                 onMouseLeave={() => setIsAreaHovered(false)}
                 className={`${dropdownButtonStyle} ${areaButtonClass}`}
@@ -732,7 +731,6 @@ export default function Home() {
             </div>
           )}
 
-          {/* Timeframe & Refresh button if conditions met */}
           {action !== "" && selectedCity !== "" && ((selectedCity !== "Athens" && selectedCity !== "Thessaloniki") || selectedArea !== "") && (
             <div className="flex flex-col space-y-2">
               <div className="flex space-x-2">
