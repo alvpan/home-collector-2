@@ -40,7 +40,7 @@ const HistoricalData: React.FC<{
   setStartDate: (date: Date | null) => void,
   setEndDate: (date: Date | null) => void,
   isVisible: boolean
-}> = ({ chartData, onTimeframeChange, selectedTimeframe, onRefresh, startDate, endDate, setStartDate, setEndDate, isVisible }) => {
+}> = ({ chartData, isVisible }) => {
   const chartRef = useRef<any>(null);
   const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
@@ -52,17 +52,14 @@ const HistoricalData: React.FC<{
 
   useEffect(() => {
     const chartContainer = chartRef.current?.container;
-
     const handleTouchMove = (event: TouchEvent) => {
       if (chartContainer && event.target instanceof Node && chartContainer.contains(event.target)) {
         event.preventDefault();
       }
     };
-
     if (isMobile && chartContainer) {
       chartContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
     }
-
     return () => {
       if (chartContainer) {
         chartContainer.removeEventListener('touchmove', handleTouchMove);
@@ -156,7 +153,7 @@ export default function Home() {
         toolbar: { show: false },
         zoom: { enabled: false },
         events: {
-          mouseMove: function(event, chartContext, config) {
+          mouseMove: function(event, chartContext) {
             const tooltip = chartContext.el.querySelector('.apexcharts-tooltip');
             if (tooltip) {
               tooltip.style.top = '10px';
@@ -168,7 +165,7 @@ export default function Home() {
       tooltip: {
         x: { formatter: () => '' },
         y: {
-          formatter: function(value: number, { dataPointIndex, w }: { dataPointIndex: number, w: any }) {
+          formatter: (value: number, { dataPointIndex, w }: { dataPointIndex: number; w: any }) => {
             const date = w.globals.categoryLabels[dataPointIndex];
             return date;
           }
@@ -201,8 +198,6 @@ export default function Home() {
         axisTicks: { show: true },
         forceNiceScale: true,
         labels: { style: { colors: 'black', fontSize: '0px' }, show: false },
-        min: undefined,
-        max: undefined,
       },
       colors: ['#ff4d00'],
     },
@@ -227,7 +222,6 @@ export default function Home() {
         console.error("Error fetching cities:", error);
       }
     };
-
     fetchCities();
   }, []);
 
@@ -247,7 +241,7 @@ export default function Home() {
   }, [selectedCity]);
 
   useEffect(() => {
-    if (action !== "" && selectedCity !== "" && (selectedCity !== "Athens" && selectedCity !== "Thessaloniki" || selectedArea !== "")) {
+    if (action !== "" && selectedCity !== "" && ((selectedCity !== "Athens" && selectedCity !== "Thessaloniki") || selectedArea !== "")) {
       setChartVisible(false);
       setHistoricalDataChartLoaded(false);
       clearCharts();
@@ -277,7 +271,6 @@ export default function Home() {
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -287,7 +280,7 @@ export default function Home() {
   const cityButtonRef = useRef<HTMLButtonElement>(null);
   const areaDropdownRef = useRef<HTMLDivElement>(null);
   const areaButtonRef = useRef<HTMLButtonElement>(null);
-  const timeframeDropdownRef = useRef<HTMLDivElement>(null);
+  const timeframeDropdownRef = useRef<HTMLButtonElement>(null);
   const timeframeButtonRef = useRef<HTMLButtonElement>(null);
 
   const clearHistoricalChartData = useCallback(() => {
@@ -306,7 +299,6 @@ export default function Home() {
     const minValue = Math.min(...data);
     const maxValue = Math.max(...data);
     const padding = (maxValue - minValue) * 0.3;
-
     return {
       min: Math.max(0, minValue - padding),
       max: maxValue + padding,
@@ -384,7 +376,7 @@ export default function Home() {
           toolbar: { show: false },
           zoom: { enabled: false },
           events: {
-            mouseMove: function(event, chartContext, config) {
+            mouseMove: function(event, chartContext) {
               const tooltip = chartContext.el.querySelector('.apexcharts-tooltip');
               if (tooltip) {
                 tooltip.style.top = '10px';
@@ -398,10 +390,7 @@ export default function Home() {
       setHistoricalDataChartData({
         ...initialHistoricalChartData,
         options: options,
-        series: [{
-          name: '',
-          data: prices
-        }]
+        series: [{ name: '', data: prices }]
       });
 
       setRenderHistoricalDataChart(false);
@@ -526,28 +515,33 @@ export default function Home() {
     t(area).toLowerCase().includes(areaSearchTerm.toLowerCase())
   );
 
-  const actionButtonStyle = "py-2 px-4 rounded w-48 h-12 font-bold text-[15px]";
-  const dropdownButtonStyle = "py-2 px-4 rounded w-48 h-12 font-bold text-[15px]";
-
+  // Action buttons (w-24)
+  const actionButtonBase = "flex items-center justify-center whitespace-nowrap text-center w-24 h-12 font-bold text-[15px] border rounded";
+  
   const rentButtonClass = action === "Rent"
-    ? "bg-orange-600 text-white border border-orange-600 font-bold"
-    : "bg-transparent text-gray-400 border border-gray-300 font-bold hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300";
+    ? `${actionButtonBase} bg-orange-600 text-white border-orange-600`
+    : `${actionButtonBase} bg-transparent text-gray-400 border-gray-300 hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300`;
 
   const buyButtonClass = action === "Buy"
-    ? "bg-orange-600 text-white border border-orange-600 font-bold"
-    : "bg-transparent text-gray-400 border border-gray-300 font-bold hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300";
+    ? `${actionButtonBase} bg-orange-600 text-white border-orange-600`
+    : `${actionButtonBase} bg-transparent text-gray-400 border-gray-300 hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300`;
 
+  // Buttons below action: w-[12.5rem] = 2 * w-24 (12rem) + 0.5rem spacing
+  const lowerButtonWidth = "w-[12.5rem]";
+  
+  const dropdownButtonStyle = `flex items-center justify-center whitespace-nowrap text-center ${lowerButtonWidth} h-12 font-bold text-[15px] border rounded`;
+  
   const cityButtonClass = selectedCity !== ""
-    ? "bg-gray-200 text-gray-800 border border-gray-400 font-bold"
-    : "bg-gray-200 text-gray-800 border border-gray-400 font-bold hover:bg-orange-600 hover:text-white hover:border-orange-600";
+    ? "bg-gray-200 text-gray-800 border-gray-400"
+    : "bg-gray-200 text-gray-800 border-gray-400 hover:bg-orange-600 hover:text-white hover:border-orange-600";
 
   const areaButtonClass = selectedArea !== ""
-    ? "bg-gray-200 text-gray-800 border border-gray-400 font-bold"
-    : "bg-gray-200 text-gray-800 border border-gray-400 font-bold hover:bg-orange-600 hover:text-white hover:border-orange-600";
+    ? "bg-gray-200 text-gray-800 border-gray-400"
+    : "bg-gray-200 text-gray-800 border-gray-400 hover:bg-orange-600 hover:text-white hover:border-orange-600";
 
   const timeframeButtonClass = selectedTimeframe !== ""
-    ? "bg-gray-200 text-gray-800 border border-gray-400 font-bold"
-    : "bg-gray-200 text-gray-800 border border-gray-400 font-bold hover:bg-orange-600 hover:text-white hover:border-orange-600";
+    ? "bg-gray-200 text-gray-800 border-gray-400"
+    : "bg-gray-200 text-gray-800 border-gray-400 hover:bg-orange-600 hover:text-white hover:border-orange-600";
 
   const shouldShowHistoricalData = () => {
     return selectedCity !== "" && ((selectedCity !== "Athens" && selectedCity !== "Thessaloniki") || selectedArea !== "");
@@ -596,15 +590,15 @@ export default function Home() {
       return (
         <div className="flex justify-center items-center h-96">
           <div className="carousel-container relative overflow-hidden">
-  <div className="words-slider flex" style={style}>
-    {displayWordsWithIcons.map((item, i) => (
-      <div key={i} className="word-slide w-[300px] flex items-center justify-center">
-        {item.icon}
-        <span className="text-3xl font-bold text-gray-600">{item.text}</span>
-      </div>
-    ))}
-  </div>
-</div>
+            <div className="words-slider flex" style={style}>
+              {displayWordsWithIcons.map((item, i) => (
+                <div key={i} className="word-slide w-[300px] flex items-center justify-center">
+                  {item.icon}
+                  <span className="text-3xl font-bold text-gray-600">{item.text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       );
     }
@@ -613,13 +607,6 @@ export default function Home() {
       renderHistoricalDataChart &&
       <HistoricalData
         chartData={historicalDataChartData}
-        onTimeframeChange={handleTimeframeChange}
-        selectedTimeframe={selectedTimeframe}
-        onRefresh={handleRefreshClick}
-        startDate={startDate}
-        endDate={endDate}
-        setStartDate={setStartDate}
-        setEndDate={setEndDate}
         isVisible={shouldShowHistoricalData()}
       />
     );
@@ -650,14 +637,14 @@ export default function Home() {
       </header>
 
       <main className="flex flex-col items-start justify-start p-8 flex-grow content">
-        <div className="buttons-container">
-          <div className="flex items-center w-48">
+        <div className="buttons-container flex flex-col space-y-2">
+          {/* Action buttons row */}
+          <div className="flex space-x-2">
             <button
               onClick={() => handleActionButtonClick("Rent")}
               onMouseEnter={() => setIsRentHovered(true)}
               onMouseLeave={() => setIsRentHovered(false)}
-              className={`${actionButtonStyle} ${rentButtonClass}`}
-              style={{ marginRight: "8px" }}
+              className={rentButtonClass}
             >
               {t('actionRent')}
             </button>
@@ -665,13 +652,15 @@ export default function Home() {
               onClick={() => handleActionButtonClick("Buy")}
               onMouseEnter={() => setIsBuyHovered(true)}
               onMouseLeave={() => setIsBuyHovered(false)}
-              className={`${actionButtonStyle} ${buyButtonClass}`}
+              className={buyButtonClass}
             >
               {t('actionBuy')}
             </button>
           </div>
+
+          {/* City button appears if action chosen */}
           {action !== "" && (
-            <div className="relative flex items-center w-48">
+            <div className="relative flex items-center space-x-2">
               <button
                 ref={cityButtonRef}
                 onClick={handleLocationButtonClick}
@@ -682,7 +671,7 @@ export default function Home() {
                 {selectedCity === "" ? t("city") : t(selectedCity)}
               </button>
               {isDropdownVisible && (
-                <div ref={dropdownRef} className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+                <div ref={dropdownRef} className="absolute top-full mt-1 bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
                   <input
                     type="text"
                     placeholder={t('searchCity')}
@@ -705,8 +694,10 @@ export default function Home() {
               )}
             </div>
           )}
+
+          {/* Area button if city is Athens or Thessaloniki */}
           {action !== "" && selectedCity !== "" && (selectedCity === "Athens" || selectedCity === "Thessaloniki") && (
-            <div className="relative flex items-center w-48">
+            <div className="relative flex items-center space-x-2">
               <button
                 ref={areaButtonRef}
                 onClick={handleAreaButtonClick}
@@ -717,7 +708,7 @@ export default function Home() {
                 {selectedArea === "" ? t("area") : t(selectedArea)}
               </button>
               {isAreaDropdownVisible && (
-                <div ref={areaDropdownRef} className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+                <div ref={areaDropdownRef} className="absolute top-full mt-1 bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
                   <input
                     type="text"
                     placeholder={t('searchArea')}
@@ -740,29 +731,43 @@ export default function Home() {
               )}
             </div>
           )}
+
+          {/* Timeframe & Refresh button if conditions met */}
           {action !== "" && selectedCity !== "" && ((selectedCity !== "Athens" && selectedCity !== "Thessaloniki") || selectedArea !== "") && (
-            <div className="flex flex-col space-y-4 mt-0">
-              <div className="relative">
-                <button
-                  ref={timeframeButtonRef}
-                  className={`${dropdownButtonStyle} ${timeframeButtonClass} mt-0`}
-                  onClick={() => setTimeframeDropdownVisible(prev => !prev)}
-                  onMouseEnter={() => setIsTimeframeHovered(true)}
-                  onMouseLeave={() => setIsTimeframeHovered(false)}
-                >
-                  {t(selectedTimeframe) || t('timeframe')}
-                </button>
-                {timeframeDropdownVisible && (
-                  <div ref={timeframeDropdownRef} className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
-                    <ul className="py-1 text-black">
-                      {renderTimeframeOptions()}
-                    </ul>
-                  </div>
+            <div className="flex flex-col space-y-2">
+              <div className="flex space-x-2">
+                <div className="relative">
+                  <button
+                    ref={timeframeButtonRef}
+                    className={`${dropdownButtonStyle} ${timeframeButtonClass} mt-0`}
+                    onClick={() => setTimeframeDropdownVisible(prev => !prev)}
+                    onMouseEnter={() => setIsTimeframeHovered(true)}
+                    onMouseLeave={() => setIsTimeframeHovered(false)}
+                  >
+                    {t(selectedTimeframe) || t('timeframe')}
+                  </button>
+                  {timeframeDropdownVisible && (
+                    <div ref={timeframeDropdownRef} className="absolute top-full mt-1 bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+                      <ul className="py-1 text-black">
+                        {renderTimeframeOptions()}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+
+                {isRefreshButtonVisible && (
+                  <button
+                    className={`flex items-center justify-center whitespace-nowrap text-center bg-green-600 hover:bg-green-700 text-white font-bold text-[15px] py-2 px-4 rounded h-12 ${lowerButtonWidth}`}
+                    onClick={handleRefreshClick}
+                  >
+                    {t('refreshChart')}
+                  </button>
                 )}
               </div>
+
               {selectedTimeframe === "custom" && (
-                <div className="relative flex flex-col space-y-2 items-start w-48">
-                  <div className="w-48 h-12">
+                <div className="flex flex-col space-y-2 items-start">
+                  <div className={`${lowerButtonWidth} h-12`}>
                     <DatePicker
                       selected={startDate}
                       onChange={(date: Date | null) => setStartDate(date)}
@@ -777,7 +782,7 @@ export default function Home() {
                       shouldCloseOnSelect={false}
                     />
                   </div>
-                  <div className="w-48 h-12">
+                  <div className={`${lowerButtonWidth} h-12`}>
                     <DatePicker
                       selected={endDate}
                       onChange={(date: Date | null) => setEndDate(date)}
@@ -795,18 +800,10 @@ export default function Home() {
                   </div>
                 </div>
               )}
-              {isRefreshButtonVisible && (
-                <button
-                  className="bg-green-600 hover:bg-green-700 text-white font-bold text-[15px] py-2 px-4 rounded-full w-48 h-12"
-                  onClick={handleRefreshClick}
-                >
-                  {t('refreshChart')}
-                </button>
-              )}
             </div>
           )}
         </div>
-        <div ref={chartContainerRef} className="chart-container">
+        <div ref={chartContainerRef} className="chart-container mt-4">
           {renderContent()}
         </div>
       </main>
