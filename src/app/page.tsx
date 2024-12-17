@@ -150,7 +150,6 @@ export default function Home() {
     setSelectedTimeframe(timeframe);
   };
 
-  // Define missing handlers here:
   const handleActionButtonClick = (selectedAction: string) => {
     setAction(selectedAction);
     clearCharts();
@@ -752,15 +751,6 @@ export default function Home() {
                     </div>
                   )}
                 </div>
-
-                {isRefreshButtonVisible && (
-                  <button
-                    className={`flex items-center justify-center whitespace-nowrap text-center bg-green-600 hover:bg-green-700 text-white font-bold text-[15px] py-2 px-4 rounded h-12 ${lowerButtonWidth}`}
-                    onClick={handleRefreshClick}
-                  >
-                    {t('refreshChart')}
-                  </button>
-                )}
               </div>
 
               {selectedTimeframe === "custom" && (
@@ -797,6 +787,15 @@ export default function Home() {
                     />
                   </div>
                 </div>
+              )}
+
+              {isRefreshButtonVisible && (
+                <button
+                  className={`flex items-center justify-center whitespace-nowrap text-center bg-green-600 hover:bg-green-700 text-white font-bold text-[15px] py-2 px-4 rounded h-12 ${lowerButtonWidth}`}
+                  onClick={handleRefreshClick}
+                >
+                  {t('refreshChart')}
+                </button>
               )}
             </div>
           )}
