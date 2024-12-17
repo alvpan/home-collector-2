@@ -638,7 +638,6 @@ export default function Home() {
 
       <main className="flex flex-col items-start justify-start p-8 flex-grow content">
         <div className="buttons-container flex flex-col space-y-2">
-          {/* Action buttons row */}
           <div className="flex space-x-2">
             <button
               onClick={() => handleActionButtonClick("Rent")}
@@ -791,7 +790,7 @@ export default function Home() {
 
               {isRefreshButtonVisible && (
                 <button
-                  className={`flex items-center justify-center whitespace-nowrap text-center bg-green-600 hover:bg-green-700 text-white font-bold text-[15px] py-2 px-4 rounded h-12 ${lowerButtonWidth}`}
+                  className={`mt-1 flex items-center justify-center whitespace-nowrap text-center bg-green-600 hover:bg-green-700 text-white font-bold text-[15px] py-2 px-4 rounded h-12 ${lowerButtonWidth}`}
                   onClick={handleRefreshClick}
                 >
                   {t('refreshChart')}
