@@ -722,7 +722,7 @@ export default function Home() {
               </div>
 
               {selectedTimeframe === "custom" && (
-                <div className="flex space-x-2">
+                <div className="flex flex-col space-y-2">
                   <div className={`${lowerButtonWidth} h-12`}>
                     <DatePicker
                       selected={startDate}
