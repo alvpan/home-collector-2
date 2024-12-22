@@ -81,7 +81,6 @@ const HistoricalData: React.FC<{
 
 export default function Home() {
   const [language, setLanguage] = useState<'en' | 'gr'>('gr');
-
   const t = (key: string) => {
     return translations[language][key as keyof typeof translations['en']] || key;
   };
@@ -104,18 +103,15 @@ export default function Home() {
   const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
   const [isChartRendered, setIsChartRendered] = useState(false);
   const isFetchingDataRef = useRef(false);
-
   const [isRentHovered, setIsRentHovered] = useState(false);
   const [isBuyHovered, setIsBuyHovered] = useState(false);
   const [isCityHovered, setIsCityHovered] = useState(false);
   const [isAreaHovered, setIsAreaHovered] = useState(false);
   const [isTimeframeHovered, setIsTimeframeHovered] = useState(false);
-
   const [hasRefreshed, setHasRefreshed] = useState(false);
 
   const words = ["Real Estate Prices", "Over Time", "Always Current"];
   const displayWords = [...words, words[0]];
-
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [noTransition, setNoTransition] = useState(false);
 
@@ -198,14 +194,14 @@ export default function Home() {
       tooltip: {
         x: { formatter: () => '' },
         y: {
-          formatter: (value: number, { dataPointIndex, w }: { dataPointIndex: number, w: any }) => {
+          formatter: (value: number, { dataPointIndex, w }) => {
             const date = w.globals.categoryLabels[dataPointIndex];
             return date;
           }
         },
         marker: { show: false },
         theme: 'dark',
-        style: { fontSize: '20px', fontFamily: undefined },
+        style: { fontSize: '20px' },
         fixed: {
           enabled: true,
           position: 'topLeft',
@@ -280,22 +276,13 @@ export default function Home() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        !dropdownRef.current?.contains(event.target as Node) &&
-        !cityButtonRef.current?.contains(event.target as Node)
-      ) {
+      if (!dropdownRef.current?.contains(event.target as Node) && !cityButtonRef.current?.contains(event.target as Node)) {
         setDropdownVisible(false);
       }
-      if (
-        !areaDropdownRef.current?.contains(event.target as Node) &&
-        !areaButtonRef.current?.contains(event.target as Node)
-      ) {
+      if (!areaDropdownRef.current?.contains(event.target as Node) && !areaButtonRef.current?.contains(event.target as Node)) {
         setAreaDropdownVisible(false);
       }
-      if (
-        !timeframeDropdownRef.current?.contains(event.target as Node) &&
-        !timeframeButtonRef.current?.contains(event.target as Node)
-      ) {
+      if (!timeframeDropdownRef.current?.contains(event.target as Node) && !timeframeButtonRef.current?.contains(event.target as Node)) {
         setTimeframeDropdownVisible(false);
       }
     };
@@ -313,10 +300,13 @@ export default function Home() {
   const timeframeButtonRef = useRef<HTMLButtonElement>(null);
 
   const clearHistoricalChartData = useCallback(() => {
-    setHistoricalDataChartData((prevData: ChartData) => ({
+    setHistoricalDataChartData((prevData) => ({
       ...prevData,
       series: [{ name: '€', data: [] }],
-      options: { ...prevData.options, xaxis: { ...prevData.options.xaxis, categories: [] } }
+      options: {
+        ...prevData.options,
+        xaxis: { ...prevData.options.xaxis, categories: [] }
+      }
     }));
   }, []);
 
@@ -337,10 +327,8 @@ export default function Home() {
   const fetchHistoricalData = async (timeframe: string) => {
     const city = selectedCity;
     const area = (city === "Athens" || city === "Thessaloniki") ? selectedArea : city;
-
     try {
       setHistoricalDataChartData(initialHistoricalChartData);
-
       let fetchStartDate = '';
       let fetchEndDate = new Date().toISOString();
 
@@ -357,9 +345,10 @@ export default function Home() {
         fetchEndDate = endDate.toISOString();
       }
 
-      const response = await fetch(`/api/getHistoricalPpm?action=${action}&city=${city}&area=${area}&startDate=${fetchStartDate}&endDate=${fetchEndDate}`);
+      const response = await fetch(
+        `/api/getHistoricalPpm?action=${action}&city=${city}&area=${area}&startDate=${fetchStartDate}&endDate=${fetchEndDate}`
+      );
       const data = await response.json();
-
       const dates = data.map((item: { date: string }) => format(new Date(item.date), 'd MMM'));
       const prices = data.map((item: { pricePerSqm: number }) => item.pricePerSqm);
       const { min, max } = addYAxisPadding(prices);
@@ -372,26 +361,26 @@ export default function Home() {
         },
         yaxis: {
           ...initialHistoricalChartData.options?.yaxis,
-          min: min,
-          max: max,
+          min,
+          max,
         },
         tooltip: {
           x: {
-            formatter: function(value, { seriesIndex, dataPointIndex, w }) {
+            formatter(value, { seriesIndex, dataPointIndex, w }) {
               const price = w.globals.series[seriesIndex][dataPointIndex];
               const seriesColor = w.config.colors ? w.config.colors[seriesIndex] : '#000';
               return `1m² costs: <span style="color: ${seriesColor}; font-weight: bold; font-size: 28px;">${price.toFixed(1)}€</span>`;
             }
           },
           y: {
-            formatter: function(value, { dataPointIndex, w }) {
+            formatter(value, { dataPointIndex, w }) {
               const date = w.globals.categoryLabels[dataPointIndex];
               return date;
             }
           },
           theme: 'light',
           marker: { show: false },
-          style: { fontSize: '15px', fontFamily: undefined },
+          style: { fontSize: '15px' },
           fixed: {
             enabled: true,
             position: 'topLeft',
@@ -405,7 +394,7 @@ export default function Home() {
           toolbar: { show: false },
           zoom: { enabled: false },
           events: {
-            mouseMove: function(event, chartContext) {
+            mouseMove(event, chartContext) {
               const tooltip = chartContext.el.querySelector('.apexcharts-tooltip');
               if (tooltip) {
                 tooltip.style.top = '10px';
@@ -418,13 +407,12 @@ export default function Home() {
 
       setHistoricalDataChartData({
         ...initialHistoricalChartData,
-        options: options,
+        options,
         series: [{ name: '', data: prices }]
       });
 
       setRenderHistoricalDataChart(false);
       setTimeout(() => setRenderHistoricalDataChart(true), 0);
-
       setChartVisible(true);
       setHistoricalDataChartLoaded(true);
       setIsChartRendered(true);
@@ -444,7 +432,6 @@ export default function Home() {
 
   const handleRefreshClick = async () => {
     isFetchingDataRef.current = true;
-
     const currentValues = {
       action,
       city: selectedCity,
@@ -471,13 +458,11 @@ export default function Home() {
         alert("Please select both start and end dates for custom timeframe.");
         return;
       }
-
       setIsLoading(true);
       setChartVisible(false);
       clearHistoricalChartData();
       await fetchHistoricalData(selectedTimeframe);
       setIsLoading(false);
-
       setChartVisible(true);
       setIsChartRendered(true);
       setHasRefreshed(true);
@@ -486,10 +471,7 @@ export default function Home() {
     }
 
     setTimeout(() => {
-      window.scrollTo({
-        top: document.body.scrollHeight,
-        behavior: "smooth",
-      });
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
       isFetchingDataRef.current = false;
     }, 100);
   };
@@ -497,33 +479,25 @@ export default function Home() {
   const filteredCities = cities.filter(city =>
     t(city).toLowerCase().includes(citySearchTerm.toLowerCase())
   );
-
   const filteredAreas = areas.filter(area =>
     t(area).toLowerCase().includes(areaSearchTerm.toLowerCase())
   );
 
   const actionButtonBase = "flex items-center justify-center whitespace-nowrap text-center w-24 h-12 font-bold text-[15px] border rounded";
-  
   const rentButtonClass = action === "Rent"
     ? `${actionButtonBase} bg-orange-600 text-white border-orange-600`
     : `${actionButtonBase} bg-transparent text-gray-400 border-gray-300 hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300`;
-
   const buyButtonClass = action === "Buy"
     ? `${actionButtonBase} bg-orange-600 text-white border-orange-600`
     : `${actionButtonBase} bg-transparent text-gray-400 border border-gray-300 hover:bg-gray-200 hover:text-gray-500 hover:border-gray-300`;
-
   const lowerButtonWidth = "w-[12.5rem]";
-  
   const dropdownButtonStyle = `flex items-center justify-center whitespace-nowrap text-center ${lowerButtonWidth} h-12 font-bold text-[15px] border rounded`;
-  
   const cityButtonClass = selectedCity !== ""
     ? "bg-gray-200 text-gray-800 border-gray-400"
     : "bg-gray-200 text-gray-800 border-gray-400 hover:bg-orange-600 hover:text-white hover:border-orange-600";
-
   const areaButtonClass = selectedArea !== ""
     ? "bg-gray-200 text-gray-800 border-gray-400"
     : "bg-gray-200 text-gray-800 border-gray-400 hover:bg-orange-600 hover:text-white hover:border-orange-600";
-
   const timeframeButtonClass = selectedTimeframe !== ""
     ? "bg-gray-200 text-gray-800 border-gray-400"
     : "bg-gray-200 text-gray-800 border-gray-400 hover:bg-orange-600 hover:text-white hover:border-orange-600";
@@ -565,18 +539,16 @@ export default function Home() {
         </div>
       );
     }
-
     if (!hasRefreshed) {
       const style = {
         transform: `translateX(-${carouselIndex * 100}%)`,
         transition: noTransition ? 'none' : 'transform 0.5s ease-in-out'
       };
-
       const displayWordsWithIcons = [
-        { text: "Real Estate Prices", icon: <Euro className="mr-2 text-gray-600" size={28} strokeWidth={3}/> },
-        { text: "Over Time", icon: <TrendingUp className="mr-2 text-gray-600" size={28} strokeWidth={3}/> },
-        { text: "Always Current", icon: <CheckCheck className="mr-2 text-gray-600" size={28} strokeWidth={3}/> },
-        { text: "Real Estate Prices", icon: <Euro className="mr-2 text-gray-600" size={28} strokeWidth={3}/> }
+        { text: "Real Estate Prices", icon: <Euro className="mr-2 text-gray-600" size={28} strokeWidth={3} /> },
+        { text: "Over Time", icon: <TrendingUp className="mr-2 text-gray-600" size={28} strokeWidth={3} /> },
+        { text: "Always Current", icon: <CheckCheck className="mr-2 text-gray-600" size={28} strokeWidth={3} /> },
+        { text: "Real Estate Prices", icon: <Euro className="mr-2 text-gray-600" size={28} strokeWidth={3} /> }
       ];
 
       return (
@@ -594,7 +566,6 @@ export default function Home() {
         </div>
       );
     }
-
     return (
       renderHistoricalDataChart && (
         <HistoricalData
@@ -658,7 +629,7 @@ export default function Home() {
           </div>
 
           {action !== "" && (
-            <div className="relative flex items-center space-x-2">
+            <div className="relative">
               <button
                 ref={cityButtonRef}
                 onClick={() => setDropdownVisible(!isDropdownVisible)}
@@ -694,7 +665,7 @@ export default function Home() {
           )}
 
           {action !== "" && selectedCity !== "" && (selectedCity === "Athens" || selectedCity === "Thessaloniki") && (
-            <div className="relative flex items-center space-x-2">
+            <div className="relative">
               <button
                 ref={areaButtonRef}
                 onClick={() => setAreaDropdownVisible(!isAreaDropdownVisible)}
@@ -730,34 +701,32 @@ export default function Home() {
           )}
 
           {action !== "" && selectedCity !== "" && ((selectedCity !== "Athens" && selectedCity !== "Thessaloniki") || selectedArea !== "") && (
-            <div className="flex flex-col space-y-2">
-              <div className="flex space-x-2">
-                <div className="relative">
-                  <button
-                    ref={timeframeButtonRef}
-                    className={`${dropdownButtonStyle} ${timeframeButtonClass}`}
-                    onClick={() => setTimeframeDropdownVisible(prev => !prev)}
-                    onMouseEnter={() => setIsTimeframeHovered(true)}
-                    onMouseLeave={() => setIsTimeframeHovered(false)}
-                  >
-                    {t(selectedTimeframe) || t('timeframe')}
-                  </button>
-                  {timeframeDropdownVisible && (
-                    <div ref={timeframeDropdownRef} className="absolute top-full mt-1 bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
-                      <ul className="py-1 text-black">
-                        {renderTimeframeOptions()}
-                      </ul>
-                    </div>
-                  )}
-                </div>
+            <>
+              <div className="relative">
+                <button
+                  ref={timeframeButtonRef}
+                  className={`${dropdownButtonStyle} ${timeframeButtonClass}`}
+                  onClick={() => setTimeframeDropdownVisible(prev => !prev)}
+                  onMouseEnter={() => setIsTimeframeHovered(true)}
+                  onMouseLeave={() => setIsTimeframeHovered(false)}
+                >
+                  {t(selectedTimeframe) || t('timeframe')}
+                </button>
+                {timeframeDropdownVisible && (
+                  <div ref={timeframeDropdownRef} className="absolute top-full mt-1 bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+                    <ul className="py-1 text-black">
+                      {renderTimeframeOptions()}
+                    </ul>
+                  </div>
+                )}
               </div>
 
               {selectedTimeframe === "custom" && (
-                <div className="flex flex-col space-y-2 items-start">
+                <div className="flex space-x-2">
                   <div className={`${lowerButtonWidth} h-12`}>
                     <DatePicker
                       selected={startDate}
-                      onChange={(date: Date | null) => setStartDate(date)}
+                      onChange={(date) => setStartDate(date)}
                       selectsStart
                       startDate={startDate}
                       endDate={endDate}
@@ -772,7 +741,7 @@ export default function Home() {
                   <div className={`${lowerButtonWidth} h-12`}>
                     <DatePicker
                       selected={endDate}
-                      onChange={(date: Date | null) => setEndDate(date)}
+                      onChange={(date) => setEndDate(date)}
                       selectsEnd
                       startDate={startDate}
                       endDate={endDate}
@@ -789,7 +758,7 @@ export default function Home() {
               )}
 
               {isRefreshButtonVisible && (
-                <div className="relative flex items-center space-x-2">
+                <div>
                   <button
                     className={`flex items-center justify-center whitespace-nowrap text-center bg-green-600 hover:bg-green-700 text-white font-bold text-[15px] py-2 px-4 rounded-full h-12 ${lowerButtonWidth}`}
                     onClick={handleRefreshClick}
@@ -798,9 +767,10 @@ export default function Home() {
                   </button>
                 </div>
               )}
-            </div>
+            </>
           )}
         </div>
+
         <div ref={chartContainerRef} className="chart-container mt-4">
           {renderContent()}
         </div>
