@@ -607,7 +607,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="flex flex-col items-start justify-start p-8 flex-grow content">
+      <main className="flex flex-col items-start justify-start px-16 py-8 flex-grow content">
         <div className="buttons-container flex flex-col space-y-2">
           <div className="flex space-x-2">
             <button
