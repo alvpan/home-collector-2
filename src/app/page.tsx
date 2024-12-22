@@ -789,12 +789,14 @@ export default function Home() {
               )}
 
               {isRefreshButtonVisible && (
-                <button
-                  className={`flex items-center justify-center whitespace-nowrap text-center bg-green-600 hover:bg-green-700 text-white font-bold text-[15px] py-2 px-4 rounded-full h-12 ${lowerButtonWidth}`}
-                  onClick={handleRefreshClick}
-                >
-                  {t('refreshChart')}
-                </button>
+                <div className="relative flex items-center space-x-2">
+                  <button
+                    className={`flex items-center justify-center whitespace-nowrap text-center bg-green-600 hover:bg-green-700 text-white font-bold text-[15px] py-2 px-4 rounded-full h-12 ${lowerButtonWidth}`}
+                    onClick={handleRefreshClick}
+                  >
+                    {t('refreshChart')}
+                  </button>
+                </div>
               )}
             </div>
           )}
