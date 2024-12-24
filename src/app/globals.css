@@ -216,7 +216,7 @@ html {
   content: '';
   position: absolute;
   inset: 0;           
-  padding: 1.5px;          
+  padding: 1px;          
   border-radius: 0.2rem;
   background: linear-gradient(120deg, #6559ae, #ff7159, #6559ae);
   background-size: 400% 400%;
