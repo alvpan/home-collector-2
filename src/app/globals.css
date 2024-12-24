@@ -197,3 +197,35 @@ html {
     flex: 0 0 200px;
   }
 }
+
+
+@keyframes animated-border-gradient {
+  0%   { background-position: 14% 0%; }
+  50%  { background-position: 87% 100%; }
+  100% { background-position: 14% 0%; }
+}
+
+.animated-border {
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: 0.25rem;
+}
+
+.animated-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;           
+  padding: 1.5px;          
+  border-radius: 0.2rem;
+  background: linear-gradient(120deg, #6559ae, #ff7159, #6559ae);
+  background-size: 400% 400%;
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0) padding-box;
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+  z-index: -1;
+  animation: animated-border-gradient 3s ease-in-out infinite;
+}
