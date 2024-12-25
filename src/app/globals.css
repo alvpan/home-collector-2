@@ -174,7 +174,7 @@ html {
     width: 100%;
     align-items: center;
     margin-bottom: 20px;
-    margin-top: 16px;
+    margin-top: 2rem;
   }
 
   .chart-container {
@@ -201,7 +201,7 @@ html {
 
   .carousel-container {
     width: 200px;
-    margin-top: -17rem;
+    margin-top: -8rem;
   }
 
   .word-slide {
