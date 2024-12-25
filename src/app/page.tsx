@@ -11,6 +11,7 @@ import { useMediaQuery } from 'react-responsive';
 import { format } from 'date-fns';
 import { Euro, TrendingUp, CheckCheck } from 'lucide-react';
 
+
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 interface ChartData {
@@ -633,8 +634,8 @@ export default function Home() {
             value={language}
             className="bg-transparent hover:bg-gray-100 text-black py-2 px-4 rounded language-dropdown"
           >
-            <option value="en">English</option>
-            <option value="gr">Ελληνικά</option>
+            <option value="en">🇬🇧 English</option>
+            <option value="gr">🇬🇷 Ελληνικά</option>
           </select>
         </div>
       </header>
