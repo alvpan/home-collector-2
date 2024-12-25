@@ -401,12 +401,12 @@ export default function Home() {
               strokeDashArray: 4,
               borderWidth: 1,
               label: {
-                borderColor: '#c4c4c4',
+                borderColor: '#525f7f',
                 style: {
-                  color: '#c4c4c4',
+                  color: '#525f7f',
                   background: '#f2f2f2',
                   fontWeight: 'bold',
-                  fontSize: '20px',
+                  fontSize: '18px',
                 },
                 text: `Avg: ${averagePrice.toFixed(1)}€`,
                 position: 'center',
