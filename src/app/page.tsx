@@ -411,7 +411,7 @@ export default function Home() {
               const seriesColor = w.config.colors ? w.config.colors[seriesIndex] : '#000';
               return `
               <div style="margin-bottom:4px;">
-                &nbsp;&nbsp;Average: <span 
+                &nbsp;&nbsp;&nbsp;Average: <span 
                   style="color:#67779d; 
                          font-weight:bold; 
                          font-size:20px;">
