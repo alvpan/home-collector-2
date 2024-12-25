@@ -397,13 +397,13 @@ export default function Home() {
           yaxis: [
             {
               y: averagePrice,
-              borderColor: '#6559ae',
+              borderColor: '#b069db',
               strokeDashArray: 4,
-              borderWidth: 3,
+              borderWidth: 2,
               label: {
-                borderColor: '#6559ae',
+                borderColor: '#b069db',
                 style: {
-                  color: '#6559ae',
+                  color: '#b069db',
                   background: '#f2f2f2',
                 },
                 text: `Avg: ${averagePrice.toFixed(1)}€`,
