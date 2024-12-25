@@ -376,6 +376,10 @@ export default function Home() {
       const data = await response.json();
       const dates = data.map((item: { date: string }) => format(new Date(item.date), 'd MMM'));
       const prices = data.map((item: { pricePerSqm: number }) => item.pricePerSqm);
+      const averagePrice =
+        prices.length > 0
+          ? prices.reduce((acc: number, val: number) => acc + val, 0) / prices.length
+          : 0;
       const { min, max } = addYAxisPadding(prices);
 
       const options: ApexOptions = {
@@ -388,6 +392,23 @@ export default function Home() {
           ...initialHistoricalChartData.options?.yaxis,
           min,
           max,
+        },
+        annotations: {
+          yaxis: [
+            {
+              y: averagePrice,
+              borderColor: '#cccccc',
+              strokeDashArray: 4,
+              label: {
+                borderColor: '#cccccc',
+                style: {
+                  color: '#333333',
+                  background: '#f2f2f2',
+                },
+                text: `Avg: ${averagePrice.toFixed(1)}€`,
+              },
+            },
+          ],
         },
         tooltip: {
           x: {
@@ -433,7 +454,8 @@ export default function Home() {
       setHistoricalDataChartData({
         ...initialHistoricalChartData,
         options,
-        series: [{ name: '', data: prices }]
+        series: [{ name: '', data: prices }],
+        
       });
 
       setRenderHistoricalDataChart(false);
@@ -632,7 +654,7 @@ export default function Home() {
           <select
             onChange={(e) => handleLanguageChange(e.target.value as 'en' | 'gr')}
             value={language}
-            className="bg-transparent hover:bg-gray-100 text-black py-2 px-4 rounded language-dropdown"
+            className="bg-transparent hover:bg-gray-100 hover:border-orange-600 text-black py-2 px-4 rounded language-dropdown"
           >
             <option value="en">🇬🇧 English</option>
             <option value="gr">🇬🇷 Ελληνικά</option>
