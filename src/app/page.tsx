@@ -116,6 +116,7 @@ export default function Home() {
   const [isChartRendered, setIsChartRendered] = useState(false);
   const isFetchingDataRef = useRef(false);
   const [hasRefreshed, setHasRefreshed] = useState(false);
+  const [isCarouselVisible, setIsCarouselVisible] = useState(true);
 
   const words = ["Real Estate Prices", "Over Time", "Always Current"];
   const displayWords = [...words, words[0]];
@@ -159,6 +160,9 @@ export default function Home() {
     setChartVisible(false);
     setHistoricalDataChartLoaded(false);
     setIsActionChosen(true);
+    if (isMobile) {
+      setIsCarouselVisible(false);
+    }
   };
 
   const handleCitySelect = (city: string) => {
@@ -600,7 +604,7 @@ export default function Home() {
         </div>
       );
     }
-    if (!hasRefreshed) {
+    if (!hasRefreshed && isCarouselVisible) {
       const style = {
         transform: `translateX(-${carouselIndex * 100}%)`,
         transition: noTransition ? 'none' : 'transform 0.5s ease-in-out'
