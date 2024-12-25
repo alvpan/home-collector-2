@@ -400,27 +400,28 @@ export default function Home() {
               borderColor: '#67779d',
               strokeDashArray: 4,
               borderWidth: 1,
-              label: {
-                borderColor: '#67779d',
-                style: {
-                  color: '#67779d',
-                  background: '#f2f2f2',
-                  fontWeight: 'bold',
-                  fontSize: '22px',
-                },
-                text: `Avg: ${averagePrice.toFixed(1)}€`,
-                position: 'center',
-              },
             },
           ],
         },
         tooltip: {
           x: {
             formatter(value, { seriesIndex, dataPointIndex, w }) {
+              const avg = averagePrice;
               const price = w.globals.series[seriesIndex][dataPointIndex];
               const seriesColor = w.config.colors ? w.config.colors[seriesIndex] : '#000';
-              return `1m² costs: <span style="color: ${seriesColor}; font-weight: bold; font-size: 28px;">${price.toFixed(1)}€</span>`;
-            }
+              return `
+              <div style="font-size:16px; margin-bottom:4px;">
+                Average: <b>${avg.toFixed(1)}€</b>
+              </div>
+              <div>
+                1m² costs: <span 
+                  style="color:${seriesColor}; 
+                         font-weight:bold; 
+                         font-size:20px;">
+                  ${price.toFixed(1)}€
+                </span>
+              </div>
+            `;            }
           },
           y: {
             formatter(value, { dataPointIndex, w }) {
