@@ -606,10 +606,10 @@ export default function Home() {
         transition: noTransition ? 'none' : 'transform 0.5s ease-in-out'
       };
       const displayWordsWithIcons = [
-        { text: "Real Estate Prices", icon: <Euro className="mr-2 text-gray-600" size={28} strokeWidth={3} /> },
-        { text: "Over Time", icon: <TrendingUp className="mr-2 text-gray-600" size={28} strokeWidth={3} /> },
-        { text: "Always Current", icon: <CheckCheck className="mr-2 text-gray-600" size={28} strokeWidth={3} /> },
-        { text: "Real Estate Prices", icon: <Euro className="mr-2 text-gray-600" size={28} strokeWidth={3} /> }
+        { text: "Real Estate Prices", icon: <Euro className="carousel-icon mr-2 text-gray-600" size={28} strokeWidth={3} /> },
+        { text: "Over Time", icon: <TrendingUp className="carousel-icon mr-2 text-gray-600" size={28} strokeWidth={3} /> },
+        { text: "Always Current", icon: <CheckCheck className="carousel-icon mr-2 text-gray-600" size={28} strokeWidth={3} /> },
+        { text: "Real Estate Prices", icon: <Euro className="carousel-icon mr-2 text-gray-600" size={28} strokeWidth={3} /> }
       ];
 
       return (
@@ -619,7 +619,7 @@ export default function Home() {
               {displayWordsWithIcons.map((item, i) => (
                 <div key={i} className="word-slide w-[300px] flex items-center justify-center">
                   {item.icon}
-                  <span className="text-3xl font-bold text-gray-600">{item.text}</span>
+                  <span className="carousel-text text-3xl font-bold text-gray-600">{item.text}</span>
                 </div>
               ))}
             </div>
