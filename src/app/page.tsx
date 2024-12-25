@@ -410,8 +410,13 @@ export default function Home() {
               const price = w.globals.series[seriesIndex][dataPointIndex];
               const seriesColor = w.config.colors ? w.config.colors[seriesIndex] : '#000';
               return `
-              <div style="font-size:16px; margin-bottom:4px;">
-                Average: <b>${avg.toFixed(1)}€</b>
+              <div style="margin-bottom:4px;">
+                Average: <span 
+                  style="color:#67779d; 
+                         font-weight:bold; 
+                         font-size:20px;">
+                  ${avg.toFixed(1)}€
+                </span>
               </div>
               <div>
                 1m² costs: <span 
