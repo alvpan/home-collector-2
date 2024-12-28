@@ -605,26 +605,22 @@ export default function Home() {
       );
     }
     if (!hasRefreshed && isCarouselVisible) {
-      // We wrap our carousel in the same container as the blob
       const style = {
         transform: `translateX(-${carouselIndex * 100}%)`,
         transition: noTransition ? 'none' : 'transform 0.5s ease-in-out'
       };
 
       const displayWordsWithIcons = [
-        { text: "Real Estate Prices", icon: <Euro className="carousel-icon text-white" size={28} strokeWidth={3} /> },
-        { text: "Over Time", icon: <TrendingUp className="carousel-icon text-white" size={28} strokeWidth={3} /> },
-        { text: "Always Current", icon: <CheckCheck className="carousel-icon text-white" size={28} strokeWidth={3} /> },
-        // repeat the first item so we can animate seamlessly
-        { text: "Real Estate Prices", icon: <Euro className="carousel-icon text-white" size={28} strokeWidth={3} /> }
+        { text: "Real Estate Prices", icon: <Euro className="carousel-icon text-white" /> },
+        { text: "Over Time", icon: <TrendingUp className="carousel-icon text-white" /> },
+        { text: "Always Current", icon: <CheckCheck className="carousel-icon text-white" /> },
+        { text: "Real Estate Prices", icon: <Euro className="carousel-icon text-white" /> }
       ];
 
       return (
         <div className="blob-and-carousel-container">
-          {/* The blob background */}
           <div className="blob-background" />
           
-          {/* Carousel content absolutely positioned */}
           <div className="carousel-content">
             <div className="carousel-container">
               <div className="words-slider" style={style}>
@@ -632,7 +628,7 @@ export default function Home() {
                   <div key={i} className="word-slide">
                     <div className="flex items-center justify-center">
                       {item.icon}
-                      <span className="carousel-text font-bold">{item.text}</span>
+                      <span className="carousel-text">{item.text}</span>
                     </div>
                   </div>
                 ))}
@@ -642,7 +638,6 @@ export default function Home() {
         </div>
       );
     }
-    // Otherwise, show the chart (historical data)
     return (
       renderHistoricalDataChart && (
         <HistoricalData
