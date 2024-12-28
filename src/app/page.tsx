@@ -11,7 +11,6 @@ import { useMediaQuery } from 'react-responsive';
 import { format } from 'date-fns';
 import { Euro, TrendingUp, CheckCheck } from 'lucide-react';
 
-
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 interface ChartData {
@@ -430,7 +429,8 @@ export default function Home() {
                   ${price.toFixed(1)}€
                 </span>
               </div>
-            `;            }
+            `;
+            }
           },
           y: {
             formatter(value, { dataPointIndex, w }) {
@@ -605,32 +605,44 @@ export default function Home() {
       );
     }
     if (!hasRefreshed && isCarouselVisible) {
+      // We wrap our carousel in the same container as the blob
       const style = {
         transform: `translateX(-${carouselIndex * 100}%)`,
         transition: noTransition ? 'none' : 'transform 0.5s ease-in-out'
       };
+
       const displayWordsWithIcons = [
-        { text: "Real Estate Prices", icon: <Euro className="carousel-icon mr-2 text-gray-600" size={28} strokeWidth={3} /> },
-        { text: "Over Time", icon: <TrendingUp className="carousel-icon mr-2 text-gray-600" size={28} strokeWidth={3} /> },
-        { text: "Always Current", icon: <CheckCheck className="carousel-icon mr-2 text-gray-600" size={28} strokeWidth={3} /> },
-        { text: "Real Estate Prices", icon: <Euro className="carousel-icon mr-2 text-gray-600" size={28} strokeWidth={3} /> }
+        { text: "Real Estate Prices", icon: <Euro className="carousel-icon text-white" size={28} strokeWidth={3} /> },
+        { text: "Over Time", icon: <TrendingUp className="carousel-icon text-white" size={28} strokeWidth={3} /> },
+        { text: "Always Current", icon: <CheckCheck className="carousel-icon text-white" size={28} strokeWidth={3} /> },
+        // repeat the first item so we can animate seamlessly
+        { text: "Real Estate Prices", icon: <Euro className="carousel-icon text-white" size={28} strokeWidth={3} /> }
       ];
 
       return (
-        <div className="flex justify-center items-center h-96">
-          <div className="carousel-container relative overflow-hidden">
-            <div className="words-slider flex" style={style}>
-              {displayWordsWithIcons.map((item, i) => (
-                <div key={i} className="word-slide w-[300px] flex items-center justify-center">
-                  {item.icon}
-                  <span className="carousel-text text-3xl font-bold text-gray-600">{item.text}</span>
-                </div>
-              ))}
+        <div className="blob-and-carousel-container">
+          {/* The blob background */}
+          <div className="blob-background" />
+          
+          {/* Carousel content absolutely positioned */}
+          <div className="carousel-content">
+            <div className="carousel-container">
+              <div className="words-slider" style={style}>
+                {displayWordsWithIcons.map((item, i) => (
+                  <div key={i} className="word-slide">
+                    <div className="flex items-center justify-center">
+                      {item.icon}
+                      <span className="carousel-text font-bold">{item.text}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       );
     }
+    // Otherwise, show the chart (historical data)
     return (
       renderHistoricalDataChart && (
         <HistoricalData

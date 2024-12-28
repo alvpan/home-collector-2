@@ -146,7 +146,7 @@ html {
   z-index: 1;
 }
 
-/* Carousel */
+/* Carousel Container (mobile) */
 .carousel-container {
   width: 300px;
   height: 96px;
@@ -162,6 +162,64 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* 
+  NEW: Blob + Carousel Container for Desktop
+  Here we ensure the blob and carousel text scale together. 
+*/
+.blob-and-carousel-container {
+  position: relative;
+  width: 100%;
+  /* You can adjust this height to control how much space the blob & text take. */
+  height: 50vw; 
+  min-height: 300px; /* Optional fallback for very narrow screens */
+  max-height: 700px; /* Optional clamp for extremely wide screens */
+  overflow: hidden;
+}
+
+/* The orange blob background inside the container */
+.blob-background {
+  position: absolute;
+  top: 45%;
+  left: 40%;
+  width: clamp(200px, 30vw, 1000px); /* Clamp the width */
+  height: clamp(200px, 30vw, 1000px); /* Clamp the height */
+  transform: translate(-50%, -50%);
+  background: url('data:image/svg+xml;base64,PHN2ZyBpZD0ic3ctanMtYmxvYi1zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPiA8ZGVmcz4gPGxpbmVhckdyYWRpZW50IGlkPSJzdy1ncmFkaWVudCIgeDE9IjAiIHgyPSIxIiB5MT0iMSIgeTI9IjAiPiA8c3RvcCBpZD0ic3RvcDEiIHN0b3AtY29sb3I9InJnYmEoMjQ4LCAxMTcsIDU1LCAxKSIgb2Zmc2V0PSIwJSI+PC9zdG9wPiA8c3RvcCBpZD0ic3RvcDIiIHN0b3AtY29sb3I9InJnYmEoMjUxLCAxNjgsIDMxLCAxKSIgb2Zmc2V0PSIxMDAiPjwvc3RvcD4gPC9saW5lYXJHcmFkaWVudD4gPC9kZWZzPiA8cGF0aCBmaWxsPSJ1cmwoI3N3LWdyYWRpZW50KSIgZD0iTTMzLC0yMi40QzQwLjIsLTE3LjMsNDEuNiwtMy44LDM3LjUsNi40QzMzLjUsMTYuNiwyNC4xLDIzLjUsMTQuNCwyN0M0LjgsMzAuNSwtNS4xLDMwLjcsLTEyLjIsMjYuOEMtMTkuMywyMi44LC0yMy44LDE0LjYsLTI1LDYuNUMtMjYuMywtMS43LC0yNC4zLC05LjgsLTE5LjYsLTE0LjNDLTE0LjksLTE4LjgsLTcuNSwtMTkuOCwyLjcsLTIyQzEyLjksLTI0LjEsMjUuOCwtMjcuNSwzMywtMjIuNFoiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDUwIDUwKSIgc3R5bGU9InRyYW5zaXRpb246IDAuM3M7IiBzdHJva2Utd2lkdGg9IjAiPjwvcGF0aD4gPC9zdmc+') 
+    no-repeat center / contain;
+  z-index: 0; 
+}
+
+/* Carousel content absolutely centered in the same container */
+.carousel-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  width: 40vw; /* Adjust as needed for text width */
+  max-width: 600px; /* You can clamp it so it doesn't get too large */
+  text-align: center;
+}
+
+/*
+  By using viewport units or clamp for text and icons, 
+  both the text and the blob will scale similarly.
+*/
+.carousel-text {
+  font-size: clamp(1rem, 1.3vw, 2rem);
+  color: #FFFFFF;
+  position: relative;
+  z-index: 1;
+}
+
+.carousel-icon {
+  width: clamp(1.5rem, 4vw, 3rem);
+  height: clamp(1.5rem, 4vw, 3rem);
+  position: relative;
+  z-index: 1;
+  margin-right: 0.5rem;
 }
 
 /* Responsive: Mobile */
@@ -227,81 +285,18 @@ html {
 
   .carousel-text {
     font-size: 1.2rem;
-    position: relative; /* Ensure text is above the background */
-    z-index: 1;
   }
 
   .carousel-icon {
     width: 18px;
     height: 18px;
-    position: relative; /* Ensure icons are above the background */
-    z-index: 1;
   }
 }
 
-/* Responsive: Desktop */
-@media (min-width: 769px) {
-  /* Keep the carousel text above the background */
-  .carousel-text {
-    position: relative;
-    z-index: 1;
-    background-size: cover;
-    background-position: center;
-  }
-
-  /* Ensure the carousel content is above the background */
-  .carousel-container {
-    position: relative;
-    z-index: 1; 
-    background-repeat: no-repeat;
-    background-position: center;
-  }
-
-  /* Background for the carousel container (behind the text) */
-  .carousel-container::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 200%;
-    height: 200%;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    transform: translate(-50%, -50%);
-    z-index: -1;
-  }
-
-  /* Remove the gradient background so the blob shows through on desktop */
-  body {
-    background: none !important;
-    position: relative;
-    z-index: 0;
-  }
-
-  /* Make the .main-container transparent so the blob is visible behind it */
-  .main-container {
-    background-color: transparent !important;
-  }
-
-  /* Orange blob behind everything */
-  body::before {
-    content: '';
-    position: fixed;
-    top: 48%;
-    left: 56%;
-    width: 100%;
-    height: 100%;
-    background: url('data:image/svg+xml;base64,PHN2ZyBpZD0ic3ctanMtYmxvYi1zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPiA8ZGVmcz4gPGxpbmVhckdyYWRpZW50IGlkPSJzdy1ncmFkaWVudCIgeDE9IjAiIHgyPSIxIiB5MT0iMSIgeTI9IjAiPiA8c3RvcCBpZD0ic3RvcDEiIHN0b3AtY29sb3I9InJnYmEoMjQ4LCAxMTcsIDU1LCAxKSIgb2Zmc2V0PSIwJSI+PC9zdG9wPiA8c3RvcCBpZD0ic3RvcDIiIHN0b3AtY29sb3I9InJnYmEoMjUxLCAxNjgsIDMxLCAxKSIgb2Zmc2V0PSIxMDAiPjwvc3RvcD4gPC9saW5lYXJHcmFkaWVudD4gPC9kZWZzPiA8cGF0aCBmaWxsPSJ1cmwoI3N3LWdyYWRpZW50KSIgZD0iTTMzLC0yMi40QzQwLjIsLTE3LjMsNDEuNiwtMy44LDM3LjUsNi40QzMzLjUsMTYuNiwyNC4xLDIzLjUsMTQuNCwyN0M0LjgsMzAuNSwtNS4xLDMwLjcsLTEyLjIsMjYuOEMtMTkuMywyMi44LC0yMy44LDE0LjYsLTI1LDYuNUMtMjYuMywtMS43LC0yNC4zLC05LjgsLTE5LjYsLTE0LjNDLTE0LjksLTE4LjgsLTcuNSwtMTkuOCwyLjcsLTIyQzEyLjksLTI0LjEsMjUuOCwtMjcuNSwzMywtMjIuNFoiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDUwIDUwKSIgc3R5bGU9InRyYW5zaXRpb246IDAuM3M7IiBzdHJva2Utd2lkdGg9IjAiPjwvcGF0aD4gPC9zdmc+');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    transform: translate(-50%, -50%);
-    z-index: -1; 
-  }
-}
-
-/* Animated Border Gradient */
+/* 
+  Animated Border Gradient 
+  (unchanged from your original)
+*/
 @keyframes animated-border-gradient {
   0%   { background-position: 14% 0%; }
   50%  { background-position: 87% 100%; }
