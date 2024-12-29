@@ -356,6 +356,8 @@ html {
   animation: animated-border-gradient 3s ease-in-out infinite;
 }
 
+
+
 @media (min-width: 1920px) {   .blob-and-carousel-container {
     margin-top: -100px;     margin-left: 70px;;
   }
@@ -370,7 +372,7 @@ html {
   }
 
   .carousel-container {
-    margin-left: -300px;
+    margin-left: -400px;
     margin-top: -20px;
   }
 
