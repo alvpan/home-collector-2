@@ -6,7 +6,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { data } = req.body;
   if (!Array.isArray(data)) return res.status(400).json({ error: 'Invalid data format' });
 
-  const formattedData = data.map(d => `${d.date}, ${d.pricePerSqm}`).join('\n');
+  // Every 5th data point
+  const sampledData = data.filter((_, i) => i % 5 === 0);
+  const formattedData = sampledData.map(d => `${d.date}, ${d.pricePerSqm}`).join('\n');
+
 
   const prompt = `
 You are a real estate market analyst. Below is a time series (YYYY-MM-DD) of housing price per square meter data (in euros):
@@ -24,7 +27,7 @@ Summarize the change clearly in 2–3 sentences.
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      model: "gpt-3.5", // or gpt-3.5-turbo if budget-sensitive
+      model: "gpt-3.5-turbo",
       messages: [{ role: "user", content: prompt }],
       temperature: 0.5
     })
