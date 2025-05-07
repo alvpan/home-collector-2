@@ -855,7 +855,7 @@ export default function Home() {
           {renderContent()}
         </div>
 
-          // AI Button
+          {/* AI Button */}
           {hasRefreshed && (
             <div className="mt-4">
               <button
