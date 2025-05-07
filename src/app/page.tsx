@@ -122,15 +122,6 @@ export default function Home() {
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [noTransition, setNoTransition] = useState(false);
 
-  // AI stuff
-  const [aiSummary, setAiSummary] = useState<string | null>(null);
-  const [loadingSummary, setLoadingSummary] = useState(false);
-
-  const resetAISummary = () => {
-    setAiSummary(null);
-    setLoadingSummary(false);
-  };
-
   useEffect(() => {
     const interval = setInterval(() => {
       setCarouselIndex((prevIndex) => {
@@ -160,7 +151,6 @@ export default function Home() {
 
   const handleTimeframeChange = (timeframe: string) => {
     setSelectedTimeframe(timeframe);
-    resetAISummary();
   };
 
   const handleActionButtonClick = (selectedAction: string) => {
@@ -169,7 +159,6 @@ export default function Home() {
     setChartVisible(false);
     setHistoricalDataChartLoaded(false);
     setIsActionChosen(true);
-    resetAISummary();
     if (isMobile) {
       setIsCarouselVisible(false);
     }
@@ -181,7 +170,6 @@ export default function Home() {
     setDropdownVisible(false);
     setAreas([]);
     setSelectedArea("");
-    resetAISummary();
     setAreaDropdownVisible(false);
     clearCharts();
     setChartVisible(false);
@@ -190,7 +178,6 @@ export default function Home() {
 
   const handleAreaSelect = (area: string) => {
     setSelectedArea(area);
-    resetAISummary();
     setAreaSearchTerm("");
     setAreaDropdownVisible(false);
     clearCharts();
@@ -814,10 +801,7 @@ export default function Home() {
                   <div className="w-[12.5rem] h-12">
                     <DatePicker
                       selected={startDate}
-                      onChange={(date) => {
-                        setStartDate(date);
-                        resetAISummary();
-                      }}                      
+                      onChange={(date) => setStartDate(date)}
                       selectsStart
                       startDate={startDate}
                       endDate={endDate}
@@ -832,10 +816,7 @@ export default function Home() {
                   <div className="w-[12.5rem] h-12">
                     <DatePicker
                       selected={endDate}
-                      onChange={(date) => {
-                        setEndDate(date);
-                        resetAISummary();
-                      }}                      
+                      onChange={(date) => setEndDate(date)}
                       selectsEnd
                       startDate={startDate}
                       endDate={endDate}
@@ -868,41 +849,6 @@ export default function Home() {
         <div ref={chartContainerRef} className="chart-container mt-4">
           {renderContent()}
         </div>
-
-        {hasRefreshed && (
-          <div className="mt-8 flex flex-col md:flex-row md:items-start md:space-x-6 space-y-4 md:space-y-0 w-full">
-            <button
-              className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 whitespace-nowrap"
-              onClick={async () => {
-                setLoadingSummary(true);
-                const fullData = historicalDataChartData.series[0].data.map((price, index) => ({
-                  date: historicalDataChartData.options.xaxis?.categories?.[index],
-                  pricePerSqm: price
-                }));
-
-                const res = await fetch('/api/getGraphSummary', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ data: fullData })
-                });
-
-                const { summary } = await res.json();
-                setAiSummary(summary);
-                setLoadingSummary(false);
-              }}
-            >
-              {loadingSummary ? "Generating AI Summary..." : "AI Summary"}
-            </button>
-
-            {aiSummary && (
-              <div className="p-4 bg-gray-100 border border-blue-300 rounded shadow flex-1 max-w-3xl">
-                <h3 className="text-lg font-semibold text-blue-700 mb-2">AI Summary</h3>
-                <p className="text-gray-800 whitespace-pre-line">{aiSummary}</p>
-              </div>
-            )}
-          </div>
-        )}
-
       </main>
     </div>
   );
