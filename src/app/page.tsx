@@ -122,6 +122,11 @@ export default function Home() {
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [noTransition, setNoTransition] = useState(false);
 
+  // AI stuff
+  const [aiSummary, setAiSummary] = useState<string | null>(null);
+  const [loadingSummary, setLoadingSummary] = useState(false);
+
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCarouselIndex((prevIndex) => {
@@ -654,6 +659,42 @@ export default function Home() {
       )
     );
   };
+
+  // AI Button
+  {hasRefreshed && isChartRendered && (
+    <div className="mt-4">
+      <button
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        onClick={async () => {
+          setLoadingSummary(true);
+          const fullData = historicalDataChartData.series[0].data.map((price, index) => ({
+            date: historicalDataChartData.options.xaxis?.categories?.[index],
+            pricePerSqm: price
+          }));
+  
+          const res = await fetch('/api/getGraphSummary', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ data: fullData })
+          });
+  
+          const { summary } = await res.json();
+          setAiSummary(summary);
+          setLoadingSummary(false);
+        }}
+      >
+        {loadingSummary ? "Generating AI Summary..." : "AI Summary"}
+      </button>
+    </div>
+  )}
+
+  {aiSummary && (
+    <div className="mt-4 p-4 bg-gray-100 border border-blue-300 rounded shadow">
+      <h3 className="text-lg font-semibold text-blue-700 mb-2">AI Summary</h3>
+      <p className="text-gray-800 whitespace-pre-line">{aiSummary}</p>
+    </div>
+  )}
+
 
   const handleLanguageChange = (lang: 'en' | 'gr') => {
     setLanguage(lang);

@@ -160,6 +160,7 @@ html {
   height: 50vw; 
   min-height: 300px;   max-height: 600px;   overflow: hidden;
   margin-top: -150px;
+  
 }
 
 .blob-background {
@@ -168,6 +169,7 @@ html {
   left: 50%;
   width: clamp(200px, 30vw, 1000px);   height: clamp(200px, 30vw, 1000px);   transform: translate(-50%, -50%);
   z-index: 0;
+  
 }
 
 .carousel-content {
@@ -246,7 +248,7 @@ html {
   z-index: 1;
   margin-right: 0.5em; }
 
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
   .header {
     flex-direction: row;
     justify-content: space-between;
