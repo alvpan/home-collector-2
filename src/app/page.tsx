@@ -126,6 +126,10 @@ export default function Home() {
   const [aiSummary, setAiSummary] = useState<string | null>(null);
   const [loadingSummary, setLoadingSummary] = useState(false);
 
+  const resetAISummary = () => {
+    setAiSummary(null);
+    setLoadingSummary(false);
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -156,6 +160,7 @@ export default function Home() {
 
   const handleTimeframeChange = (timeframe: string) => {
     setSelectedTimeframe(timeframe);
+    resetAISummary();
   };
 
   const handleActionButtonClick = (selectedAction: string) => {
@@ -164,6 +169,7 @@ export default function Home() {
     setChartVisible(false);
     setHistoricalDataChartLoaded(false);
     setIsActionChosen(true);
+    resetAISummary();
     if (isMobile) {
       setIsCarouselVisible(false);
     }
@@ -175,6 +181,7 @@ export default function Home() {
     setDropdownVisible(false);
     setAreas([]);
     setSelectedArea("");
+    resetAISummary();
     setAreaDropdownVisible(false);
     clearCharts();
     setChartVisible(false);
@@ -183,6 +190,7 @@ export default function Home() {
 
   const handleAreaSelect = (area: string) => {
     setSelectedArea(area);
+    resetAISummary();
     setAreaSearchTerm("");
     setAreaDropdownVisible(false);
     clearCharts();
@@ -806,7 +814,10 @@ export default function Home() {
                   <div className="w-[12.5rem] h-12">
                     <DatePicker
                       selected={startDate}
-                      onChange={(date) => setStartDate(date)}
+                      onChange={(date) => {
+                        setStartDate(date);
+                        resetAISummary();
+                      }}                      
                       selectsStart
                       startDate={startDate}
                       endDate={endDate}
@@ -821,7 +832,10 @@ export default function Home() {
                   <div className="w-[12.5rem] h-12">
                     <DatePicker
                       selected={endDate}
-                      onChange={(date) => setEndDate(date)}
+                      onChange={(date) => {
+                        setEndDate(date);
+                        resetAISummary();
+                      }}                      
                       selectsEnd
                       startDate={startDate}
                       endDate={endDate}
