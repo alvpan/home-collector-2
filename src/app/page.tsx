@@ -869,40 +869,39 @@ export default function Home() {
           {renderContent()}
         </div>
 
-          {/* AI Button */}
-          {hasRefreshed && (
-            <div className="mt-4">
-              <button
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                onClick={async () => {
-                  setLoadingSummary(true);
-                  const fullData = historicalDataChartData.series[0].data.map((price, index) => ({
-                    date: historicalDataChartData.options.xaxis?.categories?.[index],
-                    pricePerSqm: price
-                  }));
-          
-                  const res = await fetch('/api/getGraphSummary', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: fullData })
-                  });
-          
-                  const { summary } = await res.json();
-                  setAiSummary(summary);
-                  setLoadingSummary(false);
-                }}
-              >
-                {loadingSummary ? "Generating AI Summary..." : "AI Summary"}
-              </button>
-            </div>
-          )}
+        {hasRefreshed && (
+          <div className="mt-8 flex flex-col md:flex-row md:items-start md:space-x-6 space-y-4 md:space-y-0 w-full">
+            <button
+              className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 whitespace-nowrap"
+              onClick={async () => {
+                setLoadingSummary(true);
+                const fullData = historicalDataChartData.series[0].data.map((price, index) => ({
+                  date: historicalDataChartData.options.xaxis?.categories?.[index],
+                  pricePerSqm: price
+                }));
 
-          {aiSummary && (
-            <div className="mt-4 p-4 bg-gray-100 border border-blue-300 rounded shadow">
-              <h3 className="text-lg font-semibold text-blue-700 mb-2">AI Summary</h3>
-              <p className="text-gray-800 whitespace-pre-line">{aiSummary}</p>
-            </div>
-          )}
+                const res = await fetch('/api/getGraphSummary', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ data: fullData })
+                });
+
+                const { summary } = await res.json();
+                setAiSummary(summary);
+                setLoadingSummary(false);
+              }}
+            >
+              {loadingSummary ? "Generating AI Summary..." : "AI Summary"}
+            </button>
+
+            {aiSummary && (
+              <div className="p-4 bg-gray-100 border border-blue-300 rounded shadow flex-1 max-w-3xl">
+                <h3 className="text-lg font-semibold text-blue-700 mb-2">AI Summary</h3>
+                <p className="text-gray-800 whitespace-pre-line">{aiSummary}</p>
+              </div>
+            )}
+          </div>
+        )}
 
       </main>
     </div>
