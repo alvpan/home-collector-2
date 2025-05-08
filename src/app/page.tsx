@@ -588,31 +588,33 @@ export default function Home() {
     }, 100);
   };
 
-  const handleSummarizeClick = async () => {
-    if (isSummarizing || historicalRawData.length === 0) return;
-  
-    setIsSummarizing(true);
-    setAiSummary("");
+const MIN_SPINNER_TIME = 1000;
 
-    await new Promise<void>(resolve =>
-      requestAnimationFrame(() => resolve())
-    );
-  
-    try {
-      const res = await fetch("/api/getGraphSummary", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: historicalRawData }),
-      });
-      const { summary } = await res.json();
-      setAiSummary(summary);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsSummarizing(false);
-    }
-  };
-  
+const handleSummarizeClick = async () => {
+  if (isSummarizing || historicalRawData.length === 0) return;
+
+  setIsSummarizing(true);
+  setAiSummary("");
+
+  const start = Date.now();
+
+  try {
+    const res = await fetch("/api/getGraphSummary", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ data: historicalRawData }),
+    });
+    const { summary } = await res.json();
+    setAiSummary(summary);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    const elapsed = Date.now() - start;
+    const remaining = Math.max(MIN_SPINNER_TIME - elapsed, 0);
+
+    setTimeout(() => setIsSummarizing(false), remaining);
+  }
+};
 
   const filteredCities = cities.filter((city) =>
     t(city).toLowerCase().includes(citySearchTerm.toLowerCase())
