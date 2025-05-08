@@ -588,37 +588,45 @@ export default function Home() {
     }, 100);
   };
 
-const MIN_SPINNER_TIME = 1_000;
+  const MIN_SPINNER_TIME = 1000;
 
-const handleSummarizeClick = async () => {
-  if (isSummarizing) return;
-
-  setIsSummarizing(true);
-  setAiSummary("");
-
-  const t0 = Date.now();
-
-  try {
-    if (historicalRawData.length === 0) {
-      throw new Error("No chart data yet — refresh first.");
+  const handleSummarizeClick = async () => {
+    if (isSummarizing) return;
+  
+    setIsSummarizing(true);
+    setAiSummary("");
+  
+    await new Promise(requestAnimationFrame);
+  
+    const started = Date.now();
+    let pendingSummary = "";
+  
+    try {
+      if (!historicalRawData.length) {
+        throw new Error("Refresh the chart first, then try again.");
+      }
+  
+      const res = await fetch("/api/getGraphSummary", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: historicalRawData }),
+      });
+      const { summary } = await res.json();
+      pendingSummary = summary;
+    } catch (err: any) {
+      console.error(err);
+      pendingSummary = err?.message ?? "Something went wrong — please try again.";
+    } finally {
+      const elapsed = Date.now() - started;
+      const delay = Math.max(MIN_SPINNER_TIME - elapsed, 0);
+  
+      setTimeout(() => {
+        setIsSummarizing(false);
+        setAiSummary(pendingSummary);
+      }, delay);
     }
-
-    const res = await fetch("/api/getGraphSummary", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ data: historicalRawData }),
-    });
-    const { summary } = await res.json();
-    setAiSummary(summary);
-  } catch (err) {
-    console.error(err);
-    setAiSummary("Couldn’t generate a summary — refresh the chart and try again.");
-  } finally {
-    const elapsed = Date.now() - t0;
-    setTimeout(() => setIsSummarizing(false),
-               Math.max(MIN_SPINNER_TIME - elapsed, 0));
-  }
-};
+  };
+  
 
 
   const filteredCities = cities.filter((city) =>
