@@ -593,6 +593,10 @@ export default function Home() {
   
     setIsSummarizing(true);
     setAiSummary("");
+
+    await new Promise<void>(resolve =>
+      requestAnimationFrame(() => resolve())
+    );
   
     try {
       const res = await fetch("/api/getGraphSummary", {
