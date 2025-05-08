@@ -17,7 +17,7 @@ You are a real estate market analyst. Below is a time series (YYYY-MM-DD) of hou
 ${formattedData}
 
 Describe the trend between the first and last date. Focus only on what is visible in the data. Do not guess or explain causes. Avoid speculation.
-Summarize the change clearly in 1-2 sentences. Use '€' and 'm²'.
+Summarize the change clearly in 2-3 sentences. Use '€' and 'm²'.
 `;
 
   const gptResponse = await fetch("https://api.openai.com/v1/chat/completions", {

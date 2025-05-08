@@ -944,7 +944,6 @@ export default function Home() {
 
           {renderContent()}
           
-          <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4 mt-4">
             {hasRefreshed && historicalDataChartLoaded && (
               <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4 mt-4">
 
@@ -962,13 +961,12 @@ export default function Home() {
                 )}
 
                 {aiSummary && (
-                  <p className="max-w-xl whitespace-pre-wrap text-blue-600">
+                  <p className="w-full md:flex-1 whitespace-pre-wrap text-blue-500 italic font-semibold">
                     {aiSummary}
                   </p>
                 )}
               </div>
             )}
-          </div>
         </div>
 
       </main>
