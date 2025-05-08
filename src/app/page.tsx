@@ -588,17 +588,21 @@ export default function Home() {
     }, 100);
   };
 
-const MIN_SPINNER_TIME = 1000;
+const MIN_SPINNER_TIME = 1_000;
 
 const handleSummarizeClick = async () => {
-  if (isSummarizing || historicalRawData.length === 0) return;
+  if (isSummarizing) return;
 
   setIsSummarizing(true);
   setAiSummary("");
 
-  const start = Date.now();
+  const t0 = Date.now();
 
   try {
+    if (historicalRawData.length === 0) {
+      throw new Error("No chart data yet — refresh first.");
+    }
+
     const res = await fetch("/api/getGraphSummary", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -608,13 +612,14 @@ const handleSummarizeClick = async () => {
     setAiSummary(summary);
   } catch (err) {
     console.error(err);
+    setAiSummary("Couldn’t generate a summary — refresh the chart and try again.");
   } finally {
-    const elapsed = Date.now() - start;
-    const remaining = Math.max(MIN_SPINNER_TIME - elapsed, 0);
-
-    setTimeout(() => setIsSummarizing(false), remaining);
+    const elapsed = Date.now() - t0;
+    setTimeout(() => setIsSummarizing(false),
+               Math.max(MIN_SPINNER_TIME - elapsed, 0));
   }
 };
+
 
   const filteredCities = cities.filter((city) =>
     t(city).toLowerCase().includes(citySearchTerm.toLowerCase())
