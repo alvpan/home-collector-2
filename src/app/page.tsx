@@ -590,20 +590,25 @@ export default function Home() {
 
   const handleSummarizeClick = async () => {
     if (isSummarizing || historicalRawData.length === 0) return;
+  
     setIsSummarizing(true);
+    setAiSummary("");
+  
     try {
-      const response = await fetch("/api/getGraphSummary", {
+      const res = await fetch("/api/getGraphSummary", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ data: historicalRawData }),
       });
-      const json = await response.json();
-      setAiSummary(json.summary);
-    } catch (error) {
-      console.error("Error summarizing:", error);
+      const { summary } = await res.json();
+      setAiSummary(summary);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setTimeout(() => setIsSummarizing(false), 0);
     }
-    setIsSummarizing(false);
   };
+  
 
   const filteredCities = cities.filter((city) =>
     t(city).toLowerCase().includes(citySearchTerm.toLowerCase())
