@@ -944,26 +944,31 @@ export default function Home() {
 
           {renderContent()}
           
-          
-          <div className="flex flex-col">
+          <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4 mt-4">
             {hasRefreshed && historicalDataChartLoaded && (
-              <div className="flex items-start mt-4 space-x-4">
-                <button
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                  onClick={handleSummarizeClick}
-                  disabled={isSummarizing}
-                >
-                  {isSummarizing ? "Loading..." : "Summarize with AI"}
-                </button>
+              <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4 mt-4">
+
+                {!isSummarizing && !aiSummary && (
+                  <button
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    onClick={handleSummarizeClick}
+                  >
+                    Summarize with AI
+                  </button>
+                )}
+
+                {isSummarizing && (
+                  <span className="text-gray-500">Summarizing…</span>
+                )}
+
                 {aiSummary && (
-                  <p className="max-w-xl whitespace-pre-wrap text-black">
+                  <p className="max-w-xl whitespace-pre-wrap text-blue">
                     {aiSummary}
                   </p>
                 )}
               </div>
             )}
           </div>
-
         </div>
 
       </main>
