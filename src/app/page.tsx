@@ -947,7 +947,7 @@ export default function Home() {
             {hasRefreshed && historicalDataChartLoaded && (
               <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4 mt-4">
 
-                {!isSummarizing && !aiSummary && (
+                {!aiSummary && (
                   <button
                     className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                     onClick={handleSummarizeClick}
@@ -956,7 +956,7 @@ export default function Home() {
                   </button>
                 )}
 
-                {isSummarizing && (
+                {!aiSummary && (
                   <div className="w-full md:flex-1">
                     <div className="ai-glare-placeholder h-28 rounded-xl relative">
                       <div className="loading-text text-xl">a i   s u m m a r y</div>
@@ -965,7 +965,7 @@ export default function Home() {
                 )}
 
                 {aiSummary && (
-                  <div className="w-full md:flex-1 bg-blue-50 border border-blue-100 rounded-xl p-4 shadow-md">
+                  <div className="w-full md:flex-1 bg-blue-50 border border-blue-100 rounded-xl p-4">
                     <p className="w-full md:flex-1 whitespace-pre-wrap text-blue-500 italic font-semibold">
                       {aiSummary}
                     </p>
