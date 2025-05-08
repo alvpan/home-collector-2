@@ -962,7 +962,7 @@ export default function Home() {
                 )}
 
                 {aiSummary && (
-                  <p className="max-w-xl whitespace-pre-wrap text-blue">
+                  <p className="max-w-xl whitespace-pre-wrap text-blue-600">
                     {aiSummary}
                   </p>
                 )}
