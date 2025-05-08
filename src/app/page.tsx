@@ -940,26 +940,29 @@ export default function Home() {
             )}
         </div>
 
-        <div ref={chartContainerRef} className="chart-container mt-4">
+        <div ref={chartContainerRef} className="chart-container flex flex-col mt-4">
+
           {renderContent()}
+
+          {hasRefreshed && historicalDataChartLoaded && (
+            <div className="flex items-start mt-4 space-x-4">
+              <button
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={handleSummarizeClick}
+                disabled={isSummarizing}
+              >
+                {isSummarizing ? "Loading..." : "Summarize with AI"}
+              </button>
+              {aiSummary && (
+                <p className="max-w-xl whitespace-pre-wrap text-black">
+                  {aiSummary}
+                </p>
+              )}
+            </div>
+          )}
+
         </div>
 
-        {hasRefreshed && historicalDataChartLoaded && (
-          <div className="flex items-start mt-4 space-x-4">
-            <button
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              onClick={handleSummarizeClick}
-              disabled={isSummarizing}
-            >
-              {isSummarizing ? "Loading..." : "Summarize with AI"}
-            </button>
-            {aiSummary && (
-              <p className="max-w-xl whitespace-pre-wrap text-black">
-                {aiSummary}
-              </p>
-            )}
-          </div>
-        )}
       </main>
     </div>
   );
