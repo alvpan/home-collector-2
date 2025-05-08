@@ -667,11 +667,11 @@ export default function Home() {
 
   const renderTimeframeOptions = () => {
     const timeframeOptions = [
-      { key: "lastMonth", label: t("lastMonth") },
-      { key: "last6Months", label: t("last6Months") },
+      // { key: "lastMonth", label: t("lastMonth") },
+      // { key: "last6Months", label: t("last6Months") },
       { key: "lastYear", label: t("lastYear") },
       { key: "ever", label: t("ever") },
-      { key: "custom", label: t("custom") },
+      // { key: "custom", label: t("custom") },
     ];
     return timeframeOptions.map((option) => (
       <li
