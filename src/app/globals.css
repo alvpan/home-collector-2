@@ -114,6 +114,18 @@ html {
   overflow: hidden;
 }
 
+.ai-glare-placeholder {
+  position: relative;
+  background: #f0f0f0;
+  background: linear-gradient(90deg, #f0f0f0 20%, #0026ff 50%, #f0f0f0 30%);
+  background-size: 200% 100%;
+  animation: glare 2s infinite;
+  border-radius: 4px;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
 @keyframes glare {
   0% {
     background-position: 200% 0;

@@ -957,12 +957,16 @@ export default function Home() {
                 )}
 
                 {isSummarizing && (
-                  <span className="text-gray-500">Summarizing…</span>
+                  <div className="w-full md:flex-1">
+                    <div className="ai-glare-placeholder h-28 rounded-xl relative">
+                      <div className="loading-text text-xl">a i   s u m m a r y</div>
+                    </div>
+                  </div>
                 )}
 
                 {aiSummary && (
-                  <div className="w-full md:flex-1 bg-blue-50 border border-blue-200 rounded-xl p-4 shadow-sm">
-                    <p className="w-full md:flex-1 whitespace-pre-wrap text-blue-400 italic font-semibold">
+                  <div className="w-full md:flex-1 bg-blue-50 border border-blue-100 rounded-xl p-4 shadow-md">
+                    <p className="w-full md:flex-1 whitespace-pre-wrap text-blue-500 italic font-semibold">
                       {aiSummary}
                     </p>
                   </div>
