@@ -961,9 +961,11 @@ export default function Home() {
                 )}
 
                 {aiSummary && (
-                  <p className="w-full md:flex-1 whitespace-pre-wrap text-blue-500 italic font-semibold">
-                    {aiSummary}
-                  </p>
+                  <div className="w-full md:flex-1 bg-blue-50 border border-blue-200 rounded-xl p-4 shadow-sm">
+                    <p className="w-full md:flex-1 whitespace-pre-wrap text-blue-400 italic font-semibold">
+                      {aiSummary}
+                    </p>
+                  </div>
                 )}
               </div>
             )}
