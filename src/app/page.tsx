@@ -605,7 +605,7 @@ export default function Home() {
     } catch (err) {
       console.error(err);
     } finally {
-      setTimeout(() => setIsSummarizing(false), 0);
+      setIsSummarizing(false);
     }
   };
   
